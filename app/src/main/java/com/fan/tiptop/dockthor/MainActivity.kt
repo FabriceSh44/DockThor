@@ -1,8 +1,5 @@
 package com.fan.tiptop.dockthor
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,24 +20,17 @@ class MainActivity : AppCompatActivity() {
             onBikeAtStationClick()
         }
     }
-    fun isConnected():Boolean{
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
-        return isConnected
-    }
+
 
     fun onBikeAtStationClick() {
         val bikeAtStationButton = findViewById<Button>(R.id.bike_at_station_button)
-        // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
         Log.v(TAG, "Requesting $url");
-        // Request a string response from the provided URL.
         val stringRequest = StringRequest(
             Request.Method.GET, url,
-            Response.Listener<String> { response ->
-                bikeAtStationButton.text =processResponse(response)
+            Response.Listener { response ->
+                bikeAtStationButton.text = processResponse(response)
             },
             Response.ErrorListener { error ->
                 Log.e(TAG, "Unable to request. Got error ${error}")
@@ -50,14 +40,13 @@ class MainActivity : AppCompatActivity() {
             })
         queue.add(stringRequest)
     }
-    fun processResponse(response:String):String{
+
+    fun processResponse(response: String): String {
         try {
             val requestor = CitiRequestor()
-            val availibility = requestor.getAvailabilities(response,4620)
-            return "$availibility"
-        }
-        catch(e:Exception)
-        {
+            val availabilities = requestor.getAvailabilities(response, 4620)
+            return "$availabilities"
+        } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
             return "NaN"
         }
