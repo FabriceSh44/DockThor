@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">DockThor</string>
-    <string name="bikes_at_station">bikes_at_station</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Home station</string>
-    <string name="switch_fav_station">Switch favorite station</string>
+    <string name="hello_blank_fragment">Favorite station</string>
+    <string name="switch_fav_station">Change favorite stations</string>
+    <string name="add_station_button">Replace favorite station</string>
+    <string name="search_station_hint">Input station street</string>
 </resources>

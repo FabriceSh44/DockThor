@@ -32,6 +32,23 @@ class NetworkManager private constructor(context: Context) {
         })
         requestQueue.add(request)
     }
+    fun stationInformationRequest( listener: SomeCustomListener) {
+        val url = "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
+        val request = StringRequest(
+            Request.Method.GET, url,
+            Response.Listener { response ->
+                Log.d(TAG + ": ", "somePostRequest Response : $response")
+                if (null != response) listener.getResult(response.toString())
+            },
+            Response.ErrorListener { error ->
+                if (null != error.networkResponse) {
+                    Log.e(TAG, "Error with request. Error: ${error}" )
+                    listener.getError(error.toString())
+                }
+
+            })
+        requestQueue.add(request)
+    }
 
     companion object {
         private const val TAG = "NetworkManager"

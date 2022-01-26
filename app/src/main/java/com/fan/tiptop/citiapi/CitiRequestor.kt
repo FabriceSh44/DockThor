@@ -3,6 +3,7 @@ package com.fan.tiptop.citiapi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import java.lang.Exception
 
 @Serializable
@@ -65,7 +66,9 @@ data class StationInformationModel(
 class CitiRequestor {
     private var m_stationIdToStation: MutableMap<Int, CitibikeStationModel> = mutableMapOf()
     fun getStationStatusModel(string: String): StationStatusModel {
-        val model = Json.decodeFromString<StationStatusModel>(string)
+        val model = Json {
+            ignoreUnknownKeys = true
+        }.decodeFromString<StationStatusModel>(string)
         return model
     }
 
@@ -88,7 +91,9 @@ class CitiRequestor {
     }
 
     fun getStationInformationModel(stationInformationContent: String): StationInformationModel {
-        val model = Json.decodeFromString<StationInformationModel>(stationInformationContent)
+        val model = Json {
+            ignoreUnknownKeys = true
+        }.decodeFromString<StationInformationModel>(stationInformationContent)
         return model
 
     }

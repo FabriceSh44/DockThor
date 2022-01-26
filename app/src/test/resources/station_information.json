@@ -18,6 +18,7 @@
           "android": "https://bkn.lft.to/lastmile_qr_scan"
         },
         "eightd_station_services": [],
+        "eightd_station_valet": ["valet"],
         "rental_methods": [
           "KEY",
           "CREDITCARD"
