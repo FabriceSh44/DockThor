@@ -13,14 +13,14 @@ class CitiRequestorTest {
     fun getAvailabilities() {
         val requestor = CitiRequestor()
         val stationId = 83
-        val result =requestor.getAvailabilities(File(stationStatusFile).readText(), stationId)
-        assertEquals("35/24",result )
+        val result = requestor.getAvailabilities(File(stationStatusFile).readText(), stationId)
+        assertEquals("35/24", result)
     }
 
     @Test
-    fun getStationInformation(){
+    fun getStationInformation() {
         val requestor = CitiRequestor()
-        val model= requestor.getStationInformationModel(File(stationInformationFile).readText())
+        val model = requestor.getStationInformationModel(File(stationInformationFile).readText())
         assertNotNull(model)
     }
 }

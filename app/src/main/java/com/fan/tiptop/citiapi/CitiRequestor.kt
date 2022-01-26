@@ -46,7 +46,6 @@ data class CitibikeStationInformationModel(
     val lat: Double,
     val region_id: String,
     val rental_uris: RentalUri,
-    val eightd_station_services: List<String>,
     val rental_methods: List<String>,
     val has_kiosk: Boolean,
     val legacy_id: String
