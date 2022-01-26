@@ -77,11 +77,11 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private fun filterList(
         adress: String,
         stationInfoList: List<CitibikeStationInformationModel>
-    ): MutableList<StationSuggestionRow> {
-        val filteredStationList = mutableListOf<StationSuggestionRow>()
+    ): MutableList<CitibikeStationInformationModel> {
+        val filteredStationList = mutableListOf<CitibikeStationInformationModel>()
         for (station in stationInfoList) {
             if (adress in station.name) {
-                filteredStationList.add(StationSuggestionRow(station.name))
+                filteredStationList.add(station)
             }
 
         }
@@ -103,7 +103,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     private fun redrawTipTable(
         stationAdressTable: TableLayout,
-        stationSuggestions: List<StationSuggestionRow>
+        stationSuggestions: List<CitibikeStationInformationModel>
     ) {
         var i = 1
         for (ssRow in stationSuggestions) {
@@ -111,8 +111,9 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val row = inflater.inflate(R.layout.partial_suggestion_station_row, null) as TableRow
-            val adressView: TextView = getTextViewWithStyle(context, ssRow.toString())
+            val adressView: TextView = getTextViewWithStyle(context, ssRow.name)
             row.addView(adressView)
+            row.setTag(ssRow)
             row.setOnClickListener { view -> chooseView(view) }
             stationAdressTable.addView(row, i++)
         }
@@ -135,6 +136,9 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     }
 
     private fun chooseView(view: View?) {
-        TODO("Not yet implemented")
+        if (view != null) {
+            val stationInfo = view.getTag() as CitibikeStationInformationModel
+
+        }
     }
 }
