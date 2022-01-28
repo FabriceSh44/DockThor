@@ -11,11 +11,9 @@
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
         android:text="@string/add_station_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelineRight" />
 
 
     <SearchView

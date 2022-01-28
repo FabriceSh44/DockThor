@@ -14,7 +14,7 @@ class CitiRequestorTest {
         val requestor = CitiRequestor()
         val stationId = 83
         val result = requestor.getAvailabilities(File(stationStatusFile).readText(), stationId)
-        assertEquals("35/24", result)
+        assertEquals("35 bikes\n24 docks", result)
     }
 
     @Test

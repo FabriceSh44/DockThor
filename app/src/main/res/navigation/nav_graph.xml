@@ -13,10 +13,16 @@
         <action
             android:id="@+id/action_mainFragment_to_stationSearchFragment"
             app:destination="@id/stationSearchFragment" />
+        <argument android:name="stationId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/stationSearchFragment"
         android:name="com.fan.tiptop.dockthor.StationSearchFragment"
         android:label="fragment_station_search"
-        tools:layout="@layout/fragment_station_search" />
+        tools:layout="@layout/fragment_station_search" >
+        <action
+            android:id="@+id/action_stationSearchFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>

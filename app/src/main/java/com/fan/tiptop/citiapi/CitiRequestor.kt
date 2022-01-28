@@ -85,7 +85,7 @@ class CitiRequestor {
             }
         }
 
-        return "${station.num_bikes_available}/${station.num_docks_available}"
+        return "${station.num_bikes_available} bikes\n${station.num_docks_available} docks"
 
     }
 

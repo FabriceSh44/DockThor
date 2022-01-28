@@ -1,4 +1,5 @@
 *.iml
+.DS_Store
 *.aab
 .gradle
 /local.properties

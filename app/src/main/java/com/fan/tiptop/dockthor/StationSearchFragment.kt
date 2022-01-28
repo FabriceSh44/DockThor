@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.SearchView.OnQueryTextListener
+import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.network.NetworkManager
@@ -80,10 +81,11 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     ): MutableList<CitibikeStationInformationModel> {
         val filteredStationList = mutableListOf<CitibikeStationInformationModel>()
         for (station in stationInfoList) {
-            if (adress in station.name) {
+            if (adress.lowercase() in station.name.lowercase()) {
                 filteredStationList.add(station)
+                if (filteredStationList.size > 10)
+                    break
             }
-
         }
         return filteredStationList
     }
@@ -138,7 +140,8 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private fun chooseView(view: View?) {
         if (view != null) {
             val stationInfo = view.getTag() as CitibikeStationInformationModel
-
+            val action = StationSearchFragmentDirections.actionStationSearchFragmentToMainFragment(stationInfo.station_id.toInt())
+            view.findNavController().navigate(action)
         }
     }
 }
