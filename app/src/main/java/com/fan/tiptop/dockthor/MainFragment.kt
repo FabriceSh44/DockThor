@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.CitiRequestor
+import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
 import com.fan.tiptop.dockthor.network.NetworkManager
 import com.fan.tiptop.dockthor.network.SomeCustomListener
 
@@ -16,29 +17,34 @@ import com.fan.tiptop.dockthor.network.SomeCustomListener
 class MainFragment : Fragment() {
 
     private val TAG = "DockThor"
+
     //my default favorit station id
     private var _stationId = 4620
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
-        val bikeAtStationButton = view.findViewById<Button>(R.id.bike_at_station_button)
-        bikeAtStationButton.setOnClickListener {
-            onBikeAtStationClick(bikeAtStationButton)
-        }
-        val switchFavStationButton = view.findViewById<Button>(R.id.switch_fav_station_button)
-        switchFavStationButton.setOnClickListener {
-            view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
-        }
         if (!requireArguments().isEmpty) {
             _stationId = MainFragmentArgs.fromBundle(requireArguments()).stationId
+        }
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        val view = binding.root
+        binding.bikeAtStationButton.setOnClickListener { onBikeAtStationClick(binding.bikeAtStationButton) }
+        binding.switchFavStationButton.setOnClickListener {
+            view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
         }
         return view
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding=null
+    }
 
     fun onBikeAtStationClick(bikeAtStationButton: Button) {
         NetworkManager.getInstance().stationStatusRequest(object : SomeCustomListener {

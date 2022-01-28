@@ -14,6 +14,7 @@ import android.widget.SearchView.OnQueryTextListener
 import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
+import com.fan.tiptop.dockthor.databinding.FragmentStationSearchBinding
 import com.fan.tiptop.dockthor.network.NetworkManager
 import com.fan.tiptop.dockthor.network.SomeCustomListener
 import java.util.*
@@ -22,15 +23,17 @@ import java.util.*
 class StationSearchFragment : Fragment(), OnQueryTextListener {
     private lateinit var _stationInfoList: List<CitibikeStationInformationModel>
     private val TAG = "DockThor"
+    private var _binding: FragmentStationSearchBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val myView = inflater.inflate(R.layout.fragment_station_search, container, false)
+        _binding = FragmentStationSearchBinding.inflate(inflater, container, false)
+        val myView = binding.root
         if (myView != null) {
-            val editSearch = myView.findViewById<SearchView>(R.id.searchView)
-            editSearch.setOnQueryTextListener(this)
+            binding.searchView.setOnQueryTextListener(this)
         }
         NetworkManager.getInstance().stationInformationRequest(
             object : SomeCustomListener {
@@ -68,8 +71,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-        val tableLayout =
-            this.requireView().findViewById<TableLayout>(R.id.stationAdressTableLayout)
+        val tableLayout = binding.stationAdressTableLayout
         removeAllAdress(tableLayout)
         redrawTipTable(tableLayout, filterList(newText, _stationInfoList))
         return false
@@ -140,7 +142,9 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private fun chooseView(view: View?) {
         if (view != null) {
             val stationInfo = view.getTag() as CitibikeStationInformationModel
-            val action = StationSearchFragmentDirections.actionStationSearchFragmentToMainFragment(stationInfo.station_id.toInt())
+            val action = StationSearchFragmentDirections.actionStationSearchFragmentToMainFragment(
+                stationInfo.station_id.toInt()
+            )
             view.findNavController().navigate(action)
         }
     }
