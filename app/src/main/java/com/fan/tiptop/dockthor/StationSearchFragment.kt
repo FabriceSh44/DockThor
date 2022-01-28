@@ -5,12 +5,14 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import android.widget.SearchView.OnQueryTextListener
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
@@ -32,9 +34,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     ): View? {
         _binding = FragmentStationSearchBinding.inflate(inflater, container, false)
         val myView = binding.root
-        if (myView != null) {
-            binding.searchView.setOnQueryTextListener(this)
-        }
+        binding.searchView.setOnQueryTextListener(this)
         NetworkManager.getInstance().stationInformationRequest(
             object : SomeCustomListener {
                 override fun getResult(result: String) {
@@ -117,7 +117,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
             val row = inflater.inflate(R.layout.partial_suggestion_station_row, null) as TableRow
             val adressView: TextView = getTextViewWithStyle(context, ssRow.name)
             row.addView(adressView)
-            row.setTag(ssRow)
+            row.tag = ssRow
             row.setOnClickListener { view -> chooseView(view) }
             stationAdressTable.addView(row, i++)
         }
@@ -141,9 +141,9 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     private fun chooseView(view: View?) {
         if (view != null) {
-            val stationInfo = view.getTag() as CitibikeStationInformationModel
+            val stationInfo = view.tag as CitibikeStationInformationModel
             val action = StationSearchFragmentDirections.actionStationSearchFragmentToMainFragment(
-                stationInfo.station_id.toInt()
+                stationInfo
             )
             view.findNavController().navigate(action)
         }

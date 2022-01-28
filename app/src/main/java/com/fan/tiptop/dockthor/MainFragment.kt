@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.CitiRequestor
+import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
 import com.fan.tiptop.dockthor.network.NetworkManager
 import com.fan.tiptop.dockthor.network.SomeCustomListener
@@ -19,7 +20,13 @@ class MainFragment : Fragment() {
     private val TAG = "DockThor"
 
     //my default favorit station id
-    private var _stationId = 4620
+    private var _station = CitibikeStationInformationModel(
+        0.0, "", false,
+        "", "Clinton Street",
+        "", 0, "4620",
+        true, 0.0, "", listOf(),
+        false, ""
+    )
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
@@ -29,7 +36,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         if (!requireArguments().isEmpty) {
-            _stationId = MainFragmentArgs.fromBundle(requireArguments()).stationId
+            _station = MainFragmentArgs.fromBundle(requireArguments()).stationModel
         }
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -43,7 +50,7 @@ class MainFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding=null
+        _binding = null
     }
 
     fun onBikeAtStationClick(bikeAtStationButton: Button) {
@@ -66,8 +73,8 @@ class MainFragment : Fragment() {
     fun processResponse(response: String): String {
         try {
             val requestor = CitiRequestor()
-            val availabilities = requestor.getAvailabilities(response, _stationId)
-            return "$availabilities"
+            val availabilities = requestor.getAvailabilities(response, _station.station_id.toInt())
+            return "${_station.name}\n------\n$availabilities"
         } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
             return "NaN"
