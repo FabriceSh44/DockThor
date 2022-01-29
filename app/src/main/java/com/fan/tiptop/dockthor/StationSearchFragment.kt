@@ -24,7 +24,7 @@ import java.util.*
 
 class StationSearchFragment : Fragment(), OnQueryTextListener {
     //StationSearchFragment works with view binding
-    private lateinit var _stationInfoList: List<CitibikeStationInformationModel>
+    private  var _stationInfoList: List<CitibikeStationInformationModel>?=null
     private val TAG = "DockThor"
     private var _binding: FragmentStationSearchBinding? = null
     private val binding get() = _binding!!
@@ -72,9 +72,11 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-        val tableLayout = binding.stationAdressTableLayout
-        removeAllAdress(tableLayout)
-        redrawTipTable(tableLayout, filterList(newText, _stationInfoList))
+        if(_stationInfoList!=null) {
+            val tableLayout = binding.stationAdressTableLayout
+            removeAllAdress(tableLayout)
+            redrawTipTable(tableLayout, filterList(newText, _stationInfoList!!))
+        }
         return false
     }
 
@@ -110,7 +112,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         stationAdressTable: TableLayout,
         stationSuggestions: List<CitibikeStationInformationModel>
     ) {
-        var i = 1
+        var i = 0
         for (ssRow in stationSuggestions) {
             val context = stationAdressTable.context
             val inflater =

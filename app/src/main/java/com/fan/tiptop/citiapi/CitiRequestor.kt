@@ -26,35 +26,35 @@ data class StationInformationModel(
 
 class CitiRequestor {
     private var m_stationIdToStation: MutableMap<Int, CitibikeStationModel> = mutableMapOf()
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
+
     fun getStationStatusModel(string: String): StationStatusModel {
-        val model = Json {
-            ignoreUnknownKeys = true
-        }.decodeFromString<StationStatusModel>(string)
+        val model = json.decodeFromString<StationStatusModel>(string)
         return model
     }
 
 
     fun getAvailabilities(response: String, stationId: Int): String {
-        var station = this.m_stationIdToStation[stationId]
-        if (station == null) {
+        var currentStation = this.m_stationIdToStation[stationId]
+        if (currentStation == null) {
             val model = getStationStatusModel(response)
             for (station in model.data.stations) {
                 this.m_stationIdToStation.put(station.station_id.toInt(), station)
             }
-            station = this.m_stationIdToStation[stationId]
-            if (station == null) {
+            currentStation = this.m_stationIdToStation[stationId]
+            if (currentStation == null) {
                 throw Exception("Unable to find station for $stationId")
             }
         }
 
-        return "${station.num_bikes_available} bikes\n${station.num_docks_available} docks"
+        return "${currentStation.num_bikes_available} bikes\n${currentStation.num_ebikes_available} e-bikes\n${currentStation.num_docks_available} docks"
 
     }
 
     fun getStationInformationModel(stationInformationContent: String): StationInformationModel {
-        val model = Json {
-            ignoreUnknownKeys = true
-        }.decodeFromString<StationInformationModel>(stationInformationContent)
+        val model = json.decodeFromString<StationInformationModel>(stationInformationContent)
         return model
 
     }
