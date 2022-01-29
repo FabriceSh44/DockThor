@@ -53,12 +53,15 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
-                        _bikeAtStation.value = error
+                        _bikeAtStation.value = processError(error)
                     }
                 }
             })
     }
 
+    fun processError(error: String): String {
+        return error;
+    }
     fun processResponse(response: String): String {
         try {
             if (_favoriteStation != null) {

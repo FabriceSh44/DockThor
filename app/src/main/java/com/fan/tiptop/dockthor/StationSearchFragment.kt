@@ -52,8 +52,12 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
                 }
             }
         )
-
         return myView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.searchView.requestFocus()
     }
 
     fun processResponse(response: String): List<CitibikeStationInformationModel> {
@@ -73,9 +77,13 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     override fun onQueryTextChange(newText: String): Boolean {
         if(_stationInfoList!=null) {
-            val tableLayout = binding.stationAdressTableLayout
-            removeAllAdress(tableLayout)
-            redrawTipTable(tableLayout, filterList(newText, _stationInfoList!!))
+            binding.errorTextView.text=""
+            removeAllAdress()
+            redrawStationAddressTable(filterList(newText, _stationInfoList!!))
+        }
+        else
+        {
+            binding.errorTextView.text="Can't load station suggestions"
         }
         return false
     }
@@ -95,7 +103,8 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         return filteredStationList
     }
 
-    private fun removeAllAdress(addressTable: TableLayout) {
+    private fun removeAllAdress() {
+        var addressTable=binding.stationAddressTableLayout
         val toDelete = LinkedList<View>()
         for (i in 1 until addressTable.childCount) {
             val view = addressTable.getChildAt(i)
@@ -108,13 +117,13 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         }
     }
 
-    private fun redrawTipTable(
-        stationAdressTable: TableLayout,
+    private fun redrawStationAddressTable(
         stationSuggestions: List<CitibikeStationInformationModel>
     ) {
+        var addressTable=binding.stationAddressTableLayout
         var i = 0
         for (ssRow in stationSuggestions) {
-            val context = stationAdressTable.context
+            val context = addressTable.context
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val row = inflater.inflate(R.layout.partial_suggestion_station_row, null) as TableRow
@@ -122,9 +131,9 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
             row.addView(addressView)
             row.tag = ssRow
             row.setOnClickListener { view -> chooseView(view) }
-            stationAdressTable.addView(row, i++)
+            addressTable.addView(row, i++)
         }
-        stationAdressTable.invalidate()
+        addressTable.invalidate()
     }
 
     private fun getTextViewWithStyle(context: Context, tvStr: String): TextView {
