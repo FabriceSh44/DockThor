@@ -18,11 +18,12 @@ import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.databinding.FragmentStationSearchBinding
 import com.fan.tiptop.dockthor.network.NetworkManager
-import com.fan.tiptop.dockthor.network.SomeCustomListener
+import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import java.util.*
 
 
 class StationSearchFragment : Fragment(), OnQueryTextListener {
+    //StationSearchFragment works with view binding
     private lateinit var _stationInfoList: List<CitibikeStationInformationModel>
     private val TAG = "DockThor"
     private var _binding: FragmentStationSearchBinding? = null
@@ -31,12 +32,12 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentStationSearchBinding.inflate(inflater, container, false)
         val myView = binding.root
         binding.searchView.setOnQueryTextListener(this)
         NetworkManager.getInstance().stationInformationRequest(
-            object : SomeCustomListener {
+            object : DefaultNetworkManagerListener {
                 override fun getResult(result: String) {
                     if (!result.isEmpty()) {
                         _stationInfoList = processResponse(result)
@@ -78,12 +79,12 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     }
 
     private fun filterList(
-        adress: String,
+        address: String,
         stationInfoList: List<CitibikeStationInformationModel>
     ): MutableList<CitibikeStationInformationModel> {
         val filteredStationList = mutableListOf<CitibikeStationInformationModel>()
         for (station in stationInfoList) {
-            if (adress.lowercase() in station.name.lowercase()) {
+            if (address.lowercase() in station.name.lowercase()) {
                 filteredStationList.add(station)
                 if (filteredStationList.size > 10)
                     break
@@ -92,16 +93,16 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         return filteredStationList
     }
 
-    private fun removeAllAdress(adressTable: TableLayout) {
+    private fun removeAllAdress(addressTable: TableLayout) {
         val toDelete = LinkedList<View>()
-        for (i in 1 until adressTable.childCount) {
-            val view = adressTable.getChildAt(i)
+        for (i in 1 until addressTable.childCount) {
+            val view = addressTable.getChildAt(i)
             if (view is TableRow) {
                 toDelete.add(view)
             }
         }
         for (viewToDelete in toDelete) {
-            adressTable.removeView(viewToDelete)
+            addressTable.removeView(viewToDelete)
         }
     }
 
@@ -115,8 +116,8 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val row = inflater.inflate(R.layout.partial_suggestion_station_row, null) as TableRow
-            val adressView: TextView = getTextViewWithStyle(context, ssRow.name)
-            row.addView(adressView)
+            val addressView: TextView = getTextViewWithStyle(context, ssRow.name)
+            row.addView(addressView)
             row.tag = ssRow
             row.setOnClickListener { view -> chooseView(view) }
             stationAdressTable.addView(row, i++)

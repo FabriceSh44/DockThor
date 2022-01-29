@@ -1,84 +1,52 @@
 package com.fan.tiptop.dockthor
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.fan.tiptop.citiapi.CitiRequestor
-import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
-import com.fan.tiptop.dockthor.network.NetworkManager
-import com.fan.tiptop.dockthor.network.SomeCustomListener
+import com.fan.tiptop.dockthor.model.MainViewModel
 
 
 class MainFragment : Fragment() {
 
-    private val TAG = "DockThor"
-
-    //my default favorit station id
-    private var _station = CitibikeStationInformationModel(
-        0.0, "", false,
-        "", "Clinton Street",
-        "", 0, "4620",
-        true, 0.0, "", listOf(),
-        false, ""
-    )
+    //Mainfragment works with databinding
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-
+    private var _mainViewModel : MainViewModel? =null
+    private val mainViewModel get() = _mainViewModel!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        if (!requireArguments().isEmpty) {
-            _station = MainFragmentArgs.fromBundle(requireArguments()).stationModel
-        }
+    ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        binding.mainViewModel = mainViewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         val view = binding.root
-        binding.bikeAtStationButton.setOnClickListener { onBikeAtStationClick(binding.bikeAtStationButton) }
+        if (!requireArguments().isEmpty) {
+            mainViewModel.station = MainFragmentArgs.fromBundle(requireArguments()).stationModel
+        }
         binding.switchFavStationButton.setOnClickListener {
             view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
         }
         return view
     }
 
+    override fun onStart() {
+        super.onStart()
+        mainViewModel.refreshBikeStation()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        _mainViewModel=null
     }
 
-    fun onBikeAtStationClick(bikeAtStationButton: Button) {
-        NetworkManager.getInstance().stationStatusRequest(object : SomeCustomListener {
-            override fun getResult(result: String) {
-                if (!result.isEmpty()) {
-                    bikeAtStationButton.text = processResponse(result)
-                }
-            }
-
-            override fun getError(error: String) {
-                if (!error.isEmpty()) {
-                    bikeAtStationButton.text = error
-                }
-            }
-        })
-    }
-
-
-    fun processResponse(response: String): String {
-        try {
-            val requestor = CitiRequestor()
-            val availabilities = requestor.getAvailabilities(response, _station.station_id.toInt())
-            return "${_station.name}\n------\n$availabilities"
-        } catch (e: Exception) {
-            Log.e(TAG, "Unable to process response. Got error ${e}")
-            return "NaN"
-        }
-    }
 
 }

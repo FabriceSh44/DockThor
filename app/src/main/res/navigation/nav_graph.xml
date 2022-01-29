@@ -23,6 +23,7 @@
         tools:layout="@layout/fragment_station_search" >
         <action
             android:id="@+id/action_stationSearchFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/mainFragment" />
     </fragment>
 </navigation>
