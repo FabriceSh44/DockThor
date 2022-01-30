@@ -21,17 +21,18 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
-        android:enabled="@{mainViewModel.favoriteStationIsNull ? false: true}"
         android:gravity="center_horizontal|center_vertical"
-        android:onClick="@{()-> mainViewModel.refreshBikeStation()}"
-        android:text="@{mainViewModel.bikeAtStation}"
         android:textAlignment="center"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/switch_fav_station_button"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop"
-        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck"
+        android:enabled="@{mainViewModel.favoriteStationIsNull ? false: true}"
+        android:onClick="@{()-> mainViewModel.refreshBikeStation()}"
+        android:text="@{mainViewModel.bikeAtStation}"
+        />
 
     <Button
         android:id="@+id/switch_fav_station_button"

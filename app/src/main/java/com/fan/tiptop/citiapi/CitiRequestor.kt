@@ -42,8 +42,7 @@ class CitiRequestor {
     }
 
     fun getStationStatusModel(string: String): StationStatusModel {
-        val model = json.decodeFromString<StationStatusModel>(string)
-        return model
+        return json.decodeFromString<StationStatusModel>(string)
     }
 
 
