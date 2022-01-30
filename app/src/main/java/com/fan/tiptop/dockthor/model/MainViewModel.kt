@@ -17,11 +17,9 @@ import java.time.format.FormatStyle
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private val TAG = "DockThorModel"
-    private val _bikeAtStation = MutableLiveData("")
     private var _favoriteStation: CitibikeStationInformationModel? = null
+    val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
     var favoriteStationIsNull = MutableLiveData(true)
-    val bikeAtStation: LiveData<String>
-        get() = _bikeAtStation
     val switchFavStation = MutableLiveData("Pick new favorite station")
 
     fun refreshBikeStation() {
@@ -29,7 +27,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
             var favoriteStation = dao.getFavoriteStation()
             if (favoriteStation.isEmpty()) {
                 Log.i(TAG, "Not favorite station defined in database")
-                _bikeAtStation.value = "No favorite station defined. Please pick one"
                 setFavoriteStation(null)
             } else if (favoriteStation.size > 1) {
                 Log.e(TAG, "Should only have one station here, got ${favoriteStation.size}")
@@ -50,13 +47,13 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
             .stationStatusRequest(object : DefaultNetworkManagerListener {
                 override fun getResult(result: String) {
                     if (result.isNotEmpty()) {
-                        _bikeAtStation.value = processResponse(result)
+                        citiStationStatus.value = listOf(processResponse(result)!!)
                     }
                 }
 
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
-                        _bikeAtStation.value = processError(error)
+                        //_bikeAtStation.value = processError(error)
                     }
                 }
             })
@@ -66,20 +63,18 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         return error;
     }
 
-    fun processResponse(response: String): String {
+    fun processResponse(response: String): CitiStationStatus? {
         try {
             if (_favoriteStation != null) {
                 val requestor = CitiRequestor()
                 val stationStatus: CitiStationStatus =
                     requestor.getAvailabilities(response, _favoriteStation)
-                return "Updated at: ${stationStatus.lastUpdatedTime.format(
-                    DateTimeFormatter.ofLocalizedTime(
-                    FormatStyle.MEDIUM))}\n--\n${_favoriteStation!!.name}\n------\n${stationStatus.numBikeAvailable} bikes\n${stationStatus.numEbikeAvailable} e-bikes\n${stationStatus.numDockAvailable} docks"
+                return stationStatus
             }
-            return "No favorite station"
+            return null
         } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
-            return "Error"
+            return null
         }
     }
 

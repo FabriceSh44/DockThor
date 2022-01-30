@@ -13,8 +13,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/bike_at_station_button"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/citibike_status_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
@@ -29,9 +29,9 @@
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop"
         tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:enabled="@{mainViewModel.favoriteStationIsNull ? false: true}"
         android:onClick="@{()-> mainViewModel.refreshBikeStation()}"
-        android:text="@{mainViewModel.bikeAtStation}"
         />
 
     <Button

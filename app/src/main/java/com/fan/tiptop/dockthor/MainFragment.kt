@@ -5,9 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.DockThorDatabase
+import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
 import com.fan.tiptop.dockthor.model.MainViewModel
 import com.fan.tiptop.dockthor.model.MainViewModelFactory
@@ -31,11 +33,17 @@ class MainFragment : Fragment() {
         //set main view model
         val application = requireNotNull(this.activity).application
         val dao = DockThorDatabase.getInstance(application).citibikeStationInformationDao
+
         val viewModelFactory = MainViewModelFactory(dao)
         _mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        val adapter = CitiStationStatusAdapter()
+        binding.citibikeStatusList.adapter=adapter
+
+        mainViewModel.citiStationStatus.observe(viewLifecycleOwner, Observer { it?.let{adapter.data=it} })
 
         if (!requireArguments().isEmpty) {
             mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)
