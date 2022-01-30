@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fan.tiptop.citiapi.CitiRequestResult
+import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitibikeStationInformationDao
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
@@ -70,11 +70,11 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         try {
             if (_favoriteStation != null) {
                 val requestor = CitiRequestor()
-                val requestResult: CitiRequestResult =
-                    requestor.getAvailabilities(response, _favoriteStation!!.station_id.toInt())
-                return "Updated at: ${requestResult.lastUpdatedTime.format(
+                val stationStatus: CitiStationStatus =
+                    requestor.getAvailabilities(response, _favoriteStation)
+                return "Updated at: ${stationStatus.lastUpdatedTime.format(
                     DateTimeFormatter.ofLocalizedTime(
-                    FormatStyle.MEDIUM))}\n--\n${_favoriteStation!!.name}\n------\n${requestResult.numBikeAvailable} bikes\n${requestResult.numEbikeAvailable} e-bikes\n${requestResult.numDockAvailable} docks"
+                    FormatStyle.MEDIUM))}\n--\n${_favoriteStation!!.name}\n------\n${stationStatus.numBikeAvailable} bikes\n${stationStatus.numEbikeAvailable} e-bikes\n${stationStatus.numDockAvailable} docks"
             }
             return "No favorite station"
         } catch (e: Exception) {
