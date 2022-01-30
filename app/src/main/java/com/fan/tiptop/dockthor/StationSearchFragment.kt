@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView.OnQueryTextListener
-import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -17,14 +16,14 @@ import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.databinding.FragmentStationSearchBinding
-import com.fan.tiptop.dockthor.network.NetworkManager
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
+import com.fan.tiptop.dockthor.network.NetworkManager
 import java.util.*
 
 
 class StationSearchFragment : Fragment(), OnQueryTextListener {
     //StationSearchFragment works with view binding
-    private  var _stationInfoList: List<CitibikeStationInformationModel>?=null
+    private var _stationInfoList: List<CitibikeStationInformationModel>? = null
     private val TAG = "DockThor"
     private var _binding: FragmentStationSearchBinding? = null
     private val binding get() = _binding!!
@@ -41,12 +40,15 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
                 override fun getResult(result: String) {
                     if (!result.isEmpty()) {
                         _stationInfoList = processResponse(result)
+                        binding.errorTextView.text = ""
                         Log.i(TAG, result)
                     }
                 }
 
                 override fun getError(error: String) {
                     if (!error.isEmpty()) {
+                        binding.errorTextView.text =
+                            "Can't load station suggestions. Got error:[$error]"
                         Log.e(TAG, error)
                     }
                 }
@@ -75,38 +77,41 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         return false
     }
 
-    override fun onQueryTextChange(newText: String): Boolean {
-        if(_stationInfoList!=null) {
-            binding.errorTextView.text=""
-            removeAllAdress()
-            redrawStationAddressTable(filterList(newText, _stationInfoList!!))
-        }
-        else
-        {
-            binding.errorTextView.text="Can't load station suggestions"
+    override fun onQueryTextChange(queryText: String): Boolean {
+        if (_stationInfoList != null) {
+            removeAllAddress()
+            redrawStationAddressTable(filterList(queryText, _stationInfoList!!))
         }
         return false
     }
 
     private fun filterList(
-        address: String,
+        queryText: String,
         stationInfoList: List<CitibikeStationInformationModel>
     ): MutableList<CitibikeStationInformationModel> {
         val filteredStationList = mutableListOf<CitibikeStationInformationModel>()
+        val splitQueryList: List<String> = queryText.split(" ")
         for (station in stationInfoList) {
-            if (address.lowercase() in station.name.lowercase()) {
-                filteredStationList.add(station)
-                if (filteredStationList.size > 10)
+            var allWordInStationName = true
+            for (word in splitQueryList) {
+                if (!station.name.lowercase().contains(word)) {
+                    allWordInStationName = false
                     break
+                }
             }
+            if (allWordInStationName) {
+                filteredStationList.add(station)
+            }
+            if (filteredStationList.size > 20)
+                break
         }
         return filteredStationList
     }
 
-    private fun removeAllAdress() {
-        var addressTable=binding.stationAddressTableLayout
+    private fun removeAllAddress() {
+        var addressTable = binding.stationAddressTableLayout
         val toDelete = LinkedList<View>()
-        for (i in 1 until addressTable.childCount) {
+        for (i in 0 until addressTable.childCount) {
             val view = addressTable.getChildAt(i)
             if (view is TableRow) {
                 toDelete.add(view)
@@ -120,7 +125,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private fun redrawStationAddressTable(
         stationSuggestions: List<CitibikeStationInformationModel>
     ) {
-        var addressTable=binding.stationAddressTableLayout
+        var addressTable = binding.stationAddressTableLayout
         var i = 0
         for (ssRow in stationSuggestions) {
             val context = addressTable.context
@@ -146,8 +151,8 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         lp.weight = 1f
         lp.setMargins(3, 3, 3, 3)
         tv.layoutParams = lp
-        tv.setTextColor(Color.BLACK)
         tv.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
+        tv.textSize= 24F
         return tv
     }
 

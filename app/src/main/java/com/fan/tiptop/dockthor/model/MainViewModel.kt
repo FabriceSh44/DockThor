@@ -5,18 +5,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fan.tiptop.citiapi.CitiRequestResult
 import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitibikeStationInformationDao
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private val TAG = "DockThorModel"
     private val _bikeAtStation = MutableLiveData("")
     private var _favoriteStation: CitibikeStationInformationModel? = null
-     var favoriteStationIsNull = MutableLiveData(true)
+    var favoriteStationIsNull = MutableLiveData(true)
     val bikeAtStation: LiveData<String>
         get() = _bikeAtStation
     val switchFavStation = MutableLiveData("Pick new favorite station")
@@ -62,13 +65,16 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     fun processError(error: String): String {
         return error;
     }
+
     fun processResponse(response: String): String {
         try {
             if (_favoriteStation != null) {
                 val requestor = CitiRequestor()
-                val availabilities =
+                val requestResult: CitiRequestResult =
                     requestor.getAvailabilities(response, _favoriteStation!!.station_id.toInt())
-                return "${_favoriteStation!!.name}\n------\n$availabilities"
+                return "Updated at: ${requestResult.lastUpdatedTime.format(
+                    DateTimeFormatter.ofLocalizedTime(
+                    FormatStyle.MEDIUM))}\n--\n${_favoriteStation!!.name}\n------\n${requestResult.numBikeAvailable} bikes\n${requestResult.numEbikeAvailable} e-bikes\n${requestResult.numDockAvailable} docks"
             }
             return "No favorite station"
         } catch (e: Exception) {
