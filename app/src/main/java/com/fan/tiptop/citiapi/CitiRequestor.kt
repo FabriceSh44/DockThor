@@ -3,8 +3,6 @@ package com.fan.tiptop.citiapi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
 
 @Serializable
 data class Stations(val stations: List<CitibikeStationModel>)
@@ -35,31 +33,36 @@ class CitiRequestor {
 
     fun getAvailabilities(
         response: String,
-        station: CitibikeStationInformationModel?
-    ): CitiStationStatus {
-        requireNotNull(station)
-        val stationId = station.station_id.toInt()
-        var currentStation = this.m_stationIdToStation[stationId]
-        if (currentStation == null) {
+        stationList: List<CitibikeStationInformationModel>
+    ): List<CitiStationStatus> {
+        var result = mutableListOf<CitiStationStatus>()
+        if (stationList.isEmpty()) {
+            return result
+        }
+        if (this.m_stationIdToStation.isEmpty()) {
             val model = getStationStatusModel(response)
             for (stationInfo in model.data.stations) {
                 this.m_stationIdToStation.put(stationInfo.station_id.toInt(), stationInfo)
             }
-            currentStation = this.m_stationIdToStation[stationId]
-            if (currentStation != null) {
-                return CitiStationStatus(
-                    currentStation.num_bikes_available,
-                    currentStation.num_ebikes_available,
-                    currentStation.num_docks_available,
-                    LocalDateTime.ofEpochSecond(
-                        model.last_updated.toLong(), 0,
-                        OffsetDateTime.now().getOffset()
-                    ), station.name
-                )
-            }
         }
-        throw Exception("Unable to find station for $stationId")
+        for (stationInfoMode in stationList) {
+            val stationId = stationInfoMode.station_id.toInt()
+            val stationStatus = this.m_stationIdToStation[stationId]
+            if (stationStatus == null) {
+                throw Exception("Unable to find station for $stationId")
+            }
+            result.add(
+                CitiStationStatus(
+                    stationStatus.num_bikes_available,
+                    stationStatus.num_ebikes_available,
+                    stationStatus.num_docks_available,
+                    stationInfoMode.name
+                )
+            )
+        }
+        return result
     }
+
 
     fun getStationStatusModel(string: String): StationStatusModel {
         return json.decodeFromString(string)

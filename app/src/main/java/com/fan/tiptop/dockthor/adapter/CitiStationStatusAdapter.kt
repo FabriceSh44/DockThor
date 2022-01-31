@@ -30,7 +30,6 @@ class CitiStationStatusAdapter : Adapter<CitiStationStatusAdapter.CitiStationSta
 
     class CitiStationStatusViewHolder(val rootView: CardView) : RecyclerView.ViewHolder(rootView) {
         val address = rootView.findViewById<TextView>(R.id.addressTextView)
-        val updateTime = rootView.findViewById<TextView>(R.id.updateTimeTextView)
         val bike = rootView.findViewById<TextView>(R.id.bikeTextView)
         val electricalBike = rootView.findViewById<TextView>(R.id.electricBikeTextView)
         val parking = rootView.findViewById<TextView>(R.id.parkingTextView)
@@ -42,11 +41,6 @@ class CitiStationStatusAdapter : Adapter<CitiStationStatusAdapter.CitiStationSta
             }
         }
         fun bind(item: CitiStationStatus) {
-            updateTime.text = "Updated at: ${
-                item.lastUpdatedTime.format(
-                    DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM)
-                )
-            }"
             bike.text = item.numBikeAvailable.toString()
             parking.text = item.numDockAvailable.toString()
             electricalBike.text = item.numEbikeAvailable.toString()

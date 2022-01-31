@@ -1,89 +1,78 @@
 package com.fan.tiptop.dockthor.model
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.citiapi.CitiRequestor
+import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.citiapi.CitibikeStationInformationDao
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private val TAG = "DockThorModel"
-    private var _favoriteStation: CitibikeStationInformationModel? = null
+    private var _favoriteStations: List<CitibikeStationInformationModel> = listOf()
     val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
-    var favoriteStationIsNull = MutableLiveData(true)
+    var favoriteStationsIsEmpty = MutableLiveData(true)
     val switchFavStation = MutableLiveData("Pick new favorite station")
 
     fun refreshBikeStation() {
         viewModelScope.launch {
-            var favoriteStation = dao.getFavoriteStation()
-            if (favoriteStation.isEmpty()) {
+            var localFavoriteStations = dao.getFavoriteStation()
+            if (localFavoriteStations.isEmpty()) {
                 Log.i(TAG, "Not favorite station defined in database")
-                setFavoriteStation(null)
-            } else if (favoriteStation.size > 1) {
-                Log.e(TAG, "Should only have one station here, got ${favoriteStation.size}")
+                setFavoriteStationsList(listOf())
             } else {
-                setFavoriteStation(favoriteStation[0])
-                requestStationStatus()
+                setFavoriteStationsList(localFavoriteStations)
+                updateCitiStationStatusToDisplay()
             }
         }
     }
 
-    private fun setFavoriteStation(station: CitibikeStationInformationModel?) {
-        _favoriteStation = station
-        favoriteStationIsNull.value = _favoriteStation == null
+    private fun setFavoriteStationsList(stationInfoList: List<CitibikeStationInformationModel>) {
+        _favoriteStations = stationInfoList
+        favoriteStationsIsEmpty.value = _favoriteStations.isEmpty()
     }
 
-    private fun requestStationStatus() {
+    private fun updateCitiStationStatusToDisplay() {
         NetworkManager.getInstance()
             .stationStatusRequest(object : DefaultNetworkManagerListener {
                 override fun getResult(result: String) {
                     if (result.isNotEmpty()) {
-                        citiStationStatus.value = listOf(processResponse(result)!!)
+                        citiStationStatus.value = getCitiStationStatusToDisplay(result)
                     }
                 }
 
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
-                        //_bikeAtStation.value = processError(error)
+                        //TODOFE keep old value but display error (toast or icon)
                     }
                 }
             })
     }
 
-    fun processError(error: String): String {
-        return error;
-    }
-
-    fun processResponse(response: String): CitiStationStatus? {
+    fun getCitiStationStatusToDisplay(response: String): List<CitiStationStatus> {
         try {
-            if (_favoriteStation != null) {
+            if (_favoriteStations.isNotEmpty()) {
                 val requestor = CitiRequestor()
-                val stationStatus: CitiStationStatus =
-                    requestor.getAvailabilities(response, _favoriteStation)
-                return stationStatus
+                return requestor.getAvailabilities(response, _favoriteStations)
             }
-            return null
+            return listOf()
         } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
-            return null
+            return listOf()
         }
     }
 
     fun setStation(stationModel: CitibikeStationInformationModel) {
         viewModelScope.launch {
-            var listStation = dao.getFavoriteStation()
-            for (station in listStation) {
-                dao.delete(station)
-            }
+//            var listStation = dao.getFavoriteStation()
+//            for (station in listStation) {
+//                dao.delete(station)
+//            }
             dao.insert(stationModel)
             refreshBikeStation()
         }

@@ -43,7 +43,8 @@ class MainFragment : Fragment() {
         val adapter = CitiStationStatusAdapter()
         binding.citibikeStatusList.adapter=adapter
 
-        mainViewModel.citiStationStatus.observe(viewLifecycleOwner, Observer { it?.let{adapter.data=it} })
+        // this connect the model citistation status to the adapter which setup view
+        mainViewModel.citiStationStatus.observe(viewLifecycleOwner, { it?.let{adapter.data=it} })
 
         if (!requireArguments().isEmpty) {
             mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)

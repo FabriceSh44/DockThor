@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="@+id/guidelineTop"
         tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:enabled="@{mainViewModel.favoriteStationIsNull ? false: true}"
+        android:enabled="@{mainViewModel.favoriteStationsIsEmpty ? false: true}"
         android:onClick="@{()-> mainViewModel.refreshBikeStation()}"
         />
 

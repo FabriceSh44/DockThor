@@ -6,6 +6,5 @@ data class CitiStationStatus(
     val numBikeAvailable: Int,
     val numEbikeAvailable: Int,
     val numDockAvailable: Int,
-    val lastUpdatedTime: LocalDateTime,
     val address: String
 )

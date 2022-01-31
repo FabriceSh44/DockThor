@@ -10,4 +10,7 @@
     <string name="partialStationStatusImageText">IMAGE</string>
     <string name="partialStationStatusText">Number</string>
     <string name="updateTimeAndAddress">TextView</string>
+    <string name="bikeimage">bikeImage</string>
+    <string name="electricbikeimage">electricBikeImage</string>
+    <string name="parkingimage">parkingImage</string>
 </resources>
