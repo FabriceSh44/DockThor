@@ -29,7 +29,7 @@
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@+id/guidelineTop"
         tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         android:enabled="@{mainViewModel.favoriteStationsIsEmpty ? false: true}"
         android:onClick="@{()-> mainViewModel.refreshBikeStation()}"
         />

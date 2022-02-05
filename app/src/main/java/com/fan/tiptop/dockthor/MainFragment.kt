@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.fan.tiptop.citiapi.DockThorDatabase
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
@@ -41,6 +42,7 @@ class MainFragment : Fragment() {
 
         val adapter = CitiStationStatusAdapter()
         binding.citibikeStatusList.adapter = adapter
+        binding.citibikeStatusList.layoutManager= GridLayoutManager(view.context, 2)
 
         // this connect the model citistation status to the adapter which setup view
         mainViewModel.citiStationStatus.observe(
