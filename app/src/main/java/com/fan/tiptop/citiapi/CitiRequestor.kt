@@ -45,18 +45,17 @@ class CitiRequestor {
                 this.m_stationIdToStation.put(stationInfo.station_id.toInt(), stationInfo)
             }
         }
-        for (stationInfoMode in stationList) {
-            val stationId = stationInfoMode.station_id.toInt()
+        for (stationInfoModel in stationList) {
+            val stationId = stationInfoModel.station_id.toInt()
             val stationStatus = this.m_stationIdToStation[stationId]
-            if (stationStatus == null) {
-                throw Exception("Unable to find station for $stationId")
-            }
+                ?: throw Exception("Unable to find station for $stationId")
             result.add(
                 CitiStationStatus(
-                    stationStatus.num_bikes_available,
-                    stationStatus.num_ebikes_available,
-                    stationStatus.num_docks_available,
-                    stationInfoMode.name
+                    stationStatus.num_bikes_available.toString(),
+                    stationStatus.num_ebikes_available.toString(),
+                    stationStatus.num_docks_available.toString(),
+                    stationInfoModel.name,
+                    stationInfoModel.station_id.toInt()
                 )
             )
         }

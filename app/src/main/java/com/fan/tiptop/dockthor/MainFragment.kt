@@ -1,7 +1,9 @@
 package com.fan.tiptop.dockthor
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -43,7 +45,7 @@ class MainFragment : Fragment() {
         // this connect the model citistation status to the adapter which setup view
         mainViewModel.citiStationStatus.observe(
             viewLifecycleOwner,
-            { it?.let { adapter.data = it } })
+            { it?.let { adapter.submitList(it) } })
 
         if (!requireArguments().isEmpty) {
             mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)
