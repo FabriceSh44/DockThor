@@ -13,7 +13,7 @@ import com.fan.tiptop.dockthor.network.NetworkManager
 import kotlinx.coroutines.launch
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
-    private val TAG = "DockThorModel"
+    private val TAG = "DockThorViewModel"
     private var _favoriteStations: List<CitibikeStationInformationModel> = listOf()
     val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
     var favoriteStationsIsEmpty = MutableLiveData(true)
@@ -69,10 +69,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     fun setStation(stationModel: CitibikeStationInformationModel) {
         viewModelScope.launch {
-//            var listStation = dao.getFavoriteStation()
-//            for (station in listStation) {
-//                dao.delete(station)
-//            }
             dao.insert(stationModel)
             refreshBikeStation()
         }

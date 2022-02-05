@@ -13,4 +13,6 @@
     <string name="bikeimage">bikeImage</string>
     <string name="electricbikeimage">electricBikeImage</string>
     <string name="parkingimage">parkingImage</string>
+    <string name="content_description_delete">delete</string>
+    <string name="delete">delete</string>
 </resources>

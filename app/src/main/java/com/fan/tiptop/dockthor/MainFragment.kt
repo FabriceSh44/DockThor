@@ -1,11 +1,8 @@
 package com.fan.tiptop.dockthor
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.DockThorDatabase
@@ -41,10 +38,12 @@ class MainFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val adapter = CitiStationStatusAdapter()
-        binding.citibikeStatusList.adapter=adapter
+        binding.citibikeStatusList.adapter = adapter
 
         // this connect the model citistation status to the adapter which setup view
-        mainViewModel.citiStationStatus.observe(viewLifecycleOwner, { it?.let{adapter.data=it} })
+        mainViewModel.citiStationStatus.observe(
+            viewLifecycleOwner,
+            { it?.let { adapter.data = it } })
 
         if (!requireArguments().isEmpty) {
             mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)
