@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -40,14 +41,20 @@ class MainFragment : Fragment() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = CitiStationStatusAdapter()
+        val adapter = CitiStationStatusAdapter({ stationId: Int ->
+            setContextualBar(stationId)
+        }, { stationId: Int -> Boolean
+            setContextualBar(stationId)
+            true
+        }
+        )
         binding.citibikeStatusList.adapter = adapter
-        binding.citibikeStatusList.layoutManager= GridLayoutManager(view.context, 2)
+        binding.citibikeStatusList.layoutManager = GridLayoutManager(view.context, 2)
 
         // this connect the model citistation status to the adapter which setup view
         mainViewModel.citiStationStatus.observe(
-            viewLifecycleOwner,
-            { it?.let { adapter.submitList(it) } })
+            viewLifecycleOwner
+        ) { it?.let { adapter.submitList(it) } }
 
         if (!requireArguments().isEmpty) {
             mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)
@@ -56,6 +63,11 @@ class MainFragment : Fragment() {
             view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
         }
         return view
+    }
+
+    // This should set the context action bar TODOFE
+    private fun setContextualBar(stationId: Int) {
+        Toast.makeText(binding.root.context, "Clicked station ${stationId}", Toast.LENGTH_SHORT) .show()
     }
 
     override fun onStart() {

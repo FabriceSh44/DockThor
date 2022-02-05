@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.dockthor.databinding.StationStatusItemBinding
 
-class CitiStationStatusAdapter :
+class CitiStationStatusAdapter(
+    val clickListener: (stationId: Int) -> Unit,
+    val longClickListener: (stationId: Int) -> Boolean
+) :
     ListAdapter<CitiStationStatus, CitiStationStatusAdapter.CitiStationStatusViewHolder>(
         CitiStationStatusDiffItemCallback()
     ) {
@@ -17,7 +20,7 @@ class CitiStationStatusAdapter :
 
     override fun onBindViewHolder(holder: CitiStationStatusViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, clickListener, longClickListener)
     }
 
     class CitiStationStatusViewHolder(val binding: StationStatusItemBinding) :
@@ -31,8 +34,18 @@ class CitiStationStatusAdapter :
             }
         }
 
-        fun bind(item: CitiStationStatus) {
+        fun bind(
+            item: CitiStationStatus,
+            clickListener: (stationId: Int) -> Unit,
+            longClickListener: (stationId: Int) -> Boolean
+        ) {
             binding.citiStationStatus = item
+            binding.root.setOnClickListener {
+                clickListener(item.stationId)
+            }
+            binding.root.setOnLongClickListener {
+                longClickListener(item.stationId)
+            }
         }
 
     }
