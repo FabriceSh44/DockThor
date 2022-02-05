@@ -1,6 +1,7 @@
 package com.fan.tiptop.dockthor.model
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,9 @@ import com.fan.tiptop.dockthor.network.NetworkManager
 import kotlinx.coroutines.launch
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
+    private val _navigateToSwitchFavStation = MutableLiveData(false)
+    val navigateToSwitchFavStation: LiveData<Boolean>
+        get() = _navigateToSwitchFavStation
     private val TAG = "DockThorViewModel"
     private var _favoriteStations: List<CitibikeStationInformationModel> = listOf()
     val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
@@ -72,5 +76,13 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
             dao.insert(stationModel)
             refreshBikeStation()
         }
+    }
+
+    fun onSwitchFavButtonClicked() {
+        _navigateToSwitchFavStation.value = true;
+    }
+
+    fun onSwitchFavButtonNavigated() {
+        _navigateToSwitchFavStation.value = false;
     }
 }

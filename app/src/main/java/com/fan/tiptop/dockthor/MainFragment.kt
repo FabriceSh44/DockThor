@@ -41,9 +41,11 @@ class MainFragment : Fragment() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+
         val adapter = CitiStationStatusAdapter({ stationId: Int ->
             setContextualBar(stationId)
-        }, { stationId: Int -> Boolean
+        }, { stationId: Int ->
+            Boolean
             setContextualBar(stationId)
             true
         }
@@ -56,18 +58,27 @@ class MainFragment : Fragment() {
             viewLifecycleOwner
         ) { it?.let { adapter.submitList(it) } }
 
+        //switch fave station behavior
+        binding.switchFavStationButton.setOnClickListener {
+            mainViewModel.onSwitchFavButtonClicked()
+        }
+        mainViewModel.navigateToSwitchFavStation.observe(viewLifecycleOwner) { shouldNavigate ->
+            if (shouldNavigate) {
+                view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
+                mainViewModel.onSwitchFavButtonNavigated()
+            }
+        }
         if (!requireArguments().isEmpty) {
             mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)
         }
-        binding.switchFavStationButton.setOnClickListener {
-            view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
-        }
+
         return view
     }
 
     // This should set the context action bar TODOFE
     private fun setContextualBar(stationId: Int) {
-        Toast.makeText(binding.root.context, "Clicked station ${stationId}", Toast.LENGTH_SHORT) .show()
+        Toast.makeText(binding.root.context, "Clicked station ${stationId}", Toast.LENGTH_SHORT)
+            .show()
     }
 
     override fun onStart() {
