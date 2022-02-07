@@ -20,12 +20,13 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private val TAG = "DockThorViewModel"
     private var _favoriteStations: List<CitibikeStationInformationModel> = listOf()
     val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
+    val _selectedStationsId: MutableLiveData<List<Int>> = MutableLiveData()
     var favoriteStationsIsEmpty = MutableLiveData(true)
     val switchFavStation = MutableLiveData("Pick new favorite station")
 
     fun refreshBikeStation() {
         viewModelScope.launch {
-            var localFavoriteStations = dao.getFavoriteStation()
+            var localFavoriteStations = dao.getFavoriteStations()
             if (localFavoriteStations.isEmpty()) {
                 Log.i(TAG, "Not favorite station defined in database")
                 setFavoriteStationsList(listOf())
@@ -84,5 +85,21 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     fun onSwitchFavButtonNavigated() {
         _navigateToSwitchFavStation.value = false;
+    }
+
+    fun onItemDeleted() {
+        if (_selectedStationsId.value == null) {
+            return
+        }
+        viewModelScope.launch {
+            for (stationId in _selectedStationsId.value!!) {
+                dao.deleteByStationId(stationId)
+            }
+            refreshBikeStation()
+        }
+    }
+
+    fun addSelectedStationId(stationId: Int) {
+        _selectedStationsId.value= _selectedStationsId.value?.plus(stationId) ?: listOf(stationId)
     }
 }

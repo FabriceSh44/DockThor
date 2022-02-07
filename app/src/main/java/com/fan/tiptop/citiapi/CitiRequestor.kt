@@ -11,9 +11,6 @@ data class Stations(val stations: List<CitibikeStationModel>)
 data class StationStatusModel(val data: Stations, val last_updated: Int, val ttl: Int)
 
 @Serializable
-data class RentalUri(val ios: String, val android: String)
-
-@Serializable
 data class StationInformations(val stations: List<CitibikeStationInformationModel>)
 
 
@@ -25,11 +22,10 @@ data class StationInformationModel(
 )
 
 class CitiRequestor {
-    private var m_stationIdToStation: MutableMap<Int, CitibikeStationModel> = mutableMapOf()
+    private var _stationIdToStation: MutableMap<Int, CitibikeStationModel> = mutableMapOf()
     private val json = Json {
         ignoreUnknownKeys = true
     }
-
 
     fun getAvailabilities(
         response: String,
@@ -39,15 +35,15 @@ class CitiRequestor {
         if (stationList.isEmpty()) {
             return result
         }
-        if (this.m_stationIdToStation.isEmpty()) {
+        if (this._stationIdToStation.isEmpty()) {
             val model = getStationStatusModel(response)
             for (stationInfo in model.data.stations) {
-                this.m_stationIdToStation.put(stationInfo.station_id.toInt(), stationInfo)
+                this._stationIdToStation.put(stationInfo.station_id.toInt(), stationInfo)
             }
         }
         for (stationInfoModel in stationList) {
             val stationId = stationInfoModel.station_id.toInt()
-            val stationStatus = this.m_stationIdToStation[stationId]
+            val stationStatus = this._stationIdToStation[stationId]
                 ?: throw Exception("Unable to find station for $stationId")
             result.add(
                 CitiStationStatus(

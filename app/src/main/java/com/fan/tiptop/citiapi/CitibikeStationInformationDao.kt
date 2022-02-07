@@ -11,6 +11,9 @@ interface CitibikeStationInformationDao {
     suspend fun insert(stationInformationModel: CitibikeStationInformationModel)
     @Delete
     suspend fun delete(stationInformationModel: CitibikeStationInformationModel)
+
+    @Query("DELETE FROM station_information_model WHERE station_id = :stationId")
+    suspend fun deleteByStationId(stationId: Int)
     @Query("SELECT * from station_information_model")
-    suspend fun getFavoriteStation():List<CitibikeStationInformationModel>
+    suspend fun getFavoriteStations():List<CitibikeStationInformationModel>
 }
