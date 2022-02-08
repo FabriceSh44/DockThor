@@ -15,10 +15,6 @@ import com.fan.tiptop.dockthor.model.MainViewModelFactory
 
 
 class MainFragment : Fragment() {
-
-
-
-
     //Mainfragment works with databinding
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -69,10 +65,14 @@ class MainFragment : Fragment() {
                 mainViewModel.onSwitchFavButtonNavigated()
             }
         }
+        mainViewModel.errorToDisplay.observe(viewLifecycleOwner) { errorText ->
+            if (errorText.isNotEmpty()) {
+                Toast.makeText(view.context,errorText,Toast.LENGTH_LONG).show()
+            }
+        }
         if (!requireArguments().isEmpty) {
             mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)
         }
-
         return view
     }
 

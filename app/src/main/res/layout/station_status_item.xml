@@ -13,19 +13,19 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
+            android:layout_margin="0dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bikeConstraintLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="4dp">
 
                 <ImageView
                     android:id="@+id/bikeImageView"
@@ -61,11 +61,12 @@
 
                 <TextView
                     android:id="@+id/addressTextView"
-                    android:layout_width="140dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/statusTextSize"
                     android:text="@{citiStationStatus.address}"
                     app:layout_constraintBottom_toTopOf="@+id/bikeTextView"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -74,8 +75,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:gravity="center"
-                    android:textSize="@dimen/statusTextSize"
                     android:text="@{citiStationStatus.numBikeAvailable}"
+                    android:textSize="@dimen/statusTextSize"
                     app:layout_constraintBottom_toTopOf="@+id/electricBikeTextView"
                     app:layout_constraintStart_toStartOf="@+id/electricBikeTextView" />
 
@@ -84,8 +85,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:gravity="center"
-                    android:textSize="@dimen/statusTextSize"
                     android:text="@{citiStationStatus.numEbikeAvailable}"
+                    android:textSize="@dimen/statusTextSize"
                     app:layout_constraintBottom_toTopOf="@+id/parkingTextView"
                     app:layout_constraintStart_toStartOf="@+id/parkingTextView" />
 
@@ -96,8 +97,8 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="32dp"
                     android:gravity="center"
-                    android:textSize="@dimen/statusTextSize"
                     android:text="@{citiStationStatus.numDockAvailable}"
+                    android:textSize="@dimen/statusTextSize"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/parkingImageView"
                     app:layout_constraintHorizontal_bias="0.0"

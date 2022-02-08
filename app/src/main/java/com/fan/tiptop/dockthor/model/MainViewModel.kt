@@ -14,6 +14,8 @@ import com.fan.tiptop.dockthor.network.NetworkManager
 import kotlinx.coroutines.launch
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
+    val errorToDisplay = MutableLiveData("")
+    val isLoading = MutableLiveData(false)
     private val _navigateToSwitchFavStation = MutableLiveData(false)
     val navigateToSwitchFavStation: LiveData<Boolean>
         get() = _navigateToSwitchFavStation
@@ -21,25 +23,30 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private var _favoriteStations: List<CitibikeStationInformationModel> = listOf()
     val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
     val _selectedStationsId: MutableLiveData<List<Int>> = MutableLiveData()
-    var favoriteStationsIsEmpty = MutableLiveData(true)
     val switchFavStation = MutableLiveData("Pick new favorite station")
 
     fun refreshBikeStation() {
+        isLoading.value = true
         viewModelScope.launch {
-            var localFavoriteStations = dao.getFavoriteStations()
-            if (localFavoriteStations.isEmpty()) {
-                Log.i(TAG, "Not favorite station defined in database")
-                setFavoriteStationsList(listOf())
-            } else {
-                setFavoriteStationsList(localFavoriteStations)
-                updateCitiStationStatusToDisplay()
-            }
+            internalRefreshBikeStation()
         }
     }
 
-    private fun setFavoriteStationsList(stationInfoList: List<CitibikeStationInformationModel>) {
-        _favoriteStations = stationInfoList
-        favoriteStationsIsEmpty.value = _favoriteStations.isEmpty()
+    fun onSwipeRefresh() {
+        refreshBikeStation()
+    }
+
+    private suspend fun internalRefreshBikeStation() {
+        var localFavoriteStations = dao.getFavoriteStations()
+        if (localFavoriteStations.isEmpty()) {
+            errorToDisplay.value = "No favorite station available, please pick one."
+            _favoriteStations = listOf()
+            citiStationStatus.value = listOf()
+        } else {
+            _favoriteStations = localFavoriteStations
+            updateCitiStationStatusToDisplay()
+        }
+        isLoading.value = false
     }
 
     private fun updateCitiStationStatusToDisplay() {
@@ -53,7 +60,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
-                        //TODOFE keep old value but display error (toast or icon)
+                        errorToDisplay.value = "Unable to retrieve Citibike station status"
                     }
                 }
             })
@@ -75,7 +82,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     fun setStation(stationModel: CitibikeStationInformationModel) {
         viewModelScope.launch {
             dao.insert(stationModel)
-            refreshBikeStation()
+            internalRefreshBikeStation()
         }
     }
 
@@ -92,14 +99,12 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
             return
         }
         viewModelScope.launch {
-            for (stationId in _selectedStationsId.value!!) {
-                dao.deleteByStationId(stationId)
-            }
-            refreshBikeStation()
+            dao.deleteByStationId((_selectedStationsId.value!!.distinct()))
+            internalRefreshBikeStation()
         }
     }
 
     fun addSelectedStationId(stationId: Int) {
-        _selectedStationsId.value= _selectedStationsId.value?.plus(stationId) ?: listOf(stationId)
+        _selectedStationsId.value = _selectedStationsId.value?.plus(stationId) ?: listOf(stationId)
     }
 }
