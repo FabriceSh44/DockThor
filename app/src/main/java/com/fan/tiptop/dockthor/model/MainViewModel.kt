@@ -86,11 +86,11 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         }
     }
 
-    fun onSwitchFavButtonClicked() {
+    fun onAddFavStationClicked() {
         _navigateToSwitchFavStation.value = true;
     }
 
-    fun onSwitchFavButtonNavigated() {
+    fun onAddFavStationNavigated() {
         _navigateToSwitchFavStation.value = false;
     }
 

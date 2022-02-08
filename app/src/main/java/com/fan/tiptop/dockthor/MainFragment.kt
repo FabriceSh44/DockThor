@@ -56,13 +56,10 @@ class MainFragment : Fragment() {
         ) { it?.let { adapter.submitList(it) } }
 
         //switch fav station behavior
-        binding.switchFavStationButton.setOnClickListener {
-            mainViewModel.onSwitchFavButtonClicked()
-        }
         mainViewModel.navigateToSwitchFavStation.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate) {
                 view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
-                mainViewModel.onSwitchFavButtonNavigated()
+                mainViewModel.onAddFavStationNavigated()
             }
         }
         mainViewModel.errorToDisplay.observe(viewLifecycleOwner) { errorText ->

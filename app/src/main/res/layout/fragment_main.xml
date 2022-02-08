@@ -18,17 +18,20 @@
             android:layout_height="match_parent"
             >
 
-            <Button
-                android:id="@+id/switch_fav_station_button"
-                android:layout_width="0dp"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@{mainViewModel.switchFavStation}"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="0dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="12dp"
+                android:contentDescription="submit"
+                android:src="@drawable/ic_baseline_add"
+                android:onClick="@{()->mainViewModel.onAddFavStationClicked()}"
+
                 app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
-                app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintEnd_toStartOf="@+id/guidelineRight" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineLeft"
@@ -71,7 +74,7 @@
                 android:textAlignment="center"
                 android:textSize="24sp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintBottom_toTopOf="@+id/switch_fav_station_button"
+                app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
                 app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
                 app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
                 app:layout_constraintTop_toTopOf="@+id/guidelineTop"
