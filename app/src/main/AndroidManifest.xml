@@ -30,8 +30,15 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/dock_thor_widget_info" />
         </receiver>
+        <service
+            android:name="DockThorNavigationService"
+            android:foregroundServiceType="location"  >
+        </service>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-</manifest>
+
+
+    </manifest>
