@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.fan.tiptop.citiapi.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.DockThorDatabase
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
@@ -38,7 +39,6 @@ class MainFragment : Fragment() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-
         val adapter = CitiStationStatusAdapter({ stationId: Int ->
             setContextualBar(stationId)
         }, { stationId: Int ->
@@ -58,7 +58,10 @@ class MainFragment : Fragment() {
         //switch fav station behavior
         mainViewModel.navigateToSwitchFavStation.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate) {
-                view.findNavController().navigate(R.id.action_mainFragment_to_stationSearchFragment)
+                val action = MainFragmentDirections.actionMainFragmentToStationSearchFragment(
+                    mainViewModel.citiStationStatus.value?.map{x->x.stationId}?.toIntArray() ?: intArrayOf()
+                )
+                view.findNavController().navigate(action)
                 mainViewModel.onAddFavStationNavigated()
             }
         }
@@ -75,26 +78,21 @@ class MainFragment : Fragment() {
 
     private var _actionMode: ActionMode? = null
     private val _actionModeCallback= object : ActionMode.Callback {
-        // Called when the action mode is created; startActionMode() was called
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-            // Inflate a menu resource providing context menu items
             val inflater: MenuInflater = mode.menuInflater
             inflater.inflate(R.menu.contextual_action_bar, menu)
             return true
         }
 
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
         override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-            return false // Return false if nothing is done
+            return false
         }
 
-        // Called when the user selects a contextual menu item
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
             return when (item.itemId) {
                 R.id.delete -> {
                     mainViewModel.onItemDeleted()
-                    mode.finish() // Action picked, so close the CAB
+                    mode.finish()
                     true
                 }
                 else -> false
@@ -103,6 +101,7 @@ class MainFragment : Fragment() {
 
         // Called when the user exits the action mode
         override fun onDestroyActionMode(mode: ActionMode) {
+            mainViewModel.clearSelectedStation()
             _actionMode = null
         }
     }
@@ -111,9 +110,8 @@ class MainFragment : Fragment() {
         when (_actionMode) {
             null -> {
                 _actionMode = activity?.startActionMode(_actionModeCallback)
-                true
             }
-            else -> false
+            else -> {}
         }
     }
 

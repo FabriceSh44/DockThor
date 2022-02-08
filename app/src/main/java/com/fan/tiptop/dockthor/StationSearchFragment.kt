@@ -1,7 +1,6 @@
 package com.fan.tiptop.dockthor
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -22,11 +21,13 @@ import java.util.*
 
 
 class StationSearchFragment : Fragment(), OnQueryTextListener {
+
     //StationSearchFragment works with view binding
     private var _stationInfoList: List<CitibikeStationInformationModel>? = null
     private val TAG = "DockThor"
     private var _binding: FragmentStationSearchBinding? = null
     private val binding get() = _binding!!
+    private var _currentFavStationId: Set<Int> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +55,10 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
                 }
             }
         )
+
+        if (!requireArguments().isEmpty) {
+            _currentFavStationId= StationSearchFragmentArgs.fromBundle(requireArguments()).favStationIds.toSet()
+        }
         return myView
     }
 
@@ -90,7 +95,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         stationInfoList: List<CitibikeStationInformationModel>
     ): MutableList<CitibikeStationInformationModel> {
         val filteredStationList = mutableListOf<CitibikeStationInformationModel>()
-        val splitQueryList: List<String> = queryText.split(" ")
+        val splitQueryList: List<String> = queryText.lowercase().split(" ")
         for (station in stationInfoList) {
             var allWordInStationName = true
             for (word in splitQueryList) {
@@ -99,7 +104,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
                     break
                 }
             }
-            if (allWordInStationName) {
+            if (allWordInStationName && station.station_id.toInt() !in _currentFavStationId) {
                 filteredStationList.add(station)
             }
             if (filteredStationList.size > 20)
@@ -152,7 +157,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         lp.setMargins(3, 3, 3, 3)
         tv.layoutParams = lp
         tv.gravity = Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL
-        tv.textSize= 24F
+        tv.textSize = 24F
         return tv
     }
 

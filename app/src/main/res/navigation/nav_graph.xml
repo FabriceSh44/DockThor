@@ -25,5 +25,8 @@
             android:id="@+id/action_stationSearchFragment_to_mainFragment"
             app:destination="@id/mainFragment"
             app:popUpTo="@id/nav_graph" />
+        <argument
+            android:name="favStationIds"
+            app:argType="integer[]" />
     </fragment>
 </navigation>

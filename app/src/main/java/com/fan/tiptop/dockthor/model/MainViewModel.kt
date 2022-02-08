@@ -23,7 +23,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private var _favoriteStations: List<CitibikeStationInformationModel> = listOf()
     val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
     val _selectedStationsId: MutableLiveData<List<Int>> = MutableLiveData()
-    val switchFavStation = MutableLiveData("Pick new favorite station")
 
     fun refreshBikeStation() {
         isLoading.value = true
@@ -106,5 +105,9 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     fun addSelectedStationId(stationId: Int) {
         _selectedStationsId.value = _selectedStationsId.value?.plus(stationId) ?: listOf(stationId)
+    }
+
+    fun clearSelectedStation() {
+        _selectedStationsId.value = listOf()
     }
 }

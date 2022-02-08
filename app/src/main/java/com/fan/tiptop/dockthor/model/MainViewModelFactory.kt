@@ -6,8 +6,10 @@ import com.fan.tiptop.citiapi.CitibikeStationInformationDao
 
 class MainViewModelFactory(private val dao: CitibikeStationInformationDao) :
     ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return MainViewModel(dao) as T
         }
         throw  IllegalArgumentException("Unknown MainViewModel")
