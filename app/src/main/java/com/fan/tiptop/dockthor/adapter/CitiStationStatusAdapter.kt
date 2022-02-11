@@ -8,8 +8,8 @@ import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.dockthor.databinding.StationStatusItemBinding
 
 class CitiStationStatusAdapter(
-    val clickListener: (stationId: Int) -> Unit,
-    val longClickListener: (stationId: Int) -> Boolean
+    val clickListener: (station: CitiStationStatus) -> Unit,
+    val longClickListener: (station: CitiStationStatus) -> Boolean
 ) :
     ListAdapter<CitiStationStatus, CitiStationStatusAdapter.CitiStationStatusViewHolder>(
         CitiStationStatusDiffItemCallback()
@@ -19,7 +19,7 @@ class CitiStationStatusAdapter(
         CitiStationStatusViewHolder.inflateFrom(parent)
 
     override fun onBindViewHolder(holder: CitiStationStatusViewHolder, position: Int) {
-        val item = getItem(position)
+        val item: CitiStationStatus = getItem(position)
         holder.bind(item, clickListener, longClickListener)
     }
 
@@ -29,22 +29,23 @@ class CitiStationStatusAdapter(
         companion object {
             fun inflateFrom(parent: ViewGroup): CitiStationStatusViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = StationStatusItemBinding.inflate(layoutInflater, parent, false)
+                val binding: StationStatusItemBinding =
+                    StationStatusItemBinding.inflate(layoutInflater, parent, false)
                 return CitiStationStatusViewHolder(binding)
             }
         }
 
         fun bind(
             item: CitiStationStatus,
-            clickListener: (stationId: Int) -> Unit,
-            longClickListener: (stationId: Int) -> Boolean
+            clickListener: (station: CitiStationStatus) -> Unit,
+            longClickListener: (station: CitiStationStatus) -> Boolean
         ) {
             binding.citiStationStatus = item
             binding.root.setOnClickListener {
-                clickListener(item.stationId)
+                clickListener(item)
             }
             binding.root.setOnLongClickListener {
-                longClickListener(item.stationId)
+                longClickListener(item)
             }
         }
 

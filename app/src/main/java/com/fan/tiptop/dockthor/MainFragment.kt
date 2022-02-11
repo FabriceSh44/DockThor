@@ -6,8 +6,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
-import com.fan.tiptop.citiapi.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.citiapi.DockThorDatabase
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
@@ -39,14 +38,11 @@ class MainFragment : Fragment() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = CitiStationStatusAdapter({ stationId: Int ->
-            setContextualBar(stationId)
-        }, { stationId: Int ->
-            Boolean
-            setContextualBar(stationId)
-            true
-        }
-        )
+        val adapter = CitiStationStatusAdapter({ station: CitiStationStatus -> setContextualBar(station) },
+            { station: CitiStationStatus -> Boolean
+                setContextualBar (station)
+                true
+            })
         binding.citibikeStatusList.adapter = adapter
 
         // this connect the model citistation status to the adapter which setup view
@@ -58,7 +54,8 @@ class MainFragment : Fragment() {
         mainViewModel.navigateToSwitchFavStation.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate) {
                 val action = MainFragmentDirections.actionMainFragmentToStationSearchFragment(
-                    mainViewModel.citiStationStatus.value?.map{x->x.stationId}?.toIntArray() ?: intArrayOf()
+                    mainViewModel.citiStationStatus.value?.map { x -> x.stationId }?.toIntArray()
+                        ?: intArrayOf()
                 )
                 view.findNavController().navigate(action)
                 mainViewModel.onAddFavStationNavigated()
@@ -66,17 +63,20 @@ class MainFragment : Fragment() {
         }
         mainViewModel.errorToDisplay.observe(viewLifecycleOwner) { errorText ->
             if (errorText.isNotEmpty()) {
-                Toast.makeText(view.context,errorText,Toast.LENGTH_LONG).show()
+                Toast.makeText(view.context, errorText, Toast.LENGTH_LONG).show()
             }
         }
         if (!requireArguments().isEmpty) {
-            mainViewModel.setStation(MainFragmentArgs.fromBundle(requireArguments()).stationModel)
+            val stationModel = MainFragmentArgs.fromBundle(requireArguments()).stationModel
+            if(!mainViewModel.containsModel(stationModel)) {
+                mainViewModel.setStation(stationModel)
+            }
         }
         return view
     }
 
     private var _actionMode: ActionMode? = null
-    private val _actionModeCallback= object : ActionMode.Callback {
+    private val _actionModeCallback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
             val inflater: MenuInflater = mode.menuInflater
             inflater.inflate(R.menu.contextual_action_bar, menu)
@@ -104,8 +104,9 @@ class MainFragment : Fragment() {
             _actionMode = null
         }
     }
-    private fun setContextualBar(stationId: Int) {
-        mainViewModel.addSelectedStationId(stationId)
+
+    private fun setContextualBar(station: CitiStationStatus) {
+        mainViewModel.addSelectedStation(station)
         when (_actionMode) {
             null -> {
                 _actionMode = activity?.startActionMode(_actionModeCallback)

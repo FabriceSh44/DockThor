@@ -25,7 +25,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     val _selectedStationsId: MutableLiveData<List<Int>> = MutableLiveData()
 
     fun refreshBikeStation() {
-        isLoading.value = true
         viewModelScope.launch {
             internalRefreshBikeStation()
         }
@@ -36,6 +35,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     private suspend fun internalRefreshBikeStation() {
+        isLoading.value = true
         var localFavoriteStations = dao.getFavoriteStations()
         if (localFavoriteStations.isEmpty()) {
             errorToDisplay.value = "No favorite station available, please pick one."
@@ -109,5 +109,15 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     fun clearSelectedStation() {
         _selectedStationsId.value = listOf()
+    }
+
+    fun containsModel(stationModel: CitibikeStationInformationModel): Boolean {
+        return stationModel.station_id in _favoriteStations.map { x->x.station_id }
+    }
+
+    fun addSelectedStation(station: CitiStationStatus) {
+        station.selected.value=true
+        _selectedStationsId.value = _selectedStationsId.value?.plus(station.stationId) ?: listOf(station.stationId)
+
     }
 }

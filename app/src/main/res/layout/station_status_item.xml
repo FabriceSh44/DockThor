@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
@@ -15,7 +14,40 @@
             android:id="@+id/bikeConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@{citiStationStatus.selected ?@drawable/selected_background:@drawable/default_background}"
             android:padding="4dp">
+            <ImageView
+                android:id="@+id/bikeImageView"
+                android:layout_width="@dimen/statusImageSideSize"
+                android:layout_height="@dimen/statusImageSideSize"
+                android:contentDescription="@string/bikeimage"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/bikeTextView"
+                app:layout_constraintEnd_toEndOf="@+id/bikeTextView"
+                app:layout_constraintStart_toStartOf="@+id/bikeTextView"
+                app:srcCompat="@drawable/ic_baseline_pedal_bike_24" />
+
+            <ImageView
+                android:id="@+id/electricBikeImageView"
+                android:layout_width="@dimen/statusImageSideSize"
+                android:layout_height="@dimen/statusImageSideSize"
+                android:contentDescription="@string/electricbikeimage"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/electricBikeTextView"
+                app:layout_constraintEnd_toEndOf="@+id/electricBikeTextView"
+                app:layout_constraintStart_toStartOf="@+id/electricBikeTextView"
+                app:srcCompat="@drawable/ic_baseline_electric_bike_24" />
+
+            <ImageView
+                android:id="@+id/parkingImageView"
+                android:layout_width="@dimen/statusImageSideSize"
+                android:layout_height="@dimen/statusImageSideSize"
+                android:contentDescription="@string/parkingimage"
+                app:layout_constraintBottom_toTopOf="@+id/parkingTextView"
+                app:layout_constraintEnd_toEndOf="@+id/parkingTextView"
+                app:layout_constraintStart_toStartOf="@+id/parkingTextView"
+                app:srcCompat="@drawable/ic_baseline_local_parking_24" />
 
             <TextView
                 android:id="@+id/addressTextView"
@@ -29,17 +61,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/bikeImageView"
-                android:layout_width="@dimen/statusImageSideSize"
-                android:layout_height="@dimen/statusImageSideSize"
-                android:contentDescription="@string/bikeimage"
-                android:scaleType="fitXY"
+            <TextView
+                android:id="@+id/electricBikeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="@{citiStationStatus.numEbikeAvailable}"
+                android:textSize="@dimen/statusNumbersTextSize"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/bikeTextView"
-                app:layout_constraintEnd_toEndOf="@+id/bikeTextView"
-                app:layout_constraintStart_toStartOf="@+id/bikeTextView"
-                app:srcCompat="@drawable/ic_baseline_pedal_bike_24" />
+                app:layout_constraintEnd_toStartOf="@+id/guideline3"
+                app:layout_constraintStart_toStartOf="@+id/guideline2" />
 
             <TextView
                 android:id="@+id/bikeTextView"
@@ -52,38 +83,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline3" />
 
-            <ImageView
-                android:id="@+id/electricBikeImageView"
-                android:layout_width="@dimen/statusImageSideSize"
-                android:layout_height="@dimen/statusImageSideSize"
-                android:contentDescription="@string/electricbikeimage"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/electricBikeTextView"
-                app:layout_constraintEnd_toEndOf="@+id/electricBikeTextView"
-                app:layout_constraintStart_toStartOf="@+id/electricBikeTextView"
-                app:srcCompat="@drawable/ic_baseline_electric_bike_24" />
-
-            <TextView
-                android:id="@+id/electricBikeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:text="@{citiStationStatus.numEbikeAvailable}"
-                android:textSize="@dimen/statusNumbersTextSize"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline3"
-                app:layout_constraintStart_toStartOf="@+id/guideline2" />
-
-            <ImageView
-                android:id="@+id/parkingImageView"
-                android:layout_width="@dimen/statusImageSideSize"
-                android:layout_height="@dimen/statusImageSideSize"
-                android:contentDescription="@string/parkingimage"
-                app:layout_constraintBottom_toTopOf="@+id/parkingTextView"
-                app:layout_constraintEnd_toEndOf="@+id/parkingTextView"
-                app:layout_constraintStart_toStartOf="@+id/parkingTextView"
-                app:srcCompat="@drawable/ic_baseline_local_parking_24" />
-
             <TextView
                 android:id="@+id/parkingTextView"
                 android:layout_width="wrap_content"
@@ -93,8 +92,7 @@
                 android:textSize="@dimen/statusNumbersTextSize"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline2"
