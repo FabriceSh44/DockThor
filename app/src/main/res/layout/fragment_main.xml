@@ -72,7 +72,7 @@
                 android:onClick="@{()-> mainViewModel.refreshBikeStation()}"
                 android:textAlignment="center"
                 android:textSize="24sp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
                 app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
                 app:layout_constraintStart_toStartOf="@+id/guidelineLeft"

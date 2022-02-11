@@ -48,7 +48,6 @@ class MainFragment : Fragment() {
         }
         )
         binding.citibikeStatusList.adapter = adapter
-        binding.citibikeStatusList.layoutManager = GridLayoutManager(view.context, 2)
 
         // this connect the model citistation status to the adapter which setup view
         mainViewModel.citiStationStatus.observe(
