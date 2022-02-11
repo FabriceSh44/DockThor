@@ -5,5 +5,6 @@ data class CitiStationStatus(
     val numEbikeAvailable: String,
     val numDockAvailable: String,
     val address: String,
-    val stationId: Int
+    val stationId: Int,
+    var selected: Boolean=false
 )

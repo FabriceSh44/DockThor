@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.citiapi.DockThorDatabase
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
@@ -37,6 +38,7 @@ class MainFragment : Fragment() {
 
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
 
         val adapter = CitiStationStatusAdapter({ station: CitiStationStatus -> setContextualBar(station) },
             { station: CitiStationStatus -> Boolean

@@ -56,7 +56,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
                         citiStationStatus.value = getCitiStationStatusToDisplay(result)
                     }
                 }
-
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
                         errorToDisplay.value = "Unable to retrieve Citibike station status"
@@ -103,21 +102,37 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         }
     }
 
-    fun addSelectedStationId(stationId: Int) {
-        _selectedStationsId.value = _selectedStationsId.value?.plus(stationId) ?: listOf(stationId)
-    }
-
     fun clearSelectedStation() {
         _selectedStationsId.value = listOf()
     }
 
     fun containsModel(stationModel: CitibikeStationInformationModel): Boolean {
-        return stationModel.station_id in _favoriteStations.map { x->x.station_id }
+        return stationModel.station_id in _favoriteStations.map { x -> x.station_id }
     }
 
     fun addSelectedStation(station: CitiStationStatus) {
-        station.selected.value=true
-        _selectedStationsId.value = _selectedStationsId.value?.plus(station.stationId) ?: listOf(station.stationId)
-
+        val currentList: List<CitiStationStatus> = citiStationStatus.value ?: return
+        var isSelected =false
+        citiStationStatus.value = currentList.map { x ->
+            if (x.stationId == station.stationId) {
+                val newX = x.copy(); newX.selected = !newX.selected;isSelected =
+                    newX.selected; newX
+            } else {
+                x
+            }
+        }
+        if (_selectedStationsId.value == null) {
+            if (isSelected) {
+                _selectedStationsId.value = listOf(station.stationId)
+            }
+        } else {
+            if (isSelected) {
+                _selectedStationsId.value =
+                    _selectedStationsId.value!!.toMutableList() + station.stationId
+            } else {
+                _selectedStationsId.value =
+                    _selectedStationsId.value!!.toMutableList() - station.stationId
+            }
+        }
     }
 }
