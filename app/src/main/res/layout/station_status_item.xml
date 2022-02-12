@@ -54,6 +54,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:text="@{citiStationStatus.address}"
                 android:textSize="@dimen/statusAddressTextSize"
                 app:layout_constraintBottom_toTopOf="@+id/bikeImageView"

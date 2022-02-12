@@ -14,6 +14,9 @@ import com.fan.tiptop.dockthor.network.NetworkManager
 import kotlinx.coroutines.launch
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
+    private val _contextualBarNotVisible = MutableLiveData(true)
+    val contextualBarNotVisible: LiveData<Boolean>
+        get() = _contextualBarNotVisible
     val errorToDisplay = MutableLiveData("")
     val isLoading = MutableLiveData(false)
     private val _navigateToSwitchFavStation = MutableLiveData(false)
@@ -56,6 +59,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
                         citiStationStatus.value = getCitiStationStatusToDisplay(result)
                     }
                 }
+
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
                         errorToDisplay.value = "Unable to retrieve Citibike station status"
@@ -99,28 +103,52 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         viewModelScope.launch {
             dao.deleteByStationId((_selectedStationsId.value!!.distinct()))
             internalRefreshBikeStation()
+            _contextualBarNotVisible.value = true
         }
     }
 
     fun clearSelectedStation() {
+        citiStationStatus.value =
+            citiStationStatus.value?.let { toggleSelectedStatus(it, { x -> true }) { x -> false } }
         _selectedStationsId.value = listOf()
+        _contextualBarNotVisible.value = true;
     }
 
     fun containsModel(stationModel: CitibikeStationInformationModel): Boolean {
         return stationModel.station_id in _favoriteStations.map { x -> x.station_id }
     }
 
-    fun addSelectedStation(station: CitiStationStatus) {
-        val currentList: List<CitiStationStatus> = citiStationStatus.value ?: return
-        var isSelected =false
-        citiStationStatus.value = currentList.map { x ->
-            if (x.stationId == station.stationId) {
-                val newX = x.copy(); newX.selected = !newX.selected;isSelected =
-                    newX.selected; newX
-            } else {
-                x
-            }
+    private fun toggleSelectedStatus(
+        currentList: List<CitiStationStatus>,
+        stationSelector: (CitiStationStatus) -> Boolean,
+        actionOnSelected: (CitiStationStatus) -> Boolean
+    ): List<CitiStationStatus> {
+        return currentList.map { x ->
+            if (stationSelector(x)) {
+                val newX = x.copy(); newX.selected = actionOnSelected(x); newX
+            } else x
         }
+    }
+
+    private fun getSelectedStatus(
+        currentList: List<CitiStationStatus>,
+        filter: (CitiStationStatus) -> Boolean
+    ): List<Boolean> {
+        return currentList.filter { x -> filter(x) }.map { x -> x.selected }
+    }
+
+    fun actionLongClick(station: CitiStationStatus) {
+        toggleSelectedStation(station)
+    }
+
+    private fun toggleSelectedStation(station: CitiStationStatus) {
+        val currentList: List<CitiStationStatus> = citiStationStatus.value ?: return
+        citiStationStatus.value =
+            toggleSelectedStatus(
+                currentList,
+                { x -> x.stationId == station.stationId }) { x -> !x.selected }
+        var isSelected =
+            getSelectedStatus(citiStationStatus.value!!) { x -> x.stationId == station.stationId }.first()
         if (_selectedStationsId.value == null) {
             if (isSelected) {
                 _selectedStationsId.value = listOf(station.stationId)
@@ -134,5 +162,12 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
                     _selectedStationsId.value!!.toMutableList() - station.stationId
             }
         }
+        _contextualBarNotVisible.value =
+            _selectedStationsId.value == null || _selectedStationsId.value!!.isEmpty()
     }
+
+    fun actionClick(station: CitiStationStatus) {
+        if(!contextualBarNotVisible.value!!){toggleSelectedStation(station)}
+    }
+
 }

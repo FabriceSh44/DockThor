@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.citiapi.DockThorDatabase
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
@@ -40,9 +39,13 @@ class MainFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
 
-        val adapter = CitiStationStatusAdapter({ station: CitiStationStatus -> setContextualBar(station) },
-            { station: CitiStationStatus -> Boolean
-                setContextualBar (station)
+        val adapter = CitiStationStatusAdapter({ station: CitiStationStatus ->
+            actionClick(station)
+
+        },
+            { station: CitiStationStatus ->
+                Boolean
+                actionLongClick(station)
                 true
             })
         binding.citibikeStatusList.adapter = adapter
@@ -63,6 +66,19 @@ class MainFragment : Fragment() {
                 mainViewModel.onAddFavStationNavigated()
             }
         }
+        mainViewModel.contextualBarNotVisible.observe(viewLifecycleOwner) { shouldCloseContextualBar ->
+            if (shouldCloseContextualBar) {
+                _actionMode?.finish()
+                _actionMode = null
+            } else {
+                when (_actionMode) {
+                    null -> {
+                        _actionMode = activity?.startActionMode(_actionModeCallback)
+                    }
+                    else -> {}
+                }
+            }
+        }
         mainViewModel.errorToDisplay.observe(viewLifecycleOwner) { errorText ->
             if (errorText.isNotEmpty()) {
                 Toast.makeText(view.context, errorText, Toast.LENGTH_LONG).show()
@@ -70,7 +86,7 @@ class MainFragment : Fragment() {
         }
         if (!requireArguments().isEmpty) {
             val stationModel = MainFragmentArgs.fromBundle(requireArguments()).stationModel
-            if(!mainViewModel.containsModel(stationModel)) {
+            if (!mainViewModel.containsModel(stationModel)) {
                 mainViewModel.setStation(stationModel)
             }
         }
@@ -93,7 +109,6 @@ class MainFragment : Fragment() {
             return when (item.itemId) {
                 R.id.delete -> {
                     mainViewModel.onItemDeleted()
-                    mode.finish()
                     true
                 }
                 else -> false
@@ -103,18 +118,14 @@ class MainFragment : Fragment() {
         // Called when the user exits the action mode
         override fun onDestroyActionMode(mode: ActionMode) {
             mainViewModel.clearSelectedStation()
-            _actionMode = null
         }
     }
 
-    private fun setContextualBar(station: CitiStationStatus) {
-        mainViewModel.addSelectedStation(station)
-        when (_actionMode) {
-            null -> {
-                _actionMode = activity?.startActionMode(_actionModeCallback)
-            }
-            else -> {}
-        }
+    private fun actionClick(station: CitiStationStatus) {
+        mainViewModel.actionClick(station)
+    }
+    private fun actionLongClick(station: CitiStationStatus) {
+        mainViewModel.actionLongClick(station)
     }
 
     override fun onStart() {
