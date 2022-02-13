@@ -4,6 +4,7 @@ import android.util.Log
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
 import com.fan.tiptop.citiapi.location.LocationUtils
+import kotlin.time.Duration
 
 class CitiKernel {
 
@@ -12,19 +13,20 @@ class CitiKernel {
 
     //CITI
     private val _requester = CitiRequester()
-    private var _stationInformationModelList: List<CitibikeStationInformationModelDecorated> =
-        listOf()
+    private var _stationInformationModelMap: Map<Int, CitibikeStationInformationModelDecorated> =
+        mapOf()
 
     fun processStationInfoRequestResult(result: String) {
         try {
-            _stationInformationModelList =
+            _stationInformationModelMap =
                 _requester.getStationInformationModel(result).data.stations.map { x ->
-                    CitibikeStationInformationModelDecorated(
-                        x,
-                        isClosest = false,
-                        isFavorite = false
-                    )
-                }
+                    x.station_id.toInt() to
+                            CitibikeStationInformationModelDecorated(
+                                x,
+                                isClosest = false,
+                                isFavorite = false
+                            )
+                }.toMap()
         } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
         }
@@ -59,20 +61,18 @@ class CitiKernel {
     ) {
         val favoriteStation: CitibikeStationInformationModelDecorated? =
             stationInfoModelToDisplay.find { x -> x.model.station_id == closestStation.model.station_id }
-        if(favoriteStation==null)
-        {
-            stationInfoModelToDisplay.add(0,closestStation)
-        }
-        else{
-            favoriteStation.isClosest=true
+        if (favoriteStation == null) {
+            stationInfoModelToDisplay.add(0, closestStation)
+        } else {
+            favoriteStation.isClosest = true
         }
     }
 
     private fun getClosestStation(userLocation: Location): CitibikeStationInformationModelDecorated {
         var closestStation =
-            _stationInformationModelList.first().model
+            _stationInformationModelMap.values.first().model
         var minDistance: Double = Double.MAX_VALUE
-        for (stationInfo in _stationInformationModelList.map { x->x.model }) {
+        for (stationInfo in _stationInformationModelMap.values.map { x -> x.model }) {
             val stationDistance = LocationUtils.computeDistance(
                 userLocation.latitude,
                 userLocation.longitude,
@@ -84,7 +84,17 @@ class CitiKernel {
                 closestStation = stationInfo
             }
         }
-        return CitibikeStationInformationModelDecorated(closestStation, isClosest = true, isFavorite = false)
+        return CitibikeStationInformationModelDecorated(
+            closestStation,
+            isClosest = true,
+            isFavorite = false
+        )
     }
 
+    fun getStationLocation(stationId: Int): Location? {
+        val get: CitibikeStationInformationModelDecorated? =
+            _stationInformationModelMap.get(stationId)
+        return get?.model?.let { Location(it.lat, it.lon, Duration.ZERO) }
+    }
 }
+

@@ -1,11 +1,10 @@
 package com.fan.tiptop.dockthor.logic
 
-import android.location.Location
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fan.tiptop.citiapi.CitiRequester
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
@@ -15,13 +14,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     //LOG
     private val TAG = "DockThorViewModel"
-
-    //LOCATION
-    private var _lastLocation: Location? =
-        null // this can stays null if we can't find the location or the user refuses to share it
-
-    //NETWORK CITI
-    private val _requestor = CitiRequester()
 
     //DISPLAY
     val errorToDisplayLD = MutableLiveData("")
@@ -40,8 +32,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     //MODEL
     private var _kernel: DockThorKernel = DockThorKernel(dao)
     private val _selectedStationsId: MutableList<Int> = mutableListOf()
-    private var _stationInfoModelDisplayed: MutableList<CitibikeStationInformationModel> =
-        mutableListOf()
 
     //METHODS
     fun onSwipeRefresh() {
@@ -136,10 +126,15 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         toggleSelectedStation(station)
     }
 
-    fun onActionClick(station: CitiStationStatus) {
+    fun onActionClick(station: CitiStationStatus): Intent? {
         if (!contextualBarNotVisible.value!!) {
             toggleSelectedStation(station)
         }
+        else
+        {
+            return _kernel.getActionViewIntent(station)
+        }
+        return null
     }
 
     //UTILS
@@ -164,6 +159,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     fun containsInfoModel(stationModel: CitibikeStationInformationModel): Boolean {
-        return stationModel.station_id in _stationInfoModelDisplayed.map { x -> x.station_id }
+        val matchingStation: CitiStationStatus? = citiStationStatusLD.value?.find { x -> x.stationId== stationModel.station_id.toInt() }
+        return matchingStation!=null
     }
 }

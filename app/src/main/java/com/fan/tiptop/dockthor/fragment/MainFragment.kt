@@ -42,7 +42,6 @@ class MainFragment : Fragment() {
 
         val adapter = CitiStationStatusAdapter({ station: CitiStationStatus ->
             actionClick(station)
-
         },
             { station: CitiStationStatus ->
                 Boolean
@@ -123,7 +122,11 @@ class MainFragment : Fragment() {
     }
 
     private fun actionClick(station: CitiStationStatus) {
-        mainViewModel.onActionClick(station)
+        val onActionClickIntent = mainViewModel.onActionClick(station)
+        if(onActionClickIntent!=null)
+        {
+            context?.startActivity(onActionClickIntent)
+        }
     }
     private fun actionLongClick(station: CitiStationStatus) {
         mainViewModel.onActionLongClick(station)

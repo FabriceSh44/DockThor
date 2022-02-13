@@ -1,5 +1,7 @@
 package com.fan.tiptop.dockthor.logic
 
+import android.content.Intent
+import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
 import com.fan.tiptop.citiapi.CitiKernel
@@ -12,7 +14,9 @@ import com.fan.tiptop.dockthor.location.LocationManager
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import java.time.Duration
+import java.util.*
 import kotlin.time.toKotlinDuration
+
 
 class DockThorKernel(val dao: CitibikeStationInformationDao) {
 
@@ -70,6 +74,12 @@ class DockThorKernel(val dao: CitibikeStationInformationDao) {
                     })
             }
         })
+    }
+
+    fun getActionViewIntent(station: CitiStationStatus) :Intent?{
+        val location: Location = _citiKernel.getStationLocation(station.stationId) ?: return null
+        val uri: String = java.lang.String.format(Locale.ENGLISH, "geo:%f,%f", location.latitude, location.longitude)
+        return Intent(Intent.ACTION_VIEW, Uri.parse(uri))
     }
 
 }
