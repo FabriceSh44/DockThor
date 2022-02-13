@@ -1,10 +1,12 @@
 package com.fan.tiptop.citiapi
 
+import com.fan.tiptop.citiapi.data.CitiStationStatus
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.data.CitibikeStationModel
+import com.fan.tiptop.citiapi.location.LocationUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.text.DecimalFormat
-import kotlin.math.*
 
 @Serializable
 data class Stations(val stations: List<CitibikeStationModel>)
@@ -22,7 +24,7 @@ data class StationInformationModel(
     val ttl: Int
 )
 
-class CitiRequestor {
+class CitiRequester {
     private var _stationIdToStation: MutableMap<Int, CitibikeStationModel> = mutableMapOf()
     private val json = Json {
         ignoreUnknownKeys = true
@@ -31,8 +33,7 @@ class CitiRequestor {
     fun getAvailabilitiesWithLocation(
         response: String,
         stationList: List<CitibikeStationInformationModel>,
-        userLatitude: Double?,
-        userLongitude: Double?
+        userLocation:Location?
     ): List<CitiStationStatus> {
         var result = mutableListOf<CitiStationStatus>()
         if (stationList.isEmpty()) {
@@ -49,15 +50,13 @@ class CitiRequestor {
             val stationStatus = this._stationIdToStation[stationId]
                 ?: throw Exception("Unable to find station for $stationId")
             var distanceDescription = ""
-            if (userLatitude != null && userLongitude != null) {
-                val distance = computeDistance(
-                    userLatitude,
-                    userLongitude,
+            if (userLocation != null ) {
+                distanceDescription = LocationUtils.computeAndFormatDistance(
+                    userLocation.latitude,
+                    userLocation.longitude,
                     stationInfoModel.lat,
                     stationInfoModel.lon
                 )
-                val dec = DecimalFormat("#,###.00")
-                distanceDescription="${dec.format(distance)}mi"
             }
             result.add(
                 CitiStationStatus(
@@ -67,40 +66,11 @@ class CitiRequestor {
                     stationInfoModel.name,
                     stationInfoModel.station_id.toInt(),
                     distanceDescription
-                    )
+                )
             )
         }
         return result
     }
-
-    private fun computeDistance(
-        userLatitude: Double,
-        userLongitude: Double,
-        stationLatitude: Double,
-        stationLongitude: Double
-    ): Double {
-        val userLongitudeRad = Math.toRadians(userLongitude)
-        val stationLongitudeRad = Math.toRadians(stationLongitude)
-        val userLatitudeRad = Math.toRadians(userLatitude)
-        val stationLatitudeRad = Math.toRadians(stationLatitude)
-
-        // Haversine formula
-        val dlon: Double = stationLongitudeRad - userLongitudeRad
-        val dlat: Double = stationLatitudeRad - userLatitudeRad
-        val a = (sin(dlat / 2).pow(2.0)
-                + (cos(userLatitudeRad) * cos(stationLatitudeRad)
-                * sin(dlon / 2).pow(2.0)))
-
-        val c = 2 * asin(sqrt(a))
-
-        // Radius of earth in kilometers. Use 6371.0
-        // for km
-        val r = 3956
-
-        // calculate the result
-        return c * r
-    }
-
 
     private fun getStationStatusModel(string: String): StationStatusModel {
         return json.decodeFromString(string)

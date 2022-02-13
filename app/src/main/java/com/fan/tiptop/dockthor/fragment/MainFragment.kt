@@ -1,4 +1,4 @@
-package com.fan.tiptop.dockthor
+package com.fan.tiptop.dockthor.fragment
 
 import android.os.Bundle
 import android.view.*
@@ -6,12 +6,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.fan.tiptop.citiapi.CitiStationStatus
-import com.fan.tiptop.citiapi.DockThorDatabase
+import com.fan.tiptop.citiapi.data.CitiStationStatus
+import com.fan.tiptop.citiapi.database.DockThorDatabase
+import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
-import com.fan.tiptop.dockthor.model.MainViewModel
-import com.fan.tiptop.dockthor.model.MainViewModelFactory
+import com.fan.tiptop.dockthor.logic.MainViewModel
+import com.fan.tiptop.dockthor.logic.MainViewModelFactory
 
 
 class MainFragment : Fragment() {
@@ -51,7 +52,7 @@ class MainFragment : Fragment() {
         binding.citibikeStatusList.adapter = adapter
 
         // this connect the model citistation status to the adapter which setup view
-        mainViewModel.citiStationStatus.observe(
+        mainViewModel.citiStationStatusLD.observe(
             viewLifecycleOwner
         ) { it?.let { adapter.submitList(it) } }
 
@@ -59,7 +60,7 @@ class MainFragment : Fragment() {
         mainViewModel.navigateToSwitchFavStation.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate) {
                 val action = MainFragmentDirections.actionMainFragmentToStationSearchFragment(
-                    mainViewModel.citiStationStatus.value?.map { x -> x.stationId }?.toIntArray()
+                    mainViewModel.citiStationStatusLD.value?.map { x -> x.stationId }?.toIntArray()
                         ?: intArrayOf()
                 )
                 view.findNavController().navigate(action)
@@ -79,15 +80,15 @@ class MainFragment : Fragment() {
                 }
             }
         }
-        mainViewModel.errorToDisplay.observe(viewLifecycleOwner) { errorText ->
+        mainViewModel.errorToDisplayLD.observe(viewLifecycleOwner) { errorText ->
             if (errorText.isNotEmpty()) {
                 Toast.makeText(view.context, errorText, Toast.LENGTH_LONG).show()
             }
         }
         if (!requireArguments().isEmpty) {
             val stationModel = MainFragmentArgs.fromBundle(requireArguments()).stationModel
-            if (!mainViewModel.containsModel(stationModel)) {
-                mainViewModel.setStation(stationModel)
+            if (!mainViewModel.containsInfoModel(stationModel)) {
+                mainViewModel.onSetStation(stationModel)
             }
         }
         return view
@@ -117,20 +118,20 @@ class MainFragment : Fragment() {
 
         // Called when the user exits the action mode
         override fun onDestroyActionMode(mode: ActionMode) {
-            mainViewModel.clearSelectedStation()
+            mainViewModel.onClearSelectedStation()
         }
     }
 
     private fun actionClick(station: CitiStationStatus) {
-        mainViewModel.actionClick(station)
+        mainViewModel.onActionClick(station)
     }
     private fun actionLongClick(station: CitiStationStatus) {
-        mainViewModel.actionLongClick(station)
+        mainViewModel.onActionLongClick(station)
     }
 
     override fun onStart() {
         super.onStart()
-        mainViewModel.refreshCitiStationStatusDisplay()
+        mainViewModel.initializeMainViewModel()
     }
 
     override fun onDestroyView() {

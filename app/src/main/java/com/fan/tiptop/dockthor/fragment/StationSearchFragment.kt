@@ -1,4 +1,4 @@
-package com.fan.tiptop.dockthor
+package com.fan.tiptop.dockthor.fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -12,8 +12,9 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.fan.tiptop.citiapi.CitiRequestor
-import com.fan.tiptop.citiapi.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.CitiRequester
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.databinding.FragmentStationSearchBinding
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
@@ -38,7 +39,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         binding.searchView.setOnQueryTextListener(this)
         NetworkManager.getInstance().stationInformationRequest(
             object : DefaultNetworkManagerListener {
-                override fun getResult(result: String) {
+                override suspend fun getResult(result: String) {
                     if (!result.isEmpty()) {
                         _stationInfoList = processResponse(result)
                         binding.errorTextView.text = ""
@@ -46,7 +47,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
                     }
                 }
 
-                override fun getError(error: String) {
+                override suspend fun getError(error: String) {
                     if (!error.isEmpty()) {
                         binding.errorTextView.text =
                             "Can't load station suggestions. Got error:[$error]"
@@ -69,7 +70,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     fun processResponse(response: String): List<CitibikeStationInformationModel> {
         try {
-            val requestor = CitiRequestor()
+            val requestor = CitiRequester()
             val model = requestor.getStationInformationModel(response)
             return model.data.stations
         } catch (e: Exception) {

@@ -7,21 +7,21 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.fan.tiptop.dockthor.MainFragment"
+        android:name="com.fan.tiptop.dockthor.fragment.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_stationSearchFragment"
             app:destination="@id/stationSearchFragment" />
         <argument android:name="stationModel"
-            app:argType="com.fan.tiptop.citiapi.CitibikeStationInformationModel" />
+            app:argType="com.fan.tiptop.citiapi.data.CitibikeStationInformationModel" />
         <action
             android:id="@+id/action_mainFragment_to_editCitistationStatusFragment"
             app:destination="@id/editCitistationStatusFragment" />
     </fragment>
     <fragment
         android:id="@+id/stationSearchFragment"
-        android:name="com.fan.tiptop.dockthor.StationSearchFragment"
+        android:name="com.fan.tiptop.dockthor.fragment.StationSearchFragment"
         android:label="fragment_station_search"
         tools:layout="@layout/fragment_station_search" >
         <action
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/editCitistationStatusFragment"
-        android:name="com.fan.tiptop.dockthor.EditCitistationStatusFragment"
+        android:name="com.fan.tiptop.dockthor.fragment.EditCitistationStatusFragment"
         android:label="fragment_edit_citistation_status"
         tools:layout="@layout/fragment_edit_citistation_status" >
         <action

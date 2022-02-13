@@ -9,19 +9,29 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class LocationManager private constructor(context: AppCompatActivity) {
     @SuppressLint("MissingPermission")
-    fun getLastLocation(listener: DefaultLocationManagerListener) {
+    suspend fun getLastLocation(listener: DefaultLocationManagerListener) {
         if (!_hasLocationPermission) {
             listener.getLocation(null)
         }
         _fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-                listener.getLocation(location)
+                runBlocking {
+                    launch {
+                        listener.getLocation(location)
+                    }
+                }
             }
             .addOnFailureListener {
-                listener.getLocation(null)
+                runBlocking {
+                    launch {
+                        listener.getLocation(null)
+                    }
+                }
             }
     }
 

@@ -1,8 +1,8 @@
-package com.fan.tiptop.dockthor.model
+package com.fan.tiptop.dockthor.logic
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.fan.tiptop.citiapi.CitibikeStationInformationDao
+import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
 
 class MainViewModelFactory(private val dao: CitibikeStationInformationDao) :
     ViewModelProvider.Factory {

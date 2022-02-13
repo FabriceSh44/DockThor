@@ -1,9 +1,10 @@
-package com.fan.tiptop.citiapi
+package com.fan.tiptop.citiapi.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 
 @Database(entities = [CitibikeStationInformationModel::class], version = 1, exportSchema = false)
 abstract class DockThorDatabase : RoomDatabase() {

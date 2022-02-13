@@ -127,6 +127,6 @@
 
         <variable
             name="citiStationStatus"
-            type="com.fan.tiptop.citiapi.CitiStationStatus" />
+            type="com.fan.tiptop.citiapi.data.CitiStationStatus" />
     </data>
 </layout>

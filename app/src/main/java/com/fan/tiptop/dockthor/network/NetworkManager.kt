@@ -6,21 +6,33 @@ import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class NetworkManager private constructor(context: Context) {
     //for Volley API
-    var requestQueue: RequestQueue
+    private var requestQueue: RequestQueue = Volley.newRequestQueue(context.applicationContext)
     fun stationStatusRequest(listener: DefaultNetworkManagerListener) {
         val url = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
         val request = StringRequest(
             Request.Method.GET, url,
             { response ->
                 Log.d(TAG, "somePostRequest Response : $response")
-                if (null != response) listener.getResult(response.toString())
+                if (null != response) {
+                    runBlocking {
+                        launch {
+                            listener.getResult(response.toString())
+                        }
+                    }
+                }
             },
             { error ->
-                    Log.e(TAG, "Error with request. Error: ${error}")
-                    listener.getError(error?.message?:"")
+                Log.e(TAG, "Error with request. Error: ${error}")
+                runBlocking {
+                    launch {
+                        listener.getError(error?.message ?: "")
+                    }
+                }
 
             })
         requestQueue.add(request)
@@ -32,11 +44,21 @@ class NetworkManager private constructor(context: Context) {
             Request.Method.GET, url,
             { response ->
                 Log.d(TAG, "somePostRequest Response : $response")
-                if (null != response) listener.getResult(response.toString())
+                if (null != response) {
+                    runBlocking {
+                        launch {
+                            listener.getResult(response.toString())
+                        }
+                    }
+                }
             },
             { error ->
-                    Log.e(TAG, "Error with request. Error: ${error}")
-                    listener.getError(error?.message?:"")
+                Log.e(TAG, "Error with request. Error: ${error}")
+                runBlocking {
+                    launch {
+                        listener.getError(error?.message ?: "")
+                    }
+                }
 
             })
         requestQueue.add(request)
@@ -61,7 +83,4 @@ class NetworkManager private constructor(context: Context) {
         }
     }
 
-    init {
-        requestQueue = Volley.newRequestQueue(context.applicationContext)
-    }
 }

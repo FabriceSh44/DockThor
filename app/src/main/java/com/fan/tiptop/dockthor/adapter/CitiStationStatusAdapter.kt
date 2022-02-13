@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.fan.tiptop.citiapi.CitiStationStatus
+import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.dockthor.databinding.StationStatusItemBinding
 
 class CitiStationStatusAdapter(

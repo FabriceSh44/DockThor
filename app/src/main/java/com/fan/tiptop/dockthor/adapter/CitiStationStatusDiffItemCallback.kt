@@ -1,7 +1,7 @@
 package com.fan.tiptop.dockthor.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.fan.tiptop.citiapi.CitiStationStatus
+import com.fan.tiptop.citiapi.data.CitiStationStatus
 
 class CitiStationStatusDiffItemCallback : DiffUtil.ItemCallback<CitiStationStatus>() {
     override fun areItemsTheSame(oldItem: CitiStationStatus, newItem: CitiStationStatus): Boolean {

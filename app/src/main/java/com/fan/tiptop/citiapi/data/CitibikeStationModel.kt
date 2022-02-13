@@ -1,4 +1,4 @@
-package com.fan.tiptop.citiapi
+package com.fan.tiptop.citiapi.data
 
 import kotlinx.serialization.Serializable
 

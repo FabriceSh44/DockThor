@@ -1,9 +1,10 @@
-package com.fan.tiptop.citiapi
+package com.fan.tiptop.citiapi.database
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 
 @Dao
 interface CitibikeStationInformationDao {

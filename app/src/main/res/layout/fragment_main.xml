@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainFragment">
+    tools:context=".fragment.MainFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:refreshing="@{mainViewModel.isLoading}"
+        app:refreshing="@{mainViewModel.isLoadingLD}"
         app:onRefreshListener="@{()->mainViewModel.onSwipeRefresh()}"
         >
 
@@ -69,7 +69,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="32dp"
                 android:gravity="center_horizontal|center_vertical"
-                android:onClick="@{()-> mainViewModel.refreshCitiStationStatusDisplay()}"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -88,6 +87,6 @@
 
         <variable
             name="mainViewModel"
-            type="com.fan.tiptop.dockthor.model.MainViewModel" />
+            type="com.fan.tiptop.dockthor.logic.MainViewModel" />
     </data>
 </layout>
