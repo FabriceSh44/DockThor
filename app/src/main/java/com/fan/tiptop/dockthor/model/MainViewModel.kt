@@ -1,5 +1,6 @@
 package com.fan.tiptop.dockthor.model
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,11 +10,14 @@ import com.fan.tiptop.citiapi.CitiRequestor
 import com.fan.tiptop.citiapi.CitiStationStatus
 import com.fan.tiptop.citiapi.CitibikeStationInformationDao
 import com.fan.tiptop.citiapi.CitibikeStationInformationModel
+import com.fan.tiptop.dockthor.location.DefaultLocationManagerListener
+import com.fan.tiptop.dockthor.location.LocationManager
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import kotlinx.coroutines.launch
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
+    private var _lastLocation: Location?=null
     private val _contextualBarNotVisible = MutableLiveData(true)
     val contextualBarNotVisible: LiveData<Boolean>
         get() = _contextualBarNotVisible
@@ -27,18 +31,24 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     val citiStationStatus: MutableLiveData<List<CitiStationStatus>> = MutableLiveData()
     val _selectedStationsId: MutableLiveData<List<Int>> = MutableLiveData()
 
-    fun refreshBikeStation() {
-        viewModelScope.launch {
-            internalRefreshBikeStation()
-        }
+    fun refreshCitiStationStatusDisplay() {
+        isLoading.value = true
+        LocationManager.getInstance().getLastLocation(object : DefaultLocationManagerListener {
+            override fun getLocation(location: Location?) {
+                _lastLocation = location
+                viewModelScope.launch {
+                    internaRefreshCitiStationStatusDisplay()
+                    isLoading.value = false
+                }
+            }
+        })
     }
 
     fun onSwipeRefresh() {
-        refreshBikeStation()
+       refreshCitiStationStatusDisplay()
     }
 
-    private suspend fun internalRefreshBikeStation() {
-        isLoading.value = true
+    private suspend fun internaRefreshCitiStationStatusDisplay() {
         var localFavoriteStations = dao.getFavoriteStations()
         if (localFavoriteStations.isEmpty()) {
             errorToDisplay.value = "No favorite station available, please pick one."
@@ -48,7 +58,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
             _favoriteStations = localFavoriteStations
             updateCitiStationStatusToDisplay()
         }
-        isLoading.value = false
     }
 
     private fun updateCitiStationStatusToDisplay() {
@@ -72,7 +81,11 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         try {
             if (_favoriteStations.isNotEmpty()) {
                 val requestor = CitiRequestor()
-                return requestor.getAvailabilities(response, _favoriteStations)
+                //return requestor.getAvailabilities(response, _favoriteStations)
+                return requestor.getAvailabilitiesWithLocation(response, _favoriteStations,
+                    _lastLocation?.latitude,
+                    _lastLocation?.longitude
+                )
             }
             return listOf()
         } catch (e: Exception) {
@@ -84,7 +97,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     fun setStation(stationModel: CitibikeStationInformationModel) {
         viewModelScope.launch {
             dao.insert(stationModel)
-            internalRefreshBikeStation()
+            internaRefreshCitiStationStatusDisplay()
         }
     }
 
@@ -102,14 +115,14 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         }
         viewModelScope.launch {
             dao.deleteByStationId((_selectedStationsId.value!!.distinct()))
-            internalRefreshBikeStation()
+            internaRefreshCitiStationStatusDisplay()
             _contextualBarNotVisible.value = true
         }
     }
 
     fun clearSelectedStation() {
         citiStationStatus.value =
-            citiStationStatus.value?.let { toggleSelectedStatus(it, { x -> true }) { x -> false } }
+            citiStationStatus.value?.let { toggleSelectedStatus(it, { true }) { false } }
         _selectedStationsId.value = listOf()
         _contextualBarNotVisible.value = true;
     }
@@ -118,6 +131,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         return stationModel.station_id in _favoriteStations.map { x -> x.station_id }
     }
 
+    /* if condition on station selector is true, will copy the CitiStationStatus and apply actionOnSelected */
     private fun toggleSelectedStatus(
         currentList: List<CitiStationStatus>,
         stationSelector: (CitiStationStatus) -> Boolean,
@@ -167,7 +181,9 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     fun actionClick(station: CitiStationStatus) {
-        if(!contextualBarNotVisible.value!!){toggleSelectedStation(station)}
+        if (!contextualBarNotVisible.value!!) {
+            toggleSelectedStation(station)
+        }
     }
 
 }

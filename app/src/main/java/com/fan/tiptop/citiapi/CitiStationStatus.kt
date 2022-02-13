@@ -6,5 +6,6 @@ data class CitiStationStatus(
     val numDockAvailable: String,
     val address: String,
     val stationId: Int,
+    var distance:String?=null,
     var selected: Boolean=false
 )

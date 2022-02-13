@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
-@Entity(tableName = "station_information_model")
-@Serializable
+@Entity(tableName = "station_information_model")//to be put in database
+@Serializable //to be en/decoded in json
 @Parcelize //to be transmitted as Argument
 data class CitibikeStationInformationModel(
     @PrimaryKey

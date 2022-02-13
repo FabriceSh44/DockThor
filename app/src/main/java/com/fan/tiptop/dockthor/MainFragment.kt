@@ -130,7 +130,7 @@ class MainFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        mainViewModel.refreshBikeStation()
+        mainViewModel.refreshCitiStationStatusDisplay()
     }
 
     override fun onDestroyView() {

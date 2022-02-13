@@ -15,6 +15,9 @@
             app:destination="@id/stationSearchFragment" />
         <argument android:name="stationModel"
             app:argType="com.fan.tiptop.citiapi.CitibikeStationInformationModel" />
+        <action
+            android:id="@+id/action_mainFragment_to_editCitistationStatusFragment"
+            app:destination="@id/editCitistationStatusFragment" />
     </fragment>
     <fragment
         android:id="@+id/stationSearchFragment"
@@ -28,5 +31,14 @@
         <argument
             android:name="favStationIds"
             app:argType="integer[]" />
+    </fragment>
+    <fragment
+        android:id="@+id/editCitistationStatusFragment"
+        android:name="com.fan.tiptop.dockthor.EditCitistationStatusFragment"
+        android:label="fragment_edit_citistation_status"
+        tools:layout="@layout/fragment_edit_citistation_status" >
+        <action
+            android:id="@+id/action_editCitistationStatusFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

@@ -69,7 +69,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="32dp"
                 android:gravity="center_horizontal|center_vertical"
-                android:onClick="@{()-> mainViewModel.refreshBikeStation()}"
+                android:onClick="@{()-> mainViewModel.refreshCitiStationStatusDisplay()}"
                 android:textAlignment="center"
                 android:textSize="24sp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
