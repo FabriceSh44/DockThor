@@ -5,6 +5,7 @@ import android.util.Log
 import com.fan.tiptop.citiapi.CitiKernel
 import com.fan.tiptop.citiapi.Location
 import com.fan.tiptop.citiapi.data.CitiStationStatus
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
 import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
 import com.fan.tiptop.dockthor.location.DefaultLocationManagerListener
 import com.fan.tiptop.dockthor.location.LocationManager
@@ -20,7 +21,7 @@ class DockThorKernel(val dao: CitibikeStationInformationDao) {
 
     //LOG
     private val TAG = "DockThorKernel"
-    suspend  fun initialize(function: (List<CitiStationStatus>, String) -> Unit) {
+    suspend fun initialize(function: (List<CitiStationStatus>, String) -> Unit) {
         NetworkManager.getInstance().stationInformationRequest(
             object : DefaultNetworkManagerListener {
                 override suspend fun getResult(result: String) {
@@ -42,7 +43,13 @@ class DockThorKernel(val dao: CitibikeStationInformationDao) {
     suspend fun updateCitistationList(onUpdateComplete: (List<CitiStationStatus>, String) -> Unit) {
         LocationManager.getInstance().getLastLocation(object : DefaultLocationManagerListener {
             override suspend fun getLocation(location: android.location.Location?) {
-                val stationInfoModelToDisplay = dao.getFavoriteStations().toMutableList()
+                val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
+                    CitibikeStationInformationModelDecorated(
+                        x,
+                        isClosest = false,
+                        isFavorite = true
+                    )
+                }.toMutableList()
                 NetworkManager.getInstance()
                     .stationStatusRequest(object : DefaultNetworkManagerListener {
                         override suspend fun getResult(result: String) {
@@ -56,7 +63,7 @@ class DockThorKernel(val dao: CitibikeStationInformationDao) {
                             }
                         }
 
-                        override  suspend fun getError(error: String) {
+                        override suspend fun getError(error: String) {
                             Log.e(TAG, error)
                             onUpdateComplete(listOf(), "Unable to retrieve Citibike station status")
                         }

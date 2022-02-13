@@ -2,7 +2,9 @@ package com.fan.tiptop.citiapi.data
 
 import android.os.Parcelable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -23,5 +25,5 @@ data class CitibikeStationInformationModel(
     val lat: Double,
     val region_id: String,
     val has_kiosk: Boolean,
-    val legacy_id: String
+    val legacy_id: String,
 ):Parcelable

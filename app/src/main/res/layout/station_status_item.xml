@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
@@ -15,8 +14,9 @@
             android:id="@+id/bikeConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@{citiStationStatus.selected ?@drawable/selected_background:@drawable/default_background}"
+            android:background="@{citiStationStatus.isClosestStation? @drawable/closest_background:(citiStationStatus.selected ?@drawable/selected_background:@drawable/default_background)}"
             android:padding="4dp">
+
             <ImageView
                 android:id="@+id/bikeImageView"
                 android:layout_width="@dimen/statusImageSideSize"
@@ -52,12 +52,13 @@
 
             <TextView
                 android:id="@+id/addressTextView"
+                style="@style/Theme.DockThor.TextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
-                android:text="@{citiStationStatus.address}"
+                android:text="@{citiStationStatus.address, default=ADDRESS}"
                 android:textSize="@dimen/statusAddressTextSize"
                 app:layout_constraintBottom_toTopOf="@+id/bikeImageView"
                 app:layout_constraintEnd_toStartOf="@+id/distanceTextView"
@@ -66,10 +67,11 @@
 
             <TextView
                 android:id="@+id/electricBikeTextView"
+                style="@style/Theme.DockThor.TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:gravity="center"
-                android:text="@{citiStationStatus.numEbikeAvailable}"
+                android:text="@{citiStationStatus.numEbikeAvailable, default=50}"
                 android:textSize="@dimen/statusNumbersTextSize"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline3"
@@ -77,10 +79,11 @@
 
             <TextView
                 android:id="@+id/bikeTextView"
+                style="@style/Theme.DockThor.TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@{citiStationStatus.numBikeAvailable}"
+                android:text="@{citiStationStatus.numBikeAvailable, default=50}"
                 android:textSize="@dimen/statusNumbersTextSize"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -88,14 +91,24 @@
 
             <TextView
                 android:id="@+id/parkingTextView"
+                style="@style/Theme.DockThor.TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:gravity="center"
-                android:text="@{citiStationStatus.numDockAvailable}"
+                android:text="@{citiStationStatus.numDockAvailable, default=50}"
                 android:textSize="@dimen/statusNumbersTextSize"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/distanceTextView"
+                style="@style/Theme.DockThor.TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{citiStationStatus.distance, default=1}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline2"
@@ -110,14 +123,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.67" />
-
-            <TextView
-                android:id="@+id/distanceTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{citiStationStatus.distance}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

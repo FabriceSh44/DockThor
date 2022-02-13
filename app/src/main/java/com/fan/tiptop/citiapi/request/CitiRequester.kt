@@ -2,6 +2,7 @@ package com.fan.tiptop.citiapi
 
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
 import com.fan.tiptop.citiapi.data.CitibikeStationModel
 import com.fan.tiptop.citiapi.location.LocationUtils
 import kotlinx.serialization.Serializable
@@ -32,7 +33,7 @@ class CitiRequester {
 
     fun getAvailabilitiesWithLocation(
         response: String,
-        stationList: List<CitibikeStationInformationModel>,
+        stationList: List<CitibikeStationInformationModelDecorated>,
         userLocation:Location?
     ): List<CitiStationStatus> {
         var result = mutableListOf<CitiStationStatus>()
@@ -45,7 +46,8 @@ class CitiRequester {
                 this._stationIdToStation.put(stationInfo.station_id.toInt(), stationInfo)
             }
         }
-        for (stationInfoModel in stationList) {
+        for (stationInfoModelDecorated in stationList) {
+            val stationInfoModel=  stationInfoModelDecorated.model
             val stationId = stationInfoModel.station_id.toInt()
             val stationStatus = this._stationIdToStation[stationId]
                 ?: throw Exception("Unable to find station for $stationId")
@@ -65,7 +67,9 @@ class CitiRequester {
                     stationStatus.num_docks_available.toString(),
                     stationInfoModel.name,
                     stationInfoModel.station_id.toInt(),
-                    distanceDescription
+                    distanceDescription,
+                    isClosestStation = stationInfoModelDecorated.isClosest,
+                    isFavorite = stationInfoModelDecorated.isFavorite
                 )
             )
         }
