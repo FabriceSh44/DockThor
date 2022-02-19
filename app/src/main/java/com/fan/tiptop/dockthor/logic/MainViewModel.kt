@@ -65,6 +65,10 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     private fun toggleSelectedStation(station: CitiStationStatus) {
+        if(!station.isFavorite)
+        {
+            return
+        }
         val currentList: List<CitiStationStatus> = citiStationStatusLD.value ?: return
         citiStationStatusLD.value =
             toggleSelectedStatus(
@@ -128,10 +132,8 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     fun onActionClick(station: CitiStationStatus): Intent? {
         if (!contextualBarNotVisible.value!!) {
-            toggleSelectedStation(station)
-        }
-        else
-        {
+                toggleSelectedStation(station)
+        } else {
             return _kernel.getActionViewIntent(station)
         }
         return null
@@ -159,7 +161,8 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     fun containsInfoModel(stationModel: CitibikeStationInformationModel): Boolean {
-        val matchingStation: CitiStationStatus? = citiStationStatusLD.value?.find { x -> x.stationId== stationModel.station_id.toInt() }
-        return matchingStation!=null
+        val matchingStation: CitiStationStatus? =
+            citiStationStatusLD.value?.find { x -> x.stationId == stationModel.station_id.toInt() }
+        return matchingStation != null
     }
 }

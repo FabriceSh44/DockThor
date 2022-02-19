@@ -108,7 +108,9 @@ class MainFragment : Fragment() {
         override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
             return when (item.itemId) {
                 R.id.delete -> {
-                    mainViewModel.onItemDeleted()
+                    if (_mainViewModel != null) {
+                        mainViewModel.onItemDeleted()
+                    }
                     true
                 }
                 else -> false

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivity
 import com.fan.tiptop.citiapi.CitiKernel
 import com.fan.tiptop.citiapi.Location
 import com.fan.tiptop.citiapi.data.CitiStationStatus
@@ -78,8 +79,15 @@ class DockThorKernel(val dao: CitibikeStationInformationDao) {
 
     fun getActionViewIntent(station: CitiStationStatus) :Intent?{
         val location: Location = _citiKernel.getStationLocation(station.stationId) ?: return null
-        val uri: String = java.lang.String.format(Locale.ENGLISH, "geo:%f,%f", location.latitude, location.longitude)
-        return Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        val builder = Uri.Builder()
+        builder.scheme("https")
+            .authority("www.google.com")
+            .appendPath("maps")
+            .appendPath("dir")
+            .appendPath("")
+            .appendQueryParameter("api", "1")
+            .appendQueryParameter("destination", location.latitude.toString() + "," + location.longitude)
+        return Intent(Intent.ACTION_VIEW, Uri.parse(builder.build().toString()))
     }
 
 }
