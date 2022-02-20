@@ -3,135 +3,107 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.cardview.widget.CardView
+    <data>
+        <variable
+            name="numBikeAvailable"
+            type="String" />
+        <variable
+            name="numEbikeAvailable"
+            type="String" />
+        <variable
+            name="numDockAvailable"
+            type="String" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bikeConstraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="4dp">
+        android:padding="4dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bikeConstraintLayout"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/bikeImageView"
+            android:layout_width="@dimen/statusImageSideSize"
+            android:layout_height="@dimen/statusImageSideSize"
+            android:contentDescription="@string/bikeimage"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bikeTextView"
+            app:layout_constraintEnd_toEndOf="@+id/bikeTextView"
+            app:layout_constraintStart_toStartOf="@+id/bikeTextView"
+            app:srcCompat="@drawable/ic_baseline_pedal_bike_24" />
+
+        <ImageView
+            android:id="@+id/electricBikeImageView"
+            android:layout_width="@dimen/statusImageSideSize"
+            android:layout_height="@dimen/statusImageSideSize"
+            android:contentDescription="@string/electricbikeimage"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/electricBikeTextView"
+            app:layout_constraintEnd_toEndOf="@+id/electricBikeTextView"
+            app:layout_constraintStart_toStartOf="@+id/electricBikeTextView"
+            app:srcCompat="@drawable/ic_baseline_electric_bike_24" />
+
+        <ImageView
+            android:id="@+id/parkingImageView"
+            android:layout_width="@dimen/statusImageSideSize"
+            android:layout_height="@dimen/statusImageSideSize"
+            android:contentDescription="@string/parkingimage"
+            app:layout_constraintBottom_toTopOf="@+id/parkingTextView"
+            app:layout_constraintEnd_toEndOf="@+id/parkingTextView"
+            app:layout_constraintStart_toStartOf="@+id/parkingTextView"
+            app:srcCompat="@drawable/ic_baseline_local_parking_24" />
+
+
+        <TextView
+            android:id="@+id/electricBikeTextView"
+            style="@style/Theme.DockThor.TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="@{numEbikeAvailable, default=50}"
+            android:textSize="@dimen/statusNumbersTextSize"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintStart_toStartOf="@+id/guideline2" />
+
+        <TextView
+            android:id="@+id/bikeTextView"
+            style="@style/Theme.DockThor.TextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@{citiStationStatus.isClosestStation? @drawable/closest_background:(citiStationStatus.selected ?@drawable/selected_background:@drawable/default_background)}"
-            android:padding="4dp">
+            android:gravity="center"
+            android:text="@{numBikeAvailable, default=50}"
+            android:textSize="@dimen/statusNumbersTextSize"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline3" />
 
-            <ImageView
-                android:id="@+id/bikeImageView"
-                android:layout_width="@dimen/statusImageSideSize"
-                android:layout_height="@dimen/statusImageSideSize"
-                android:contentDescription="@string/bikeimage"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/bikeTextView"
-                app:layout_constraintEnd_toEndOf="@+id/bikeTextView"
-                app:layout_constraintStart_toStartOf="@+id/bikeTextView"
-                app:srcCompat="@drawable/ic_baseline_pedal_bike_24" />
+        <TextView
+            android:id="@+id/parkingTextView"
+            style="@style/Theme.DockThor.TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:text="@{numDockAvailable, default=50}"
+            android:textSize="@dimen/statusNumbersTextSize"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <ImageView
-                android:id="@+id/electricBikeImageView"
-                android:layout_width="@dimen/statusImageSideSize"
-                android:layout_height="@dimen/statusImageSideSize"
-                android:contentDescription="@string/electricbikeimage"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/electricBikeTextView"
-                app:layout_constraintEnd_toEndOf="@+id/electricBikeTextView"
-                app:layout_constraintStart_toStartOf="@+id/electricBikeTextView"
-                app:srcCompat="@drawable/ic_baseline_electric_bike_24" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.33" />
 
-            <ImageView
-                android:id="@+id/parkingImageView"
-                android:layout_width="@dimen/statusImageSideSize"
-                android:layout_height="@dimen/statusImageSideSize"
-                android:contentDescription="@string/parkingimage"
-                app:layout_constraintBottom_toTopOf="@+id/parkingTextView"
-                app:layout_constraintEnd_toEndOf="@+id/parkingTextView"
-                app:layout_constraintStart_toStartOf="@+id/parkingTextView"
-                app:srcCompat="@drawable/ic_baseline_local_parking_24" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.67" />
 
-            <TextView
-                android:id="@+id/addressTextView"
-                style="@style/Theme.DockThor.TextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp"
-                android:text="@{citiStationStatus.address, default=ADDRESS}"
-                android:textSize="@dimen/statusAddressTextSize"
-                app:layout_constraintBottom_toTopOf="@+id/bikeImageView"
-                app:layout_constraintEnd_toStartOf="@+id/distanceTextView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/electricBikeTextView"
-                style="@style/Theme.DockThor.TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:text="@{citiStationStatus.numEbikeAvailable, default=50}"
-                android:textSize="@dimen/statusNumbersTextSize"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline3"
-                app:layout_constraintStart_toStartOf="@+id/guideline2" />
-
-            <TextView
-                android:id="@+id/bikeTextView"
-                style="@style/Theme.DockThor.TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@{citiStationStatus.numBikeAvailable, default=50}"
-                android:textSize="@dimen/statusNumbersTextSize"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline3" />
-
-            <TextView
-                android:id="@+id/parkingTextView"
-                style="@style/Theme.DockThor.TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:text="@{citiStationStatus.numDockAvailable, default=50}"
-                android:textSize="@dimen/statusNumbersTextSize"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/distanceTextView"
-                style="@style/Theme.DockThor.TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{citiStationStatus.distance, default=1}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.33" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.67" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <data>
-
-        <variable
-            name="citiStationStatus"
-            type="com.fan.tiptop.citiapi.data.CitiStationStatus" />
-    </data>
 </layout>

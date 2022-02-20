@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.dockthor.databinding.StationStatusItemBinding
+import com.fan.tiptop.dockthor.databinding.StationCardViewBinding
 
 class CitiStationStatusAdapter(
     val clickListener: (station: CitiStationStatus) -> Unit,
@@ -23,14 +23,14 @@ class CitiStationStatusAdapter(
         holder.bind(item, clickListener, longClickListener)
     }
 
-    class CitiStationStatusViewHolder(val binding: StationStatusItemBinding) :
+    class CitiStationStatusViewHolder(val binding: StationCardViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         companion object {
             fun inflateFrom(parent: ViewGroup): CitiStationStatusViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding: StationStatusItemBinding =
-                    StationStatusItemBinding.inflate(layoutInflater, parent, false)
+                val binding: StationCardViewBinding =
+                    StationCardViewBinding.inflate(layoutInflater, parent, false)
                 return CitiStationStatusViewHolder(binding)
             }
         }

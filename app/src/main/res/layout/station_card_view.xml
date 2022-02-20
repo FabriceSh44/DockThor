@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bikeConstraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@{citiStationStatus.isClosestStation? @drawable/closest_background:(citiStationStatus.selected ?@drawable/selected_background:@drawable/default_background)}"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/addressTextView"
+                style="@style/Theme.DockThor.TextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:text="@{citiStationStatus.address, default=ADDRESS}"
+                android:textSize="@dimen/statusAddressTextSize"
+                app:layout_constraintBottom_toTopOf="@+id/stationStatusItem"
+                app:layout_constraintEnd_toStartOf="@+id/distanceTextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/distanceTextView"
+                style="@style/Theme.DockThor.TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{citiStationStatus.distance, default=1}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <include
+                android:id="@+id/stationStatusItem"
+                layout="@layout/station_status_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:numBikeAvailable="@{citiStationStatus.numBikeAvailable}"
+                app:numEbikeAvailable="@{citiStationStatus.numEbikeAvailable}"
+                app:numDockAvailable="@{citiStationStatus.numDockAvailable}"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <data>
+
+        <variable
+            name="citiStationStatus"
+            type="com.fan.tiptop.citiapi.data.CitiStationStatus" />
+    </data>
+</layout>
