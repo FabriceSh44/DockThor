@@ -9,19 +9,12 @@ plugins {
 
 android {
     signingConfigs {
-        debug {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyPassword RELEASE_KEY_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-        }
         release  {
             storeFile file(RELEASE_STORE_FILE)
             storePassword RELEASE_STORE_PASSWORD
             keyPassword RELEASE_KEY_PASSWORD
             keyAlias RELEASE_KEY_ALIAS
         }
-
     }
     compileSdk 31
 
@@ -68,7 +61,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.gms:play-services-location:19.0.1'
     kapt "androidx.room:room-compiler:2.4.1"
-    testImplementation 'junit:junit:'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
