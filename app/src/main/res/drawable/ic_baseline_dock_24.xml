@@ -1,0 +1,13 @@
+<vector android:height="24dp" android:viewportHeight="60" android:tint="@color/citibike_blue"
+    android:viewportWidth="52" android:width="16.969696dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@android:color/white"
+        android:pathData="M11.415,43.125L43.484,43.125A0.844,0.844 0,0 1,44.328 43.968L44.328,46.894A0.844,0.844 0,0 1,43.484 47.738L11.415,47.738A0.844,0.844 0,0 1,10.571 46.894L10.571,43.968A0.844,0.844 0,0 1,11.415 43.125z" />
+    <path android:fillColor="@android:color/white"
+        android:pathData="M19.096,11.594h4.752v31.71h-4.752z"/>
+    <path android:fillColor="@android:color/white"
+        android:pathData="M27.209,11.765h5.355v31.71h-5.355z"/>
+    <path android:fillColor="@android:color/white"
+        android:pathData="M21.138,8.902L30.514,8.902A2.049,2.049 0,0 1,32.564 10.951L32.564,18.466A2.049,2.049 0,0 1,30.514 20.516L21.138,20.516A2.049,2.049 0,0 1,19.089 18.466L19.089,10.951A2.049,2.049 0,0 1,21.138 8.902z" />
+    <path android:fillColor="@android:color/white"
+        android:pathData="m33.274,43.947 l-1.07,0.351 -1.071,-0.022 0.517,-15.745 0.536,-15.561 0.553,15.394z"/>
+</vector>

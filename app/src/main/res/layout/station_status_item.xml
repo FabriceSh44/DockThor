@@ -51,7 +51,7 @@
             app:layout_constraintBottom_toTopOf="@+id/parkingTextView"
             app:layout_constraintEnd_toEndOf="@+id/parkingTextView"
             app:layout_constraintStart_toStartOf="@+id/parkingTextView"
-            app:srcCompat="@drawable/ic_baseline_local_parking_24" />
+            app:srcCompat="@drawable/ic_baseline_dock_24" />
 
 
         <TextView
