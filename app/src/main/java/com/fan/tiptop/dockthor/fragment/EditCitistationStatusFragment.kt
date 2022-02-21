@@ -1,60 +1,40 @@
 package com.fan.tiptop.dockthor.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.fan.tiptop.dockthor.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.fan.tiptop.dockthor.databinding.FragmentEditCitistationStatusBinding
+import com.fan.tiptop.dockthor.logic.EditCitistationStatusViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EditCitistationStatusFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class EditCitistationStatusFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentEditCitistationStatusBinding? = null
+    private val binding get() = _binding!!
+    private var _viewModel: EditCitistationStatusViewModel? = null
+    private val viewModel get() = _viewModel!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_citistation_status, container, false)
+    ): View {
+        _binding = FragmentEditCitistationStatusBinding.inflate(inflater, container, false)
+        _viewModel = ViewModelProvider(this).get(EditCitistationStatusViewModel::class.java)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+        if (!requireArguments().isEmpty) {
+            val stationId = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).stationId
+            viewModel.initialize(stationId)
+        }
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EditCitistationStatusFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EditCitistationStatusFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        _viewModel = null
     }
 }

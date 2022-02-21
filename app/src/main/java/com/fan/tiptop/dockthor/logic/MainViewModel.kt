@@ -30,7 +30,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         get() = _navigateToSwitchFavStation
 
     //MODEL
-    private var _kernel: DockThorKernel = DockThorKernel(dao)
+    private var _kernel: DockThorKernel = DockThorKernel.getInstance(dao)
     private val _selectedStationsId: MutableList<Int> = mutableListOf()
 
     //METHODS

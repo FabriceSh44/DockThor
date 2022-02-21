@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.database.DockThorDatabase
 import com.fan.tiptop.dockthor.R
@@ -124,12 +125,15 @@ class MainFragment : Fragment() {
     }
 
     private fun actionClick(station: CitiStationStatus) {
-        val onActionClickIntent = mainViewModel.onActionClick(station)
-        if(onActionClickIntent!=null)
-        {
-            context?.startActivity(onActionClickIntent)
-        }
+        val action = MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(station.stationId)
+        this.findNavController().navigate(action)
+
+       // val onActionClickIntent = mainViewModel.onActionClick(station)
+        //if (onActionClickIntent != null) {
+       //     context?.startActivity(onActionClickIntent)
+        //}
     }
+
     private fun actionLongClick(station: CitiStationStatus) {
         mainViewModel.onActionLongClick(station)
     }

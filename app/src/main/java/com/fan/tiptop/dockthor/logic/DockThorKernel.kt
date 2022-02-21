@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import com.fan.tiptop.citiapi.CitiKernel
 import com.fan.tiptop.citiapi.Location
 import com.fan.tiptop.citiapi.data.CitiStationStatus
@@ -15,11 +14,10 @@ import com.fan.tiptop.dockthor.location.LocationManager
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import java.time.Duration
-import java.util.*
 import kotlin.time.toKotlinDuration
 
 
-class DockThorKernel(val dao: CitibikeStationInformationDao) {
+class DockThorKernel private constructor(val dao: CitibikeStationInformationDao) {
 
     //CITI
     private val _citiKernel: CitiKernel = CitiKernel()
@@ -88,6 +86,24 @@ class DockThorKernel(val dao: CitibikeStationInformationDao) {
             .appendQueryParameter("api", "1")
             .appendQueryParameter("destination", location.latitude.toString() + "," + location.longitude)
         return Intent(Intent.ACTION_VIEW, Uri.parse(builder.build().toString()))
+    }
+    companion object {
+        private const val TAG = "DockThorKernel"
+        private var _instance: DockThorKernel? = null
+
+        @Synchronized
+        fun getInstance(dao: CitibikeStationInformationDao): DockThorKernel {
+            if (null == _instance) _instance = DockThorKernel(dao)
+            return _instance!!
+        }
+
+        @Synchronized
+        fun getInstance(): DockThorKernel {
+            checkNotNull(_instance) {
+                throw Exception("DockThorKernel is not initialized, call getInstance(dao) first")
+            }
+            return _instance as DockThorKernel
+        }
     }
 
 }
