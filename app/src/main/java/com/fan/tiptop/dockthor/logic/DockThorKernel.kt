@@ -75,7 +75,7 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         })
     }
 
-    fun getActionViewIntent(station: CitiStationStatus) :Intent?{
+    fun getActionViewIntent(station: CitiStationStatus): Intent? {
         val location: Location = _citiKernel.getStationLocation(station.stationId) ?: return null
         val builder = Uri.Builder()
         builder.scheme("https")
@@ -84,9 +84,23 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
             .appendPath("dir")
             .appendPath("")
             .appendQueryParameter("api", "1")
-            .appendQueryParameter("destination", location.latitude.toString() + "," + location.longitude)
+            .appendQueryParameter(
+                "destination",
+                location.latitude.toString() + "," + location.longitude
+            )
         return Intent(Intent.ACTION_VIEW, Uri.parse(builder.build().toString()))
     }
+
+    suspend fun addStationToFavorite(station: CitiStationStatus) {
+        val stationInfoModel = _citiKernel.getCitiInfoModel(station.stationId) ?: return
+        dao.insert(stationInfoModel.model)
+    }
+
+    suspend fun removeStationFromFavorite(station: CitiStationStatus) {
+        val stationInfoModel = _citiKernel.getCitiInfoModel(station.stationId) ?: return
+        dao.delete(stationInfoModel.model)
+    }
+
     companion object {
         private const val TAG = "DockThorKernel"
         private var _instance: DockThorKernel? = null

@@ -125,7 +125,7 @@ class MainFragment : Fragment() {
     }
 
     private fun actionClick(station: CitiStationStatus) {
-        val action = MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(station.stationId)
+        val action = MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(station)
         this.findNavController().navigate(action)
 
        // val onActionClickIntent = mainViewModel.onActionClick(station)

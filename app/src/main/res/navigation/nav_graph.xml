@@ -41,7 +41,7 @@
             android:id="@+id/action_editCitistationStatusFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
         <argument
-            android:name="stationId"
-            app:argType="integer" />
+            android:name="station"
+            app:argType="com.fan.tiptop.citiapi.data.CitiStationStatus" />
     </fragment>
 </navigation>

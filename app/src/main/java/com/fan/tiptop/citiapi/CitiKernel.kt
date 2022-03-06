@@ -96,5 +96,15 @@ class CitiKernel {
             _stationInformationModelMap.get(stationId)
         return get?.model?.let { Location(it.lat, it.lon, Duration.ZERO) }
     }
+
+    fun getCitiInfoModel(stationId: Int):  CitibikeStationInformationModelDecorated?{
+        val stationInfoModel = _stationInformationModelMap.get(stationId)
+        if(stationInfoModel==null)
+        {
+            Log.e(TAG, "Unable to retrieve station info model from station id {stationId}")
+            return null
+        }
+        return stationInfoModel
+    }
 }
 

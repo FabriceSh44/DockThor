@@ -14,18 +14,20 @@
         tools:context=".fragment.EditCitistationStatusFragment">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/favoriteImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/btn_star"
+            android:src="@{viewModel.isStationFavoriteLD? @android:drawable/btn_star_big_on:@android:drawable/btn_star_big_off}"
+            android:onClick="@{()->viewModel.onFavoriteClick()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/directionImageView"
             android:layout_width="199dp"
             android:layout_height="145dp"
             android:src="@android:drawable/ic_menu_directions"
+            android:onClick="@{()->viewModel.onDirectionClick()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,14 +37,16 @@
             android:id="@+id/stationNicknameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hello_blank_fragment"
+            android:text="@{viewModel.stationAddress}"
+            android:textSize="@dimen/statusAddressTextSize"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
             android:id="@+id/geofenceItem"
-            layout="@layout/geofence_setup_item"
+            layout="@layout/element_geofence_setup"
             android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -51,16 +55,16 @@
 
         <include
             android:id="@+id/stationStatusItem"
-            layout="@layout/station_status_item"
+            layout="@layout/element_station_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:numBikeAvailable='@{ "50" }'
-            app:numDockAvailable='@{ "50" }'
-            app:numEbikeAvailable='@{ "50" }'
+            app:layout_constraintTop_toBottomOf="@+id/favoriteImageView"
+            app:numBikeAvailable='@{viewModel.station.numBikeAvailable}'
+            app:numDockAvailable='@{viewModel.station.numDockAvailable}'
+            app:numEbikeAvailable='@{viewModel.station.numEbikeAvailable}'
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

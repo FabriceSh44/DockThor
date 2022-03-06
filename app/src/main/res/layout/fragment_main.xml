@@ -79,12 +79,8 @@
                 tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
     <data>
-
         <variable
             name="mainViewModel"
             type="com.fan.tiptop.dockthor.logic.MainViewModel" />

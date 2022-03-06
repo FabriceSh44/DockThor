@@ -27,7 +27,9 @@
         <Button
             android:id="@+id/sundayButton"
             android:layout_width="@dimen/round_side_size"
-            android:layout_height="@dimen/round_side_size"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/round_button"
             android:gravity="center_vertical|center_horizontal"
             android:text="S"
@@ -135,7 +137,6 @@
             android:ems="10"
             android:inputType="time"
             android:text="12:00"
-            app:layout_constraintBottom_toTopOf="@+id/enabledSwitch"
             app:layout_constraintEnd_toStartOf="@+id/endTime"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -154,32 +155,40 @@
             android:id="@+id/dockSeekBar"
             android:layout_width="208dp"
             android:layout_height="40dp"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="257dp" />
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Switch
             android:id="@+id/enabledSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
             android:text="Enabled"
-            tools:layout_editor_absoluteX="278dp"
-            tools:layout_editor_absoluteY="129dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/startTime" />
 
         <TextView
             android:id="@+id/dockTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:text="docks"
-            tools:layout_editor_absoluteX="237dp"
-            tools:layout_editor_absoluteY="265dp" />
+            app:layout_constraintBottom_toBottomOf="@+id/dockSeekBar"
+            app:layout_constraintStart_toEndOf="@+id/dockSeekBar"
+            app:layout_constraintTop_toTopOf="@+id/dockSeekBar" />
 
         <TextView
             android:id="@+id/notifyTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
             android:text="Notify me if less than:"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="229dp" />
+            app:layout_constraintBottom_toTopOf="@+id/dockSeekBar"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -137,7 +137,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
             val context = addressTable.context
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val row = inflater.inflate(R.layout.partial_suggestion_station_row, null) as TableRow
+            val row = inflater.inflate(R.layout.element_suggestion_station_row, null) as TableRow
             val addressView: TextView = getTextViewWithStyle(context, ssRow.name)
             row.addView(addressView)
             row.tag = ssRow

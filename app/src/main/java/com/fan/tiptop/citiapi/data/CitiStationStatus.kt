@@ -1,6 +1,10 @@
 package com.fan.tiptop.citiapi.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 // this dataclass contains everything necessary to draw a tile
+@Parcelize //to be transmitted as Argument
 data class CitiStationStatus(
     // retrieved from citi status api request
     val numBikeAvailable: String,
@@ -16,4 +20,4 @@ data class CitiStationStatus(
     var isFavorite: Boolean=false,
     //changed by user
     var selected: Boolean=false
-)
+): Parcelable

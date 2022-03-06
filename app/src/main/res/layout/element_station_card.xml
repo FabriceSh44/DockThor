@@ -44,7 +44,7 @@
 
             <include
                 android:id="@+id/stationStatusItem"
-                layout="@layout/station_status_item"
+                layout="@layout/element_station_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"

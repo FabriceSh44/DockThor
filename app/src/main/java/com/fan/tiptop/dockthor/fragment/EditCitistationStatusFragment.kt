@@ -25,9 +25,17 @@ class EditCitistationStatusFragment : Fragment() {
         _viewModel = ViewModelProvider(this).get(EditCitistationStatusViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+        viewModel.navigationIntentLD.observe(viewLifecycleOwner) { navigationIntent ->
+            navigationIntent?.let {
+                context?.startActivity(
+                    it
+                )
+            }
+
+        }
         if (!requireArguments().isEmpty) {
-            val stationId = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).stationId
-            viewModel.initialize(stationId)
+            val station = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).station
+            viewModel.initialize(station)
         }
         return binding.root
     }

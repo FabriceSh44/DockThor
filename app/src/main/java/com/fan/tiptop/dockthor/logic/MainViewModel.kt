@@ -133,8 +133,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     fun onActionClick(station: CitiStationStatus): Intent? {
         if (!contextualBarNotVisible.value!!) {
                 toggleSelectedStation(station)
-        } else {
-            return _kernel.getActionViewIntent(station)
         }
         return null
     }
