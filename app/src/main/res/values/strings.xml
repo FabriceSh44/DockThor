@@ -16,4 +16,11 @@
     <string name="content_description_delete">delete</string>
     <string name="delete">delete</string>
     <string name="addFavStation">submit</string>
+    <string name="s_letter">S</string>
+    <string name="w_letter">W</string>
+    <string name="t_letter">T</string>
+    <string name="f_letter">F</string>
+    <string name="m_letter">M</string>
+    <string name="startTimeDefault">08:00</string>
+    <string name="endTimeDefault">9:45</string>
 </resources>

@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable
-            name="viewModel"
-            type="com.fan.tiptop.dockthor.logic.EditCitistationStatusViewModel" />
-    </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/editFragmentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,22 +12,22 @@
         <ImageView
             android:id="@+id/favoriteImageView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@{viewModel.isStationFavoriteLD? @android:drawable/btn_star_big_on:@android:drawable/btn_star_big_off}"
+            android:layout_height="0dp"
             android:onClick="@{()->viewModel.onFavoriteClick()}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:src="@{viewModel.isStationFavoriteLD? @android:drawable/btn_star_big_on:@android:drawable/btn_star_big_off}"
+            app:layout_constraintBottom_toBottomOf="@+id/stationNicknameTextView"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
+            app:layout_constraintTop_toTopOf="@+id/stationNicknameTextView" />
 
         <ImageView
             android:id="@+id/directionImageView"
             android:layout_width="199dp"
             android:layout_height="145dp"
-            android:src="@android:drawable/ic_menu_directions"
             android:onClick="@{()->viewModel.onDirectionClick()}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@android:drawable/ic_menu_directions"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineBottom2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/geofenceItem" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/stationNicknameTextView"
@@ -39,18 +35,46 @@
             android:layout_height="wrap_content"
             android:text="@{viewModel.stationAddress}"
             android:textSize="@dimen/statusAddressTextSize"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTop2" />
 
-        <include
-            android:id="@+id/geofenceItem"
-            layout="@layout/element_geofence_setup"
-            android:layout_width="0dp"
-            android:visibility="gone"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineBottom2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.98" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineLeft2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.02" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineRight2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.98" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.02" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/geofenceSetupfragmentContainerView"
+            android:name="com.fan.tiptop.dockthor.fragment.GeofenceSetupFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/directionImageView"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
             app:layout_constraintTop_toBottomOf="@+id/stationStatusItem" />
 
         <include
@@ -58,13 +82,20 @@
             layout="@layout/element_station_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="32dp"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/favoriteImageView"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
+            app:layout_constraintTop_toBottomOf="@+id/stationNicknameTextView"
             app:numBikeAvailable='@{viewModel.station.numBikeAvailable}'
             app:numDockAvailable='@{viewModel.station.numDockAvailable}'
-            app:numEbikeAvailable='@{viewModel.station.numEbikeAvailable}'
-            />
+            app:numEbikeAvailable='@{viewModel.station.numEbikeAvailable}' />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.fan.tiptop.dockthor.logic.EditCitistationStatusViewModel" />
+    </data>
 </layout>

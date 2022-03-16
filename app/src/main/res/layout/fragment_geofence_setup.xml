@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".fragment.GeofenceSetupFragment">
+
+        <TextView
+            android:id="@+id/geofenceTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Geofence"
+            android:textSize="@dimen/statusAddressTextSize"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/black_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/geofenceTextView">
+
+            <EditText
+                android:id="@+id/endTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:inputType="time"
+                android:text="@{viewModel.endTimeLD, default=@string/endTimeDefault}"
+                android:onQueryTextSubmit="@{()->viewModel.onEndTimeSubmitted()}"
+                android:textSize="@dimen/statusAddressTextSize"
+                app:layout_constraintBottom_toBottomOf="@+id/startTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/startTime"
+                app:layout_constraintTop_toTopOf="@+id/startTime" />
+
+            <EditText
+                android:id="@+id/startTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:inputType="time"
+                android:text="@{viewModel.startTimeLD, default=@string/startTimeDefault}"
+                android:textSize="@dimen/statusAddressTextSize"
+                android:onQueryTextSubmit="@{()->viewModel.onStartTimeSubmitted()}"
+                app:layout_constraintEnd_toStartOf="@+id/endTime"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/helpImageView" />
+
+            <ImageView
+                android:id="@+id/helpImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="3dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_menu_help" />
+
+            <SeekBar
+                android:id="@+id/dockSeekBar"
+                android:layout_width="208dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:progress="@={viewModel.progressLD}"
+                android:max="@{viewModel.maxDockValueLD}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notifyTextView" />
+
+            <TextView
+                android:id="@+id/dockTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="@={`` + viewModel.progressLD }"
+                app:layout_constraintBottom_toBottomOf="@+id/dockSeekBar"
+                app:layout_constraintStart_toEndOf="@+id/dockSeekBar"
+                app:layout_constraintTop_toTopOf="@+id/dockSeekBar" />
+
+            <TextView
+                android:id="@+id/notifyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Notify me if less than:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sundayButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sundayButton"
+                android:onClick="@{()->viewModel.onSundayButtonClick()}"
+                android:backgroundTint="@{viewModel.isSundayPickedLD? @color/design_default_color_primary: @color/primary_disabled}"
+                style="@style/WeekButton"
+                app:cornerRadius="@dimen/half_round_side_size"
+                android:text="@string/s_letter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/saturdayButton"
+                app:layout_constraintTop_toBottomOf="@+id/enabledSwitch" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/wednesdayButton"
+                android:backgroundTint="@{viewModel.isWednesdayPickedLD? @color/design_default_color_primary: @color/primary_disabled}"
+                android:onClick="@{()->viewModel.onWednesdayButtonClick()}"
+                style="@style/WeekButton"
+                app:cornerRadius="@dimen/half_round_side_size"
+                android:text="@string/w_letter"
+                app:layout_constraintBottom_toBottomOf="@+id/thursdayButton"
+                app:layout_constraintEnd_toStartOf="@+id/thursdayButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tuesdayButton"
+                app:layout_constraintTop_toTopOf="@+id/thursdayButton"
+                 />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tuesdayButton"
+                android:backgroundTint="@{viewModel.isTuesdayPickedLD? @color/design_default_color_primary: @color/primary_disabled}"
+                android:onClick="@{()->viewModel.onTuesdayButtonClick()}"
+                style="@style/WeekButton"
+                app:cornerRadius="@dimen/half_round_side_size"
+                android:text="@string/t_letter"
+                app:layout_constraintBottom_toBottomOf="@+id/wednesdayButton"
+                app:layout_constraintEnd_toStartOf="@+id/wednesdayButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/mondayButton"
+                app:layout_constraintTop_toTopOf="@+id/wednesdayButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/thursdayButton"
+                android:backgroundTint="@{viewModel.isThursdayPickedLD? @color/design_default_color_primary: @color/primary_disabled}"
+                android:onClick="@{()->viewModel.onThursdayButtonClick()}"
+                style="@style/WeekButton"
+                app:cornerRadius="@dimen/half_round_side_size"
+                android:text="@string/t_letter"
+                app:layout_constraintBottom_toBottomOf="@+id/fridayButton"
+                app:layout_constraintEnd_toStartOf="@+id/fridayButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/wednesdayButton"
+                app:layout_constraintTop_toTopOf="@+id/fridayButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fridayButton"
+                android:backgroundTint="@{viewModel.isFridayPickedLD? @color/design_default_color_primary: @color/primary_disabled}"
+                android:onClick="@{()->viewModel.onFridayButtonClick()}"
+                style="@style/WeekButton"
+                app:cornerRadius="@dimen/half_round_side_size"
+                android:text="@string/f_letter"
+                app:layout_constraintBottom_toBottomOf="@+id/saturdayButton"
+                app:layout_constraintEnd_toStartOf="@+id/saturdayButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/thursdayButton"
+                app:layout_constraintTop_toTopOf="@+id/saturdayButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/mondayButton"
+                android:backgroundTint="@{viewModel.isMondayPickedLD? @color/design_default_color_primary: @color/primary_disabled}"
+                android:onClick="@{()->viewModel.onMondayButtonClick()}"
+                style="@style/WeekButton"
+                app:cornerRadius="@dimen/half_round_side_size"
+                android:text="@string/m_letter"
+                app:layout_constraintBottom_toBottomOf="@+id/tuesdayButton"
+                app:layout_constraintEnd_toStartOf="@+id/tuesdayButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tuesdayButton" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saturdayButton"
+                android:backgroundTint="@{viewModel.isSaturdayPickedLD? @color/design_default_color_primary: @color/primary_disabled}"
+                android:onClick="@{()->viewModel.onSaturdayButtonClick()}"
+                style="@style/WeekButton"
+                app:cornerRadius="@dimen/half_round_side_size"
+                android:text="@string/s_letter"
+                app:layout_constraintBottom_toBottomOf="@+id/sundayButton"
+                app:layout_constraintEnd_toStartOf="@+id/sundayButton"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/fridayButton"
+                app:layout_constraintTop_toTopOf="@+id/sundayButton" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/enabledSwitch"
+                android:onClick="@{()->viewModel.onEnabledSwitchClick()}"
+                android:checked="@{viewModel.isSwitchCheckedLD}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/startTime" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.fan.tiptop.dockthor.logic.GeofenceSetupViewModel" />
+    </data>
+</layout>

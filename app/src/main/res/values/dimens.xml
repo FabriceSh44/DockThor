@@ -10,5 +10,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="statusAddressTextSize">25sp</dimen>
     <dimen name="statusImageSideSize">35sp</dimen>
     <dimen name="round_side_size">48dp</dimen>
+    <dimen name="half_round_side_size">24dp</dimen>
 
 </resources>

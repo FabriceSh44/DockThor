@@ -14,5 +14,5 @@
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
     <color name="citibike_blue">#1566AE</color>
-    <color name="citibike_blue_night">#1E91F6</color>
+    <color name="primary_disabled">#C6DFCF</color>
 </resources>

@@ -1,7 +1,7 @@
 package com.fan.tiptop.dockthor
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.fan.tiptop.dockthor.location.LocationManager
 import com.fan.tiptop.dockthor.network.NetworkManager
 
@@ -13,6 +13,5 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
     }
-
 
 }

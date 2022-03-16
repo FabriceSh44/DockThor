@@ -1,5 +1,6 @@
 package com.fan.tiptop.dockthor.logic
 
+import android.app.AlarmManager
 import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
@@ -100,6 +101,34 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         val stationInfoModel = _citiKernel.getCitiInfoModel(station.stationId) ?: return
         dao.delete(stationInfoModel.model)
     }
+
+    fun addGeofenceToStation(citiStationStatus: CitiStationStatus) {
+        val stationInfoModel = _citiKernel.getCitiInfoModel(citiStationStatus.stationId) ?: return
+        LocationManager.getInstance().addGeofence(stationInfoModel.model, 3600)
+
+    }
+    fun removeGeofenceToStation(it: CitiStationStatus) {
+        TODO("Not yet implemented")
+    }
+
+    fun getCitistationStatus(stationId: Int): CitiStationStatus? {
+        NetworkManager.getInstance().stationStatusRequest(object : DefaultNetworkManagerListener {
+            override suspend fun getResult(result: String) {
+                if (result.isNotEmpty()) {
+                    val citiStationStatus: CitiStationStatus? =
+                        _citiKernel.getCitiStationStatus(result, stationId)
+                    Log.i(TAG, "Get citistationstatus   ${citiStationStatus}")
+                }
+            }
+
+            override suspend fun getError(error: String) {
+                Log.e(TAG, error)
+            }
+        })
+
+        return null
+    }
+
 
     companion object {
         private const val TAG = "DockThorKernel"

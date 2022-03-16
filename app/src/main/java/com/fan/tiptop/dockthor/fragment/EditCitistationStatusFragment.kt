@@ -22,20 +22,17 @@ class EditCitistationStatusFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditCitistationStatusBinding.inflate(inflater, container, false)
-        _viewModel = ViewModelProvider(this).get(EditCitistationStatusViewModel::class.java)
+        _viewModel = ViewModelProvider(this)[EditCitistationStatusViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         viewModel.navigationIntentLD.observe(viewLifecycleOwner) { navigationIntent ->
-            navigationIntent?.let {
-                context?.startActivity(
-                    it
-                )
-            }
-
+            navigationIntent?.let { context?.startActivity(it) }
         }
+
         if (!requireArguments().isEmpty) {
             val station = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).station
             viewModel.initialize(station)
+            binding.geofenceSetupfragmentContainerView.getFragment<GeofenceSetupFragment>().initialize(station)
         }
         return binding.root
     }
@@ -45,4 +42,5 @@ class EditCitistationStatusFragment : Fragment() {
         _binding = null
         _viewModel = null
     }
+
 }

@@ -55,6 +55,9 @@ class CitiKernel {
         }
     }
 
+    fun getCitiStationStatus(result: String, stationId: Int): CitiStationStatus? {
+        return _requester.getStationStatus(stationId, result)
+    }
     private fun updateOrAddClosestStation(
         stationInfoModelToDisplay: MutableList<CitibikeStationInformationModelDecorated>,
         closestStation: CitibikeStationInformationModelDecorated
@@ -106,5 +109,6 @@ class CitiKernel {
         }
         return stationInfoModel
     }
+
 }
 

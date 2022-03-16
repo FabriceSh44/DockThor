@@ -48,6 +48,9 @@ class EditCitistationStatusViewModel : ViewModel() {
             }
         }
     }
+    fun onSwitchClick(){
+        _station?.let{_kernel.addGeofenceToStation(it)}
+    }
 
     fun onDirectionClick() {
         _station?.let {

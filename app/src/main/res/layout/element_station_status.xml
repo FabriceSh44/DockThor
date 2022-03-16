@@ -3,17 +3,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
-        <variable
-            name="numBikeAvailable"
-            type="String" />
-        <variable
-            name="numEbikeAvailable"
-            type="String" />
-        <variable
-            name="numDockAvailable"
-            type="String" />
-    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bikeConstraintLayout"
         android:layout_width="match_parent"
@@ -105,5 +94,20 @@
             app:layout_constraintGuide_percent="0.67" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="numBikeAvailable"
+            type="String" />
+
+        <variable
+            name="numEbikeAvailable"
+            type="String" />
+
+        <variable
+            name="numDockAvailable"
+            type="String" />
+    </data>
 
 </layout>
