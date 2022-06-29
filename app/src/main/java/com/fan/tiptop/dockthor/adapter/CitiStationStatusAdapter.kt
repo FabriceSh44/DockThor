@@ -8,13 +8,11 @@ import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.dockthor.databinding.ElementStationCardBinding
 
 class CitiStationStatusAdapter(
-    val clickListener: (station: CitiStationStatus) -> Unit,
-    val longClickListener: (station: CitiStationStatus) -> Boolean
-) :
-    ListAdapter<CitiStationStatus, CitiStationStatusAdapter.CitiStationStatusViewHolder>(
-        CitiStationStatusDiffItemCallback()
-    ) {
-
+    private val clickListener: (station: CitiStationStatus) -> Unit,
+    private val longClickListener: (station: CitiStationStatus) -> Boolean
+) : ListAdapter<CitiStationStatus, CitiStationStatusAdapter.CitiStationStatusViewHolder>(
+    CitiStationStatusDiffItemCallback()
+) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CitiStationStatusViewHolder =
         CitiStationStatusViewHolder.inflateFrom(parent)
 

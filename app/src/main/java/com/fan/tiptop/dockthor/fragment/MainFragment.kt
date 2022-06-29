@@ -13,9 +13,10 @@ import com.fan.tiptop.citiapi.database.DockThorDatabase
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
-import com.fan.tiptop.dockthor.logic.MainSwipeController
 import com.fan.tiptop.dockthor.logic.MainViewModel
 import com.fan.tiptop.dockthor.logic.MainViewModelFactory
+import com.fan.tiptop.dockthor.logic.main_swipe.MainSwipeController
+import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
 
 
 class MainFragment : Fragment() {
@@ -54,7 +55,13 @@ class MainFragment : Fragment() {
         binding.citibikeStatusList.adapter = adapter
 
         //this allow swiping on each view holder of the recyler view
-        val ith = ItemTouchHelper(MainSwipeController())
+        val ith =
+            ItemTouchHelper(MainSwipeController { station: CitiStationStatus, swipeSide: SwipeSide ->
+                mainViewModel.onSwipedCitiStationStatus(
+                    station,
+                    swipeSide
+                )
+            })
         ith.attachToRecyclerView(binding.citibikeStatusList)
 
         // this connect the model citistation status to the adapter which setup view
@@ -131,12 +138,13 @@ class MainFragment : Fragment() {
     }
 
     private fun actionClick(station: CitiStationStatus) {
-        val action = MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(station)
+        val action =
+            MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(station)
         this.findNavController().navigate(action)
 
-       // val onActionClickIntent = mainViewModel.onActionClick(station)
+        // val onActionClickIntent = mainViewModel.onActionClick(station)
         //if (onActionClickIntent != null) {
-       //     context?.startActivity(onActionClickIntent)
+        //     context?.startActivity(onActionClickIntent)
         //}
     }
 

@@ -1,4 +1,4 @@
-package com.fan.tiptop.dockthor.logic
+package com.fan.tiptop.dockthor.logic.main_swipe
 
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,15 +10,17 @@ import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
+import com.fan.tiptop.citiapi.data.CitiStationStatus
+import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 
-
-internal enum class ButtonsState {
-    GONE, LEFT_VISIBLE, RIGHT_VISIBLE
+enum class SwipeSide {
+    GONE, DOCK, BIKE
 }
 
-class MainSwipeController() : ItemTouchHelper.Callback() {
+class MainSwipeController(var onSwipedCitiStationStatus: (station: CitiStationStatus, swipeSide: SwipeSide) -> Unit) :
+    ItemTouchHelper.Callback() {
     private var swipeBack: Boolean = false
-    private var buttonShowedState: ButtonsState = ButtonsState.GONE
+    private var buttonShowedState: SwipeSide = SwipeSide.GONE
     private val buttonWidth = 300f
     private var buttonInstance: Parcelable? = null
     override fun getMovementFlags(
@@ -60,9 +62,15 @@ class MainSwipeController() : ItemTouchHelper.Callback() {
                 swipeBack =
                     event.action == MotionEvent.ACTION_CANCEL || event.action == MotionEvent.ACTION_UP
                 if (swipeBack) {
-                    if (dX < -buttonWidth) buttonShowedState = ButtonsState.RIGHT_VISIBLE;
-                    else if (dX > buttonWidth) buttonShowedState = ButtonsState.LEFT_VISIBLE;
-
+                    var citistationsStatus: CitiStationStatus? =
+                        (viewHolder as CitiStationStatusAdapter.CitiStationStatusViewHolder).binding.citiStationStatus
+                    citistationsStatus?.let {
+                        if (dX < -buttonWidth) {
+                            onSwipedCitiStationStatus(it, SwipeSide.BIKE)
+                        } else if (dX > buttonWidth) {
+                            onSwipedCitiStationStatus(it, SwipeSide.DOCK)
+                        }
+                    }
                 }
                 return false
             }
@@ -80,7 +88,7 @@ class MainSwipeController() : ItemTouchHelper.Callback() {
             itemView.top.toFloat(), itemView.left + buttonWidthWithoutPadding,
             itemView.bottom.toFloat()
         )
-        p.setColor(Color.MAGENTA)
+        p.color = Color.MAGENTA
         c.drawRoundRect(leftButton, corners, corners, p)
         drawText("CLOSEST\nDOCK", c, leftButton, p)
         val rightButton = RectF(
@@ -91,9 +99,9 @@ class MainSwipeController() : ItemTouchHelper.Callback() {
         c.drawRoundRect(rightButton, corners, corners, p)
         drawText("CLOSEST BIKE", c, rightButton, p)
         buttonInstance = null
-        if (buttonShowedState === ButtonsState.LEFT_VISIBLE) {
+        if (buttonShowedState == SwipeSide.DOCK) {
             buttonInstance = leftButton
-        } else if (buttonShowedState === ButtonsState.RIGHT_VISIBLE) {
+        } else if (buttonShowedState == SwipeSide.BIKE) {
             buttonInstance = rightButton
         }
     }

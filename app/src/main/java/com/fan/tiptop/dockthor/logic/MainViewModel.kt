@@ -8,12 +8,16 @@ import androidx.lifecycle.viewModelScope
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
+import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
 import kotlinx.coroutines.launch
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
+
     //LOG
     private val TAG = "DockThorViewModel"
+
+    private val MIN_TO_REPLACE: Int = 0
 
     //DISPLAY
     val errorToDisplayLD = MutableLiveData("")
@@ -44,12 +48,10 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     private fun initializeKernel() {
         isLoadingLD.value = true
-        viewModelScope.launch {
-            _kernel.initialize { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
-                citiStationStatusLD.value = citiStationStatus
-                errorToDisplayLD.value = errorToDisplay
-                isLoadingLD.value = false
-            }
+        _kernel.initialize { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
+            citiStationStatusLD.value = citiStationStatus
+            errorToDisplayLD.value = errorToDisplay
+            isLoadingLD.value = false
         }
     }
 
@@ -65,8 +67,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     private fun toggleSelectedStation(station: CitiStationStatus) {
-        if(!station.isFavorite)
-        {
+        if (!station.isFavorite) {
             return
         }
         val currentList: List<CitiStationStatus> = citiStationStatusLD.value ?: return
@@ -99,6 +100,16 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         }
     }
 
+    fun onSwipedCitiStationStatus(citiStationStatus: CitiStationStatus, swipeSide: SwipeSide) {
+        if (swipeSide == SwipeSide.DOCK && citiStationStatus.numDockAvailable.toInt() > MIN_TO_REPLACE) {
+            errorToDisplayLD.value = "Station has enough docks"
+            return;
+        }
+        if (swipeSide == SwipeSide.BIKE && citiStationStatus.numBikeAvailable.toInt() > MIN_TO_REPLACE) {
+            errorToDisplayLD.value = "Station has enough bikes"
+            return;
+        }
+    }
 
     fun onAddFavStationClicked() {
         _navigateToSwitchFavStation.value = true;
@@ -132,7 +143,7 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     fun onActionClick(station: CitiStationStatus): Intent? {
         if (!contextualBarNotVisible.value!!) {
-                toggleSelectedStation(station)
+            toggleSelectedStation(station)
         }
         return null
     }

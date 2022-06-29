@@ -14,6 +14,7 @@ import com.fan.tiptop.dockthor.alarm.AlarmInput
 import com.fan.tiptop.dockthor.alarm.AlarmManager
 import com.fan.tiptop.dockthor.location.DefaultLocationManagerListener
 import com.fan.tiptop.dockthor.location.LocationManager
+import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import java.time.Duration
@@ -22,14 +23,14 @@ import kotlin.time.toKotlinDuration
 
 class DockThorKernel private constructor(val dao: CitibikeStationInformationDao) {
 
-    private val setGeofenceIntent: PendingIntent?= null
+    private val setGeofenceIntent: PendingIntent? = null
 
     //CITI
     private val _citiKernel: CitiKernel = CitiKernel()
 
     //LOG
     private val TAG = "DockThorKernel"
-    suspend fun initialize(function: (List<CitiStationStatus>, String) -> Unit) {
+    fun initialize(function: (List<CitiStationStatus>, String) -> Unit) {
         NetworkManager.getInstance().stationInformationRequest(
             object : DefaultNetworkManagerListener {
                 override suspend fun getResult(result: String) {
@@ -128,6 +129,7 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
 
         return null
     }
+
 
     fun removeAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
         for (alarmInput in alarmInputs) {
