@@ -8,7 +8,7 @@ import com.fan.tiptop.dockthor.network.NetworkManager
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        NetworkManager.getInstance(this);
+        NetworkManager.getInstance(this)
         LocationManager.getInstance(this)
 
         setContentView(R.layout.activity_main)
