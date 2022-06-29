@@ -7,11 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.database.DockThorDatabase
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
+import com.fan.tiptop.dockthor.logic.MainSwipeController
 import com.fan.tiptop.dockthor.logic.MainViewModel
 import com.fan.tiptop.dockthor.logic.MainViewModelFactory
 
@@ -50,6 +52,10 @@ class MainFragment : Fragment() {
                 true
             })
         binding.citibikeStatusList.adapter = adapter
+
+        //this allow swiping on each view holder of the recyler view
+        val ith = ItemTouchHelper(MainSwipeController())
+        ith.attachToRecyclerView(binding.citibikeStatusList)
 
         // this connect the model citistation status to the adapter which setup view
         mainViewModel.citiStationStatusLD.observe(
