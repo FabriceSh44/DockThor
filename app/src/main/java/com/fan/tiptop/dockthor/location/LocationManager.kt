@@ -79,12 +79,6 @@ class LocationManager private constructor(val context: AppCompatActivity) {
                     permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                         // Only approximate location access granted.
                     }
-                    permissions.getOrDefault(
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                        false
-                    ) -> {
-                        // Only approximate location access granted.
-                    }
                     else -> {
                         // No location access granted.
                         _hasLocationPermission = false
@@ -95,8 +89,7 @@ class LocationManager private constructor(val context: AppCompatActivity) {
             requestPermissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             )
         } else {

@@ -7,12 +7,13 @@ import com.fan.tiptop.dockthor.alarm.AlarmInput
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
-class GeofenceSetupViewModel : ViewModel() {
+class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
 
     private val pickDayOfWeeks: MutableSet<DayOfWeek> = mutableSetOf()
-    private var _kernel: DockThorKernel? = null
-    private var _station: CitiStationStatus? = null
+    private var _kernel: DockThorKernel
     val isMondayPickedLD = MutableLiveData(false)
     val isTuesdayPickedLD = MutableLiveData(false)
     val isWednesdayPickedLD = MutableLiveData(false)
@@ -26,20 +27,26 @@ class GeofenceSetupViewModel : ViewModel() {
     val startTimeLD = MutableLiveData("8:00")
     val endTimeLD = MutableLiveData("9:45")
 
+    init {
+        _kernel = DockThorKernel.getInstance()
+
+    }
+
     fun onEnabledSwitchClick() {
         val alarmInputs: List<AlarmInput> = this.toListAlarmInput()
         isSwitchCheckedLD.value = isSwitchCheckedLD.value?.not()
         if (isSwitchCheckedLD.value == true) {
-            _station?.let { _kernel?.addGeofenceToStation(it) }
+             _kernel.addAlarmForStation(station, alarmInputs)
         } else {
-            _station?.let { _kernel?.removeGeofenceToStation(it) }
+             _kernel.removeAlarmForStation(station, alarmInputs)
         }
     }
 
     private fun toListAlarmInput(): List<AlarmInput> {
         val result = mutableListOf<AlarmInput>()
-        val startTime: LocalTime? = startTimeLD.value?.let { LocalTime.parse(it) }
-        val endTime: LocalTime? = endTimeLD.value?.let { LocalTime.parse(it) }
+        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("H:m", Locale.ENGLISH)
+        val startTime: LocalTime? = startTimeLD.value?.let { LocalTime.parse(it, dtf) }
+        val endTime: LocalTime? = endTimeLD.value?.let { LocalTime.parse(it, dtf) }
         if (startTime == null || endTime == null) {
             return mutableListOf()
         }
@@ -73,10 +80,8 @@ class GeofenceSetupViewModel : ViewModel() {
         }
     }
 
-    fun onStartTimeSubmitted()
-    {}
-    fun onEndTimeSubmitted()
-    {}
+    fun onStartTimeSubmitted() {}
+    fun onEndTimeSubmitted() {}
     fun onMondayButtonClick() {
         isMondayPickedLD.value = isMondayPickedLD.value?.not()
         updateDayOfWeeks(isMondayPickedLD, DayOfWeek.MONDAY)
@@ -110,10 +115,5 @@ class GeofenceSetupViewModel : ViewModel() {
     fun onSundayButtonClick() {
         isSundayPickedLD.value = isSundayPickedLD.value?.not()
         updateDayOfWeeks(isSundayPickedLD, DayOfWeek.SUNDAY)
-    }
-
-    fun initialize(station: CitiStationStatus) {
-        _station = station
-        _kernel = DockThorKernel.getInstance()
     }
 }

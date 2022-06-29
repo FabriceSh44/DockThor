@@ -28,7 +28,7 @@ class AlarmManager(val context: AppCompatActivity) {
             set(Calendar.MINUTE, alarmInput.minuteOfDay)
         }
         Log.i(
-            AlarmManager.TAG,
+            TAG,
             "Adding alarm for day:${alarmInput.dayOfWeek} hourOfDay:${alarmInput.hourOfDay} minuteOfDay:${alarmInput.minuteOfDay} => timeInMillis:${calendar.timeInMillis}"
         )
         _alarmManagerAndroid?.setExactAndAllowWhileIdle(
@@ -36,6 +36,10 @@ class AlarmManager(val context: AppCompatActivity) {
             calendar.timeInMillis,
             geofenceIntent
         )
+    }
+
+    fun removeAlarm(alarmInput: AlarmInput) {
+        TODO("Not yet implemented")
     }
 
     companion object {

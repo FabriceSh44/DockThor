@@ -1,6 +1,6 @@
 package com.fan.tiptop.dockthor.logic
 
-import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
@@ -10,6 +10,8 @@ import com.fan.tiptop.citiapi.Location
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
 import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
+import com.fan.tiptop.dockthor.alarm.AlarmInput
+import com.fan.tiptop.dockthor.alarm.AlarmManager
 import com.fan.tiptop.dockthor.location.DefaultLocationManagerListener
 import com.fan.tiptop.dockthor.location.LocationManager
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
@@ -19,6 +21,8 @@ import kotlin.time.toKotlinDuration
 
 
 class DockThorKernel private constructor(val dao: CitibikeStationInformationDao) {
+
+    private val setGeofenceIntent: PendingIntent?= null
 
     //CITI
     private val _citiKernel: CitiKernel = CitiKernel()
@@ -105,10 +109,6 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
     fun addGeofenceToStation(citiStationStatus: CitiStationStatus) {
         val stationInfoModel = _citiKernel.getCitiInfoModel(citiStationStatus.stationId) ?: return
         LocationManager.getInstance().addGeofence(stationInfoModel.model, 3600)
-
-    }
-    fun removeGeofenceToStation(it: CitiStationStatus) {
-        TODO("Not yet implemented")
     }
 
     fun getCitistationStatus(stationId: Int): CitiStationStatus? {
@@ -129,9 +129,22 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         return null
     }
 
+    fun removeAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
+        for (alarmInput in alarmInputs) {
+            AlarmManager.getInstance().removeAlarm(alarmInput)
+        }
+    }
+
+    fun addAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
+        for (alarmInput in alarmInputs) {
+            if (setGeofenceIntent != null) {
+                AlarmManager.getInstance().setAlarm(setGeofenceIntent, alarmInput)
+            }
+        }
+    }
+
 
     companion object {
-        private const val TAG = "DockThorKernel"
         private var _instance: DockThorKernel? = null
 
         @Synchronized
