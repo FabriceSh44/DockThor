@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.fan.tiptop.dockthor.databinding.FragmentEditCitistationStatusBinding
+import com.fan.tiptop.dockthor.logic.EditCitistationStatusModelFactory
 import com.fan.tiptop.dockthor.logic.EditCitistationStatusViewModel
 
 
@@ -22,17 +23,19 @@ class EditCitistationStatusFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditCitistationStatusBinding.inflate(inflater, container, false)
-        _viewModel = ViewModelProvider(this)[EditCitistationStatusViewModel::class.java]
-        binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        viewModel.navigationIntentLD.observe(viewLifecycleOwner) { navigationIntent ->
-            navigationIntent?.let { context?.startActivity(it) }
-        }
 
         if (!requireArguments().isEmpty) {
             val station = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).station
-            viewModel.initialize(station)
-            binding.geofenceSetupfragmentContainerView.getFragment<GeofenceSetupFragment>().initialize(station)
+            val viewModelFactory = EditCitistationStatusModelFactory(station)
+            _viewModel = ViewModelProvider(this, viewModelFactory).get(EditCitistationStatusViewModel::class.java)
+            binding.viewModel = viewModel
+            val  geofenceSetupFragment =childFragmentManager.fragments.firstOrNull() as GeofenceSetupFragment
+            geofenceSetupFragment.setStation(station)
+            viewModel.navigationIntentLD.observe(viewLifecycleOwner) { navigationIntent ->
+                navigationIntent?.let { context?.startActivity(it) }
+                // binding.geofenceSetupfragmentContainerView.getFragment<GeofenceSetupFragment>().initialize(station)
+            }
         }
         return binding.root
     }
