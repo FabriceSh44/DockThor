@@ -37,10 +37,6 @@ class CitiKernel {
         stationInfoModelToDisplay: MutableList<CitibikeStationInformationModelDecorated>,
         userLocation: Location?
     ): List<CitiStationStatus> {
-        if (userLocation != null) {
-            val closestStation = getClosestStation(userLocation)
-            updateOrAddClosestStation(stationInfoModelToDisplay, closestStation)
-        }
         try {
             if (stationInfoModelToDisplay.isNotEmpty()) {
                 return _requester.getAvailabilitiesWithLocation(
