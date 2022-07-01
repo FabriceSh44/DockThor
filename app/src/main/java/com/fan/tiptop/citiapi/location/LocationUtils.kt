@@ -1,5 +1,8 @@
 package com.fan.tiptop.citiapi.location
 
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
+import com.fan.tiptop.citiapi.data.Location
 import java.text.DecimalFormat
 import kotlin.math.*
 
@@ -27,7 +30,35 @@ class LocationUtils {
             val dec = DecimalFormat("#,###.00")
             return "${dec.format(distance)}mi"
         }
-
+        fun getDropShapedClosestStation(
+            userLocation: Location?,
+            targetStation: CitibikeStationInformationModel,
+            listModel: List<CitibikeStationInformationModel>
+        ): List<CitibikeStationInformationModelDecorated> {
+            if (userLocation==null)
+                return listOf()
+            var closestStation = listModel.first()
+            var minDistance: Double = Double.MAX_VALUE
+            for (stationInfo in listModel) {
+                val stationDistance = computeDistance(
+                    userLocation.latitude,
+                    userLocation.longitude,
+                    stationInfo.lat,
+                    stationInfo.lon
+                )
+                if (stationDistance < minDistance) {
+                    minDistance = stationDistance
+                    closestStation = stationInfo
+                }
+            }
+            return listOf(
+                CitibikeStationInformationModelDecorated(
+                    closestStation,
+                    isFavorite = false,
+                    distanceRank = 0f
+                )
+            )
+        }
         fun computeDistance(
             userLatitude: Double,
             userLongitude: Double,
@@ -61,4 +92,6 @@ class LocationUtils {
             return c * r
         }
     }
+
+
 }

@@ -1,6 +1,6 @@
 package com.fan.tiptop.dockthor.location
 
-import com.fan.tiptop.citiapi.Location
+import com.fan.tiptop.citiapi.data.Location
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 

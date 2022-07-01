@@ -1,8 +1,7 @@
 package com.fan.tiptop.citiapi
 
 import android.util.Log
-import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
+import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.location.LocationUtils
 import kotlin.time.Duration
 
@@ -23,7 +22,6 @@ class CitiKernel {
                     x.station_id.toInt() to
                             CitibikeStationInformationModelDecorated(
                                 x,
-                                isClosest = false,
                                 isFavorite = false
                             )
                 }.toMap()
@@ -63,32 +61,11 @@ class CitiKernel {
         if (favoriteStation == null) {
             stationInfoModelToDisplay.add(0, closestStation)
         } else {
-            favoriteStation.isClosest = true
+            //favoriteStation.isClosest = true
         }
     }
 
-    private fun getClosestStation(userLocation: Location): CitibikeStationInformationModelDecorated {
-        var closestStation =
-            _stationInformationModelMap.values.first().model
-        var minDistance: Double = Double.MAX_VALUE
-        for (stationInfo in _stationInformationModelMap.values.map { x -> x.model }) {
-            val stationDistance = LocationUtils.computeDistance(
-                userLocation.latitude,
-                userLocation.longitude,
-                stationInfo.lat,
-                stationInfo.lon
-            )
-            if (stationDistance < minDistance) {
-                minDistance = stationDistance
-                closestStation = stationInfo
-            }
-        }
-        return CitibikeStationInformationModelDecorated(
-            closestStation,
-            isClosest = true,
-            isFavorite = false
-        )
-    }
+
 
     fun getStationLocation(stationId: Int): Location? {
         val get: CitibikeStationInformationModelDecorated? =
@@ -104,6 +81,12 @@ class CitiKernel {
             return null
         }
         return stationInfoModel
+    }
+
+    fun getClosestStationWithCriteria(toCitiLocation: Location?, citiStationInfoModelToReplace: CitibikeStationInformationModel, criteria: StationSearchCriteria): CitibikeStationInformationModel {
+        // get closest with criteria TODO
+        return _stationInformationModelMap.entries.first().value.model
+
     }
 
 }

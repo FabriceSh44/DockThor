@@ -1,9 +1,6 @@
 package com.fan.tiptop.citiapi
 
-import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
-import com.fan.tiptop.citiapi.data.CitibikeStationModel
+import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.location.LocationUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -66,7 +63,6 @@ class CitiRequester {
                     stationInfoModel.name,
                     stationInfoModel.station_id.toInt(),
                     distanceDescription,
-                    isClosestStation = stationInfoModelDecorated.isClosest,
                     isFavorite = stationInfoModelDecorated.isFavorite
                 )
             )

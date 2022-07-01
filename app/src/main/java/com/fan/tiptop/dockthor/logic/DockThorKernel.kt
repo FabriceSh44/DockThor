@@ -6,15 +6,15 @@ import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
 import com.fan.tiptop.citiapi.CitiKernel
-import com.fan.tiptop.citiapi.Location
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
+import com.fan.tiptop.citiapi.data.Location
+import com.fan.tiptop.citiapi.data.StationSearchCriteria
 import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
 import com.fan.tiptop.dockthor.alarm.AlarmInput
 import com.fan.tiptop.dockthor.alarm.AlarmManager
 import com.fan.tiptop.dockthor.location.DefaultLocationManagerListener
 import com.fan.tiptop.dockthor.location.LocationManager
-import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import java.time.Duration
@@ -55,7 +55,6 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
                 val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
                     CitibikeStationInformationModelDecorated(
                         x,
-                        isClosest = false,
                         isFavorite = true
                     )
                 }.toMutableList()
@@ -132,17 +131,73 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
 
 
     fun removeAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
+        print(station)
         for (alarmInput in alarmInputs) {
             AlarmManager.getInstance().removeAlarm(alarmInput)
         }
     }
 
     fun addAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
+        print(station)
         for (alarmInput in alarmInputs) {
             if (setGeofenceIntent != null) {
                 AlarmManager.getInstance().setAlarm(setGeofenceIntent, alarmInput)
             }
         }
+    }
+
+    suspend fun replaceStationWithCriteria(
+        citiStationStatusToReplace: CitiStationStatus,
+        criteria: StationSearchCriteria,
+        onReplaceComplete: (List<CitiStationStatus>, String) -> Unit
+    ) {
+        LocationManager.getInstance().getLastLocation(object : DefaultLocationManagerListener {
+            override suspend fun getLocation(location: android.location.Location?) {
+                val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
+                    CitibikeStationInformationModelDecorated(
+                        x,
+                        isFavorite = true
+                    )
+                }.filter { x -> x.model.station_id.toInt() != citiStationStatusToReplace.stationId }
+                    .toMutableList()
+
+                //temp
+                val citiStationInfoModelToReplace = stationInfoModelToDisplay.first().model
+                stationInfoModelToDisplay.add(
+                    CitibikeStationInformationModelDecorated(
+                        _citiKernel.getClosestStationWithCriteria(
+                            location.toCitiLocation(),
+                            citiStationInfoModelToReplace,
+                            criteria
+
+                        ),
+                        isFavorite = false
+
+                    )
+                )
+                NetworkManager.getInstance()
+                    .stationStatusRequest(object : DefaultNetworkManagerListener {
+                        override suspend fun getResult(result: String) {
+                            if (result.isNotEmpty()) {
+                                val citiStationStatusToDisplay: List<CitiStationStatus> =
+                                    _citiKernel.getCitiStationStatusToDisplay(
+                                        result,
+                                        stationInfoModelToDisplay, location.toCitiLocation()
+                                    )
+                                onReplaceComplete(citiStationStatusToDisplay, "")
+                            }
+                        }
+
+                        override suspend fun getError(error: String) {
+                            Log.e(TAG, error)
+                            onReplaceComplete(
+                                listOf(),
+                                "Unable to retrieve Citibike station status"
+                            )
+                        }
+                    })
+            }
+        })
     }
 
 

@@ -42,8 +42,8 @@ class LocationManager private constructor(val context: AppCompatActivity) {
         station: CitibikeStationInformationModel,
         expirationInSecond: Long,
     ) {
-        val location: com.fan.tiptop.citiapi.Location =
-            com.fan.tiptop.citiapi.Location(station.lat, station.lon)
+        val location: com.fan.tiptop.citiapi.data.Location =
+            com.fan.tiptop.citiapi.data.Location(station.lat, station.lon)
         val geofencingRequest = GeoFenceBuilder.getGeofencingRequest(
             location, expirationInSecond, station.station_id
         )

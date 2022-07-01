@@ -1,4 +1,4 @@
-package com.fan.tiptop.citiapi
+package com.fan.tiptop.citiapi.data
 
 import kotlin.time.Duration
 

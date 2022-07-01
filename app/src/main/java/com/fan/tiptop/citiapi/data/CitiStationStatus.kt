@@ -15,7 +15,6 @@ data class CitiStationStatus(
     val stationId: Int,
     //retrieved from gps data
     var distance:String?=null,
-    var isClosestStation: Boolean=false,
     // retrieved from database
     var isFavorite: Boolean=false,
     //changed by user
