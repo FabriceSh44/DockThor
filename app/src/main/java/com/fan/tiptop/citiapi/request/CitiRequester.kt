@@ -2,6 +2,7 @@ package com.fan.tiptop.citiapi
 
 import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.location.LocationUtils
+import com.fan.tiptop.dockthor.R
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -70,6 +71,20 @@ class CitiRequester {
         return result
     }
 
+    fun getStationIdWithCriteria(response: String, criteria: StationSearchCriteria): Set<Int> {
+        val model = getStationStatusModel(response)
+        var result = mutableSetOf<Int>()
+        for (stationStatus in model.data.stations) {
+            if (criteria == StationSearchCriteria.CLOSEST_WITH_BIKE && stationStatus.num_bikes_available > R.string.min_to_replace) {
+                result.add(stationStatus.station_id.toInt())
+            } else if (criteria == StationSearchCriteria.CLOSEST_WITH_DOCK && stationStatus.num_docks_available > R.string.min_to_replace) {
+                result.add(stationStatus.station_id.toInt())
+            }
+        }
+
+        return result
+    }
+
     fun getStationStatus(stationId: Int, response: String): CitiStationStatus? {
         val model = getStationStatusModel(response)
         for (stationInfo in model.data.stations) {
@@ -94,5 +109,6 @@ class CitiRequester {
     fun getStationInformationModel(stationInformationContent: String): StationInformationModel {
         return json.decodeFromString(stationInformationContent)
     }
+
 
 }

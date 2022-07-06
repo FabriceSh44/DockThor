@@ -153,36 +153,21 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
     ) {
         LocationManager.getInstance().getLastLocation(object : DefaultLocationManagerListener {
             override suspend fun getLocation(location: android.location.Location?) {
-                val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
-                    CitibikeStationInformationModelDecorated(
-                        x,
-                        isFavorite = true
-                    )
-                }.filter { x -> x.model.station_id.toInt() != citiStationStatusToReplace.stationId }
-                    .toMutableList()
-
-                //temp
-                val citiStationInfoModelToReplace = stationInfoModelToDisplay.first().model
-                stationInfoModelToDisplay.add(
-                    CitibikeStationInformationModelDecorated(
-                        _citiKernel.getClosestStationWithCriteria(
-                            location.toCitiLocation(),
-                            citiStationInfoModelToReplace,
-                            criteria
-
-                        ),
-                        isFavorite = false
-
-                    )
-                )
+                val favoriteStations = dao.getFavoriteStations().toMutableList()
                 NetworkManager.getInstance()
                     .stationStatusRequest(object : DefaultNetworkManagerListener {
                         override suspend fun getResult(result: String) {
-                            if (result.isNotEmpty()) {
+                            if (result.isNotEmpty() && location!=null) {
+                                val closestCitiStation = _citiKernel.getClosestStationWithCriteria(
+                                    location.toCitiLocation()!!,
+                                    citiStationStatusToReplace,
+                                    criteria,
+                                    result
+                                )
                                 val citiStationStatusToDisplay: List<CitiStationStatus> =
                                     _citiKernel.getCitiStationStatusToDisplay(
                                         result,
-                                        stationInfoModelToDisplay, location.toCitiLocation()
+                                        favoriteStations, location.toCitiLocation()
                                     )
                                 onReplaceComplete(citiStationStatusToDisplay, "")
                             }

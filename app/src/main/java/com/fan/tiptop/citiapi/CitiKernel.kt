@@ -52,6 +52,7 @@ class CitiKernel {
     fun getCitiStationStatus(result: String, stationId: Int): CitiStationStatus? {
         return _requester.getStationStatus(stationId, result)
     }
+
     private fun updateOrAddClosestStation(
         stationInfoModelToDisplay: MutableList<CitibikeStationInformationModelDecorated>,
         closestStation: CitibikeStationInformationModelDecorated
@@ -66,28 +67,46 @@ class CitiKernel {
     }
 
 
-
     fun getStationLocation(stationId: Int): Location? {
         val get: CitibikeStationInformationModelDecorated? =
             _stationInformationModelMap.get(stationId)
         return get?.model?.let { Location(it.lat, it.lon, Duration.ZERO) }
     }
 
-    fun getCitiInfoModel(stationId: Int):  CitibikeStationInformationModelDecorated?{
+    fun getCitiInfoModel(stationId: Int): CitibikeStationInformationModelDecorated? {
         val stationInfoModel = _stationInformationModelMap.get(stationId)
-        if(stationInfoModel==null)
-        {
+        if (stationInfoModel == null) {
             Log.e(TAG, "Unable to retrieve station info model from station id {stationId}")
             return null
         }
         return stationInfoModel
     }
 
-    fun getClosestStationWithCriteria(toCitiLocation: Location?, citiStationInfoModelToReplace: CitibikeStationInformationModel, criteria: StationSearchCriteria): CitibikeStationInformationModel {
-        // get closest with criteria TODO
-        return _stationInformationModelMap.entries.first().value.model
+    fun getClosestStationWithCriteria(
+        userLocation: Location,
+        targetCitiStationStatus: CitiStationStatus,
+        criteria: StationSearchCriteria,
+        result: String
+    ): CitiStationStatus? {
+        val stationIdsWithCriteria = _requester.getStationIdWithCriteria(result, criteria)
+        val citiStationModelToReplace =
+            _stationInformationModelMap.get(targetCitiStationStatus.stationId)
+        if (citiStationModelToReplace != null) {
+            val sortedCitiModelList = LocationUtils.getDropShapedClosestStation(
+                _stationInformationModelMap.filter { stationIdsWithCriteria.contains(it.key) }.values,
+                userLocation,
+                citiStationModelToReplace.model.toCitiLocation()
+            )
+            return sortedCitiModelList.first()
+        }
+        return null
 
     }
 
+}
+
+
+private fun CitibikeStationInformationModel.toCitiLocation(): Location {
+    return Location(this.lat, this.lon)
 }
 

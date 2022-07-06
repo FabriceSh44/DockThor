@@ -1,8 +1,8 @@
 package com.fan.tiptop.citiapi.location
 
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
 import com.fan.tiptop.citiapi.data.Location
+import com.fan.tiptop.dockthor.R
 import java.text.DecimalFormat
 import kotlin.math.*
 
@@ -30,46 +30,32 @@ class LocationUtils {
             val dec = DecimalFormat("#,###.00")
             return "${dec.format(distance)}mi"
         }
-        fun getDropShapedClosestStation(
-            userLocation: Location?,
-            targetStation: CitibikeStationInformationModel,
-            listModel: List<CitibikeStationInformationModel>
-        ): List<CitibikeStationInformationModelDecorated> {
-            if (userLocation==null)
-                return listOf()
-            var closestStation = listModel.first()
-            var minDistance: Double = Double.MAX_VALUE
-            for (stationInfo in listModel) {
-                val stationDistance = computeDistance(
-                    userLocation.latitude,
-                    userLocation.longitude,
-                    stationInfo.lat,
-                    stationInfo.lon
-                )
-                if (stationDistance < minDistance) {
-                    minDistance = stationDistance
-                    closestStation = stationInfo
-                }
-            }
-            return listOf(
-                CitibikeStationInformationModelDecorated(
-                    closestStation,
-                    isFavorite = false,
-                    distanceRank = 0f
-                )
-            )
-        }
-        fun computeDistance(
-            userLatitude: Double,
-            userLongitude: Double,
-            stationLatitude: Double,
-            stationLongitude: Double,
+
+        private fun computeDistance(
+            location1: Location,
+            location2: Location,
             unit: UNIT = UNIT.MILE
         ): Double {
-            val userLongitudeRad = Math.toRadians(userLongitude)
-            val stationLongitudeRad = Math.toRadians(stationLongitude)
-            val userLatitudeRad = Math.toRadians(userLatitude)
-            val stationLatitudeRad = Math.toRadians(stationLatitude)
+            return computeDistance(
+                location1.latitude,
+                location1.longitude,
+                location2.latitude,
+                location2.longitude,
+                unit
+            )
+        }
+
+        fun computeDistance(
+            location1Latitude: Double,
+            location1Longitude: Double,
+            location2Latitude: Double,
+            location2Longitude: Double,
+            unit: UNIT = UNIT.MILE
+        ): Double {
+            val userLongitudeRad = Math.toRadians(location1Longitude)
+            val stationLongitudeRad = Math.toRadians(location2Longitude)
+            val userLatitudeRad = Math.toRadians(location1Latitude)
+            val stationLatitudeRad = Math.toRadians(location2Latitude)
 
             // Haversine formula
             val dlon: Double = stationLongitudeRad - userLongitudeRad
@@ -91,6 +77,39 @@ class LocationUtils {
             }
             return c * r
         }
+
+        fun getDropShapedClosestStation(
+            candidateModel: Collection<CitibikeStationInformationModelDecorated>,
+            userLocation: Location,
+            targetStationLocation: Location
+        ): List<CitibikeStationInformationModelDecorated> {
+            val result = mutableListOf<Pair<Double, CitibikeStationInformationModelDecorated>>()
+            for (model in candidateModel) {
+                val distance = computeVShapeDistance(
+                    Location(model.model.lat, model.model.lon),
+                    userLocation,
+                    targetStationLocation
+                )
+                result.add(Pair(distance, model))
+            }
+            result.sortBy { it.first }
+            return result.map { it.second }
+        }
+
+        private fun computeVShapeDistance(
+            candidateStationLocation: Location,
+            userLocation: Location,
+            targetStationLocation: Location
+        ): Double {
+            return computeDistance(
+                userLocation,
+                candidateStationLocation
+            ) * R.string.bike_factor + computeDistance(
+                candidateStationLocation,
+                targetStationLocation
+            )
+        }
+
     }
 
 
