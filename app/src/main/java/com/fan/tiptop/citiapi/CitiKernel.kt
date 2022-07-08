@@ -34,7 +34,7 @@ class CitiKernel {
         result: String,
         stationInfoModelToDisplay: MutableList<CitibikeStationInformationModelDecorated>,
         userLocation: Location?
-    ): List<CitiStationStatus> {
+    ): MutableList<CitiStationStatus> {
         try {
             if (stationInfoModelToDisplay.isNotEmpty()) {
                 return _requester.getAvailabilitiesWithLocation(
@@ -42,30 +42,16 @@ class CitiKernel {
                     userLocation
                 )
             }
-            return listOf()
+            return mutableListOf()
         } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
-            return listOf()
+            return mutableListOf()
         }
     }
 
     fun getCitiStationStatus(result: String, stationId: Int): CitiStationStatus? {
         return _requester.getStationStatus(stationId, result)
     }
-
-    private fun updateOrAddClosestStation(
-        stationInfoModelToDisplay: MutableList<CitibikeStationInformationModelDecorated>,
-        closestStation: CitibikeStationInformationModelDecorated
-    ) {
-        val favoriteStation: CitibikeStationInformationModelDecorated? =
-            stationInfoModelToDisplay.find { x -> x.model.station_id == closestStation.model.station_id }
-        if (favoriteStation == null) {
-            stationInfoModelToDisplay.add(0, closestStation)
-        } else {
-            //favoriteStation.isClosest = true
-        }
-    }
-
 
     fun getStationLocation(stationId: Int): Location? {
         val get: CitibikeStationInformationModelDecorated? =
@@ -86,21 +72,31 @@ class CitiKernel {
         userLocation: Location,
         targetCitiStationStatus: CitiStationStatus,
         criteria: StationSearchCriteria,
-        result: String
+        result: String, minToReplace: Int
     ): CitiStationStatus? {
-        val stationIdsWithCriteria = _requester.getStationIdWithCriteria(result, criteria)
+        val stationIdsWithCriteria =
+            _requester.getStationStatusWithCriteria(result, criteria, minToReplace)
         val citiStationModelToReplace =
             _stationInformationModelMap.get(targetCitiStationStatus.stationId)
         if (citiStationModelToReplace != null) {
             val sortedCitiModelList = LocationUtils.getDropShapedClosestStation(
-                _stationInformationModelMap.filter { stationIdsWithCriteria.contains(it.key) }.values,
+                _stationInformationModelMap.filter {stationIdsWithCriteria.containsKey(it.value.model.station_id.toInt() ) }.values,
                 userLocation,
                 citiStationModelToReplace.model.toCitiLocation()
             )
-            return sortedCitiModelList.first()
+            val closestStationInfo = sortedCitiModelList.first()
+            var status = stationIdsWithCriteria.get(closestStationInfo.model.station_id.toInt())
+            status?.let {
+                it.address = closestStationInfo.model.name
+                it.distance = LocationUtils.computeAndFormatDistance(
+                    userLocation.latitude,
+                    userLocation.longitude,
+                    closestStationInfo.model.lat,
+                    closestStationInfo.model.lon)
+            }
+            return status
         }
         return null
-
     }
 
 }

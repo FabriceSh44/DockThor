@@ -25,4 +25,6 @@
     <string name="endTimeDefault">9:45</string>
     <string name="bike_factor">0.5</string>
     <string name="min_to_replace">2</string>
+    <string name="clickForDirection">For direction</string>
+    <string name="setFavorite">Set favorite</string>
 </resources>

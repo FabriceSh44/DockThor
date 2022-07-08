@@ -13,6 +13,7 @@
             android:id="@+id/favoriteImageView"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:contentDescription="@string/setFavorite"
             android:onClick="@{()->viewModel.onFavoriteClick()}"
             android:src="@{viewModel.isStationFavoriteLD? @android:drawable/btn_star_big_on:@android:drawable/btn_star_big_off}"
             app:layout_constraintBottom_toBottomOf="@+id/stationNicknameTextView"
@@ -21,13 +22,16 @@
 
         <ImageView
             android:id="@+id/directionImageView"
-            android:layout_width="199dp"
-            android:layout_height="145dp"
+            android:layout_width="322dp"
+            android:layout_height="327dp"
+            android:contentDescription="@string/clickForDirection"
             android:onClick="@{()->viewModel.onDirectionClick()}"
+            android:background="@drawable/black_background"
             android:src="@android:drawable/ic_menu_directions"
             app:layout_constraintBottom_toTopOf="@+id/guidelineBottom2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stationStatusItem" />
 
         <TextView
             android:id="@+id/stationNicknameTextView"
@@ -72,6 +76,7 @@
             android:name="com.fan.tiptop.dockthor.fragment.GeofenceSetupFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:visible="false"
             app:layout_constraintBottom_toTopOf="@+id/directionImageView"
             app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"

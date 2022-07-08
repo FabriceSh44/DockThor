@@ -2,7 +2,6 @@ package com.fan.tiptop.citiapi
 
 import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.location.LocationUtils
-import com.fan.tiptop.dockthor.R
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -33,7 +32,7 @@ class CitiRequester {
         response: String,
         stationList: List<CitibikeStationInformationModelDecorated>,
         userLocation: Location?
-    ): List<CitiStationStatus> {
+    ): MutableList<CitiStationStatus> {
         var result = mutableListOf<CitiStationStatus>()
         if (stationList.isEmpty()) {
             return result
@@ -71,17 +70,30 @@ class CitiRequester {
         return result
     }
 
-    fun getStationIdWithCriteria(response: String, criteria: StationSearchCriteria): Set<Int> {
+    fun getStationStatusWithCriteria(
+        response: String,
+        criteria: StationSearchCriteria, minToReplace:Int
+    ): Map<Int, CitiStationStatus> {
         val model = getStationStatusModel(response)
-        var result = mutableSetOf<Int>()
-        for (stationStatus in model.data.stations) {
-            if (criteria == StationSearchCriteria.CLOSEST_WITH_BIKE && stationStatus.num_bikes_available > R.string.min_to_replace) {
-                result.add(stationStatus.station_id.toInt())
-            } else if (criteria == StationSearchCriteria.CLOSEST_WITH_DOCK && stationStatus.num_docks_available > R.string.min_to_replace) {
-                result.add(stationStatus.station_id.toInt())
+        var result = mutableMapOf<Int, CitiStationStatus>()
+        for (stationInfo in model.data.stations) {
+            if ((criteria == StationSearchCriteria.CLOSEST_WITH_BIKE && stationInfo.num_bikes_available > minToReplace)
+                or (criteria == StationSearchCriteria.CLOSEST_WITH_DOCK && stationInfo.num_docks_available > minToReplace)
+            ) {
+                result.put(
+                    stationInfo.station_id.toInt(),
+                    CitiStationStatus(
+                        stationInfo.num_bikes_available.toString(),
+                        stationInfo.num_ebikes_available.toString(),
+                        stationInfo.num_docks_available.toString(),
+                        "",
+                        stationInfo.station_id.toInt(),
+                        ""
+                    )
+                )
             }
-        }
 
+        }
         return result
     }
 

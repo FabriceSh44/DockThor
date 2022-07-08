@@ -80,6 +80,59 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         })
     }
 
+    suspend fun replaceStationWithCriteria(
+        citiStationStatusToReplace: CitiStationStatus,
+        criteria: StationSearchCriteria,
+        onReplaceComplete: (List<CitiStationStatus>, String) -> Unit
+    ) {
+        LocationManager.getInstance().getLastLocation(object : DefaultLocationManagerListener {
+            override suspend fun getLocation(location: android.location.Location?) {
+                val favoriteStations = dao.getFavoriteStations().map { x ->
+                    CitibikeStationInformationModelDecorated(
+                        x,
+                        isFavorite = true
+                    )
+                }.toMutableList()
+                NetworkManager.getInstance()
+                    .stationStatusRequest(object : DefaultNetworkManagerListener {
+                        override suspend fun getResult(result: String) {
+                            if (result.isNotEmpty() && location != null) {
+                                val closestCitiStation = _citiKernel.getClosestStationWithCriteria(
+                                    location.toCitiLocation()!!,
+                                    citiStationStatusToReplace,
+                                    criteria,
+                                    result, MIN_TO_REPLACE
+                                )
+                                val citiStationStatusToDisplay: MutableList<CitiStationStatus> =
+                                    _citiKernel.getCitiStationStatusToDisplay(
+                                        result,
+                                        favoriteStations, location.toCitiLocation()
+                                    )
+                                if (closestCitiStation != null) {
+                                    val index = citiStationStatusToDisplay.indexOf(
+                                        citiStationStatusToReplace
+                                    )
+                                    if (index != -1) {
+                                        citiStationStatusToDisplay.removeAt(index)
+                                        citiStationStatusToDisplay.add(index, closestCitiStation)
+                                    }
+                                }
+                                onReplaceComplete(citiStationStatusToDisplay, "")
+                            }
+                        }
+
+                        override suspend fun getError(error: String) {
+                            Log.e(TAG, error)
+                            onReplaceComplete(
+                                listOf(),
+                                "Unable to retrieve Citibike station status"
+                            )
+                        }
+                    })
+            }
+        })
+    }
+
     fun getActionViewIntent(station: CitiStationStatus): Intent? {
         val location: Location = _citiKernel.getStationLocation(station.stationId) ?: return null
         val builder = Uri.Builder()
@@ -146,47 +199,9 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         }
     }
 
-    suspend fun replaceStationWithCriteria(
-        citiStationStatusToReplace: CitiStationStatus,
-        criteria: StationSearchCriteria,
-        onReplaceComplete: (List<CitiStationStatus>, String) -> Unit
-    ) {
-        LocationManager.getInstance().getLastLocation(object : DefaultLocationManagerListener {
-            override suspend fun getLocation(location: android.location.Location?) {
-                val favoriteStations = dao.getFavoriteStations().toMutableList()
-                NetworkManager.getInstance()
-                    .stationStatusRequest(object : DefaultNetworkManagerListener {
-                        override suspend fun getResult(result: String) {
-                            if (result.isNotEmpty() && location!=null) {
-                                val closestCitiStation = _citiKernel.getClosestStationWithCriteria(
-                                    location.toCitiLocation()!!,
-                                    citiStationStatusToReplace,
-                                    criteria,
-                                    result
-                                )
-                                val citiStationStatusToDisplay: List<CitiStationStatus> =
-                                    _citiKernel.getCitiStationStatusToDisplay(
-                                        result,
-                                        favoriteStations, location.toCitiLocation()
-                                    )
-                                onReplaceComplete(citiStationStatusToDisplay, "")
-                            }
-                        }
-
-                        override suspend fun getError(error: String) {
-                            Log.e(TAG, error)
-                            onReplaceComplete(
-                                listOf(),
-                                "Unable to retrieve Citibike station status"
-                            )
-                        }
-                    })
-            }
-        })
-    }
-
 
     companion object {
+        val MIN_TO_REPLACE: Int = 2
         private var _instance: DockThorKernel? = null
 
         @Synchronized

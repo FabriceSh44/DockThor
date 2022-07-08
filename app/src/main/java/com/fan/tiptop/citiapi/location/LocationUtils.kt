@@ -2,13 +2,14 @@ package com.fan.tiptop.citiapi.location
 
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
 import com.fan.tiptop.citiapi.data.Location
-import com.fan.tiptop.dockthor.R
 import java.text.DecimalFormat
 import kotlin.math.*
 
 enum class UNIT {
     KM, MILE
 }
+
+private val BIKE_FACTOR = 2.5
 
 class LocationUtils {
     companion object {
@@ -83,17 +84,18 @@ class LocationUtils {
             userLocation: Location,
             targetStationLocation: Location
         ): List<CitibikeStationInformationModelDecorated> {
-            val result = mutableListOf<Pair<Double, CitibikeStationInformationModelDecorated>>()
+            val result = mutableListOf<CitibikeStationInformationModelDecorated>()
             for (model in candidateModel) {
                 val distance = computeVShapeDistance(
                     Location(model.model.lat, model.model.lon),
                     userLocation,
                     targetStationLocation
                 )
-                result.add(Pair(distance, model))
+                model.distanceRank= distance
+                result.add(model)
             }
-            result.sortBy { it.first }
-            return result.map { it.second }
+            result.sortBy {  it.distanceRank }
+            return result
         }
 
         private fun computeVShapeDistance(
@@ -104,10 +106,10 @@ class LocationUtils {
             return computeDistance(
                 userLocation,
                 candidateStationLocation
-            ) * R.string.bike_factor + computeDistance(
+            )  + computeDistance(
                 candidateStationLocation,
                 targetStationLocation
-            )
+            )* BIKE_FACTOR
         }
 
     }

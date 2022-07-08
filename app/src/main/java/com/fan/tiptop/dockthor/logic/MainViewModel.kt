@@ -18,8 +18,6 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     //LOG
     private val TAG = "DockThorViewModel"
 
-    private val MIN_TO_REPLACE: Int = 10
-
     //DISPLAY
     val errorToDisplayLD = MutableLiveData("")
     val isLoadingLD = MutableLiveData(false)
@@ -102,11 +100,11 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     fun onSwipedCitiStationStatus(citiStationStatus: CitiStationStatus, swipeSide: SwipeSide) {
-        if (swipeSide == SwipeSide.DOCK && citiStationStatus.numDockAvailable.toInt() > MIN_TO_REPLACE) {
+        if (swipeSide == SwipeSide.DOCK && citiStationStatus.numDockAvailable.toInt() > DockThorKernel.MIN_TO_REPLACE) {
             errorToDisplayLD.value = "Station has enough docks"
             return;
         }
-        if (swipeSide == SwipeSide.BIKE && citiStationStatus.numBikeAvailable.toInt() > MIN_TO_REPLACE) {
+        if (swipeSide == SwipeSide.BIKE && citiStationStatus.numBikeAvailable.toInt() > DockThorKernel.MIN_TO_REPLACE) {
             errorToDisplayLD.value = "Station has enough bikes"
             return;
         }

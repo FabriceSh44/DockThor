@@ -11,7 +11,7 @@ data class CitiStationStatus(
     val numEbikeAvailable: String,
     val numDockAvailable: String,
     // retrieved from citi information api request
-    val address: String,
+    var address: String,
     val stationId: Int,
     //retrieved from gps data
     var distance:String?=null,

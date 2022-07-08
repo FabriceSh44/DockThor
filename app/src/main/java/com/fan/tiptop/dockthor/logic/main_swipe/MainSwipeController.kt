@@ -90,14 +90,14 @@ class MainSwipeController(var onSwipedCitiStationStatus: (station: CitiStationSt
         )
         p.color = Color.MAGENTA
         c.drawRoundRect(leftButton, corners, corners, p)
-        drawText("CLOSEST\nDOCK", c, leftButton, p)
+        drawText("DOCK+", c, leftButton, p)
         val rightButton = RectF(
             itemView.right - buttonWidthWithoutPadding,
             itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat()
         )
         p.setColor(Color.BLUE)
         c.drawRoundRect(rightButton, corners, corners, p)
-        drawText("CLOSEST BIKE", c, rightButton, p)
+        drawText("BIKE+", c, rightButton, p)
         buttonInstance = null
         if (buttonShowedState == SwipeSide.DOCK) {
             buttonInstance = leftButton
