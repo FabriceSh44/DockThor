@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 
-@Database(entities = [CitibikeStationInformationModel::class], version = 1, exportSchema = false)
+@Database(entities = [CitibikeStationInformationModel::class], version = 2, exportSchema = false)
 abstract class DockThorDatabase : RoomDatabase() {
     abstract val citibikeStationInformationDao: CitibikeStationInformationDao
 
@@ -22,7 +22,7 @@ abstract class DockThorDatabase : RoomDatabase() {
                         context.applicationContext,
                         DockThorDatabase::class.java,
                         "dockthor_database"
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }
                 return instance

@@ -23,7 +23,6 @@ data class CitibikeStationInformationModel(
     val electric_bike_surcharge_waiver: Boolean,
     val lon: Double,
     val lat: Double,
-    val region_id: String,
     val has_kiosk: Boolean,
     val legacy_id: String,
 ):Parcelable

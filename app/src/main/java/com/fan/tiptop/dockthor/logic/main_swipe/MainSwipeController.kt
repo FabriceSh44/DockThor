@@ -88,7 +88,7 @@ class MainSwipeController(var onSwipedCitiStationStatus: (station: CitiStationSt
             itemView.top.toFloat(), itemView.left + buttonWidthWithoutPadding,
             itemView.bottom.toFloat()
         )
-        p.color = Color.MAGENTA
+        p.color = Color.GRAY
         c.drawRoundRect(leftButton, corners, corners, p)
         drawText("DOCK+", c, leftButton, p)
         val rightButton = RectF(

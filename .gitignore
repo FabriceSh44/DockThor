@@ -8,6 +8,7 @@
 /build
 /captures
 /app/release
+dock_work/
 .externalNativeBuild
 .cxx
 local.properties
