@@ -16,14 +16,14 @@ android {
             keyAlias RELEASE_KEY_ALIAS
         }
     }
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.fan.tiptop.dockthor"
         minSdk 28
-        targetSdk 30
-        versionCode 22
-        versionName "0.1.22"
+        targetSdk 32
+        versionCode 23
+        versionName "0.1.23"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

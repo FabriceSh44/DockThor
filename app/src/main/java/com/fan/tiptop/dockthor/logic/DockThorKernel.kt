@@ -83,6 +83,7 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
     suspend fun replaceStationWithCriteria(
         citiStationStatusToReplace: CitiStationStatus,
         criteria: StationSearchCriteria,
+        displayedCitistationStatus: List<CitiStationStatus>?,
         onReplaceComplete: (List<CitiStationStatus>, String) -> Unit
     ) {
         LocationManager.getInstance().getLastLocation(object : DefaultLocationManagerListener {
@@ -101,15 +102,15 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
                                     location.toCitiLocation()!!,
                                     citiStationStatusToReplace,
                                     criteria,
-                                    result, MIN_TO_REPLACE
+                                    result
                                 )
                                 val citiStationStatusToDisplay: MutableList<CitiStationStatus> =
                                     _citiKernel.getCitiStationStatusToDisplay(
                                         result,
                                         favoriteStations, location.toCitiLocation()
                                     )
-                                if (closestCitiStation != null) {
-                                    val index = citiStationStatusToDisplay.indexOf(
+                                if (closestCitiStation != null &&  displayedCitistationStatus!=null) {
+                                    val index = displayedCitistationStatus.indexOf(
                                         citiStationStatusToReplace
                                     )
                                     if (index != -1) {

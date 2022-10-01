@@ -7,7 +7,6 @@ import android.graphics.RectF
 import android.os.Parcelable
 import android.view.MotionEvent
 import android.view.View
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
 import com.fan.tiptop.citiapi.data.CitiStationStatus
@@ -18,7 +17,7 @@ enum class SwipeSide {
 }
 
 class MainSwipeController(var onSwipedCitiStationStatus: (station: CitiStationStatus, swipeSide: SwipeSide) -> Unit) :
-    ItemTouchHelper.Callback() {
+    Callback() {
     private var swipeBack: Boolean = false
     private var buttonShowedState: SwipeSide = SwipeSide.GONE
     private val buttonWidth = 300f
@@ -46,16 +45,14 @@ class MainSwipeController(var onSwipedCitiStationStatus: (station: CitiStationSt
         actionState: Int, isCurrentlyActive: Boolean
     ) {
         if (actionState == ACTION_STATE_SWIPE) {
-            setTouchListener(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            setTouchListener(recyclerView, viewHolder, dX)
         }
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         drawButtons(c, viewHolder)
     }
 
     private fun setTouchListener(
-        c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-        dX: Float, dY: Float,
-        actionState: Int, isCurrentlyActive: Boolean
+        recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float
     ) {
         recyclerView.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent): Boolean {
@@ -108,9 +105,9 @@ class MainSwipeController(var onSwipedCitiStationStatus: (station: CitiStationSt
 
     private fun drawText(text: String, c: Canvas, button: RectF, p: Paint) {
         val textSize = 60f
-        p.setColor(Color.WHITE)
-        p.setAntiAlias(true)
-        p.setTextSize(textSize)
+        p.color = Color.WHITE
+        p.isAntiAlias = true
+        p.textSize = textSize
         val textWidth: Float = p.measureText(text)
         c.drawText(text, button.centerX() - textWidth / 2, button.centerY() + textSize / 2, p)
     }

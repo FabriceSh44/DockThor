@@ -14,6 +14,7 @@
             android:id="@+id/bikeConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@{citiStationStatus.selected ?@drawable/selected_background:@drawable/default_background}"
             android:padding="4dp">
 
             <TextView

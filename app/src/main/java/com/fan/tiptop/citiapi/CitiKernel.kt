@@ -72,8 +72,9 @@ class CitiKernel {
         userLocation: Location,
         targetCitiStationStatus: CitiStationStatus,
         criteria: StationSearchCriteria,
-        result: String, minToReplace: Int
+        result: String
     ): CitiStationStatus? {
+        val minToReplace = if (criteria==StationSearchCriteria.CLOSEST_WITH_BIKE ) targetCitiStationStatus.numBikeAvailable.toInt() else targetCitiStationStatus.numDockAvailable.toInt()
         val stationIdsWithCriteria =
             _requester.getStationStatusWithCriteria(result, criteria, minToReplace)
         val citiStationModelToReplace =

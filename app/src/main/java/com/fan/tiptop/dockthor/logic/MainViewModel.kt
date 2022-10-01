@@ -1,6 +1,5 @@
 package com.fan.tiptop.dockthor.logic
 
-import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -100,19 +99,19 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     }
 
     fun onSwipedCitiStationStatus(citiStationStatus: CitiStationStatus, swipeSide: SwipeSide) {
-        if (swipeSide == SwipeSide.DOCK && citiStationStatus.numDockAvailable.toInt() > DockThorKernel.MIN_TO_REPLACE) {
-            errorToDisplayLD.value = "Station has enough docks"
-            return;
-        }
-        if (swipeSide == SwipeSide.BIKE && citiStationStatus.numBikeAvailable.toInt() > DockThorKernel.MIN_TO_REPLACE) {
-            errorToDisplayLD.value = "Station has enough bikes"
-            return;
-        }
+        //if (swipeSide == SwipeSide.DOCK && citiStationStatus.numDockAvailable.toInt() > DockThorKernel.MIN_TO_REPLACE) {
+        //    errorToDisplayLD.value = "Station has enough docks"
+        //    return;
+        //}
+        //if (swipeSide == SwipeSide.BIKE && citiStationStatus.numBikeAvailable.toInt() > DockThorKernel.MIN_TO_REPLACE) {
+        //    errorToDisplayLD.value = "Station has enough bikes"
+        //    return;
+        //}
         val criteria =
             if (swipeSide == SwipeSide.BIKE) StationSearchCriteria.CLOSEST_WITH_BIKE else StationSearchCriteria.CLOSEST_WITH_DOCK
         isLoadingLD.value = true
         viewModelScope.launch {
-            _kernel.replaceStationWithCriteria(citiStationStatus,criteria) { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
+            _kernel.replaceStationWithCriteria(citiStationStatus,criteria,citiStationStatusLD.value) { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
                 citiStationStatusLD.value = citiStationStatus
                 errorToDisplayLD.value = errorToDisplay
                 isLoadingLD.value = false
@@ -150,11 +149,12 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
         toggleSelectedStation(station)
     }
 
-    fun onActionClick(station: CitiStationStatus): Intent? {
+    fun onActionClick(station: CitiStationStatus): Boolean {
         if (!contextualBarNotVisible.value!!) {
             toggleSelectedStation(station)
+            return false
         }
-        return null
+        return true
     }
 
     //UTILS
