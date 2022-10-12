@@ -85,7 +85,7 @@ class CitiKernel {
                 userLocation,
                 citiStationModelToReplace.model.toCitiLocation()
             )
-            val closestStationInfo = sortedCitiModelList.first()
+            val closestStationInfo = sortedCitiModelList.firstOrNull() ?: return null
             var status = stationIdsWithCriteria.get(closestStationInfo.model.station_id.toInt())
             status?.let {
                 it.address = closestStationInfo.model.name
