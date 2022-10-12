@@ -9,7 +9,7 @@ enum class UNIT {
     KM, MILE
 }
 
-private val BIKE_FACTOR = 2.5
+private const val BIKE_FACTOR = 2.5
 
 class LocationUtils {
     companion object {
@@ -91,10 +91,10 @@ class LocationUtils {
                     userLocation,
                     targetStationLocation
                 )
-                model.distanceRank= distance
+                model.distanceRank = distance
                 result.add(model)
             }
-            result.sortBy {  it.distanceRank }
+            result.sortBy { it.distanceRank }
             return result
         }
 
@@ -106,10 +106,10 @@ class LocationUtils {
             return computeDistance(
                 userLocation,
                 candidateStationLocation
-            )  + computeDistance(
+            ) + computeDistance(
                 candidateStationLocation,
                 targetStationLocation
-            )* BIKE_FACTOR
+            ) * BIKE_FACTOR
         }
 
     }

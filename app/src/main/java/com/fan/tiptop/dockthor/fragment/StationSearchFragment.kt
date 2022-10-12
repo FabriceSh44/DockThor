@@ -12,7 +12,7 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import com.fan.tiptop.citiapi.CitiRequester
+import com.fan.tiptop.citiapi.request.CitiRequester
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.databinding.FragmentStationSearchBinding

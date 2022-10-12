@@ -3,6 +3,7 @@ package com.fan.tiptop.citiapi
 import android.util.Log
 import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.location.LocationUtils
+import com.fan.tiptop.citiapi.request.CitiRequester
 import kotlin.time.Duration
 
 class CitiKernel {
@@ -44,7 +45,7 @@ class CitiKernel {
             }
             return mutableListOf()
         } catch (e: Exception) {
-            Log.e(TAG, "Unable to process response. Got error ${e}")
+            Log.e(TAG, "Unable to process response. Got error $e")
             return mutableListOf()
         }
     }

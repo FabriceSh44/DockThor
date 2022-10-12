@@ -1,4 +1,4 @@
-package com.fan.tiptop.citiapi
+package com.fan.tiptop.citiapi.request
 
 import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.location.LocationUtils

@@ -26,7 +26,7 @@ class GeofenceSetupFragment : Fragment() {
         _binding = FragmentGeofenceSetupBinding.inflate(inflater, container, false)
         if (_station!=null) {
             val viewModelFactory = GeofenceSetupModelFactory(_station!!)
-            _viewModel = ViewModelProvider(this, viewModelFactory).get(GeofenceSetupViewModel::class.java)
+            _viewModel = ViewModelProvider(this, viewModelFactory)[GeofenceSetupViewModel::class.java]
             binding.viewModel = _viewModel
         }
         binding.lifecycleOwner = viewLifecycleOwner

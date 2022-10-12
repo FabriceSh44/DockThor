@@ -12,8 +12,6 @@ class MainActivity : AppCompatActivity() {
         NetworkManager.getInstance(this)
         LocationManager.getInstance(this)
         AlarmManager.getInstance(this)
-
         setContentView(R.layout.activity_main)
     }
-
 }

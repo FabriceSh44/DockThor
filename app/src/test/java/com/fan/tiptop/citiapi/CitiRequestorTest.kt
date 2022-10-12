@@ -1,6 +1,7 @@
 package com.fan.tiptop.citiapi
 
 
+import com.fan.tiptop.citiapi.request.CitiRequester
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.File

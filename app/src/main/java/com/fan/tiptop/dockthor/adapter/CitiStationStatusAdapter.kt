@@ -46,8 +46,5 @@ class CitiStationStatusAdapter(
                 longClickListener(item)
             }
         }
-
     }
-
-
 }
