@@ -67,26 +67,40 @@
                 android:id="@+id/dockSeekBar"
                 android:layout_width="208dp"
                 android:layout_height="40dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:progress="@={viewModel.progressLD}"
                 android:max="@{viewModel.maxDockValueLD}"
+                android:progress="@={viewModel.progressLD}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/notifyTextView" />
+
+            <TextView
+                android:id="@+id/numberDockTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:text="@={`` + viewModel.progressLD   }"
+                app:layout_constraintBottom_toBottomOf="@+id/dockSeekBar"
+                app:layout_constraintStart_toEndOf="@+id/dockSeekBar"
+                app:layout_constraintTop_toTopOf="@+id/dockSeekBar"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/dockTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="@={`` + viewModel.progressLD }"
-                app:layout_constraintBottom_toBottomOf="@+id/dockSeekBar"
-                app:layout_constraintStart_toEndOf="@+id/dockSeekBar"
-                app:layout_constraintTop_toTopOf="@+id/dockSeekBar" />
+                android:layout_marginStart="3dp"
+                android:text="docks"
+                app:layout_constraintBottom_toBottomOf="@id/dockSeekBar"
+                app:layout_constraintStart_toEndOf="@id/numberDockTextView"
+                app:layout_constraintTop_toTopOf="@+id/dockSeekBar"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/notifyTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="Notify me if less than:"
                 app:layout_constraintStart_toStartOf="parent"

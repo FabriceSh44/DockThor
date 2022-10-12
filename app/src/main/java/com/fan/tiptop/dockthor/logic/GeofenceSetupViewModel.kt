@@ -12,6 +12,7 @@ import java.util.*
 
 class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
 
+    val messageToDisplayLD = MutableLiveData("")
     private val pickDayOfWeeks: MutableSet<DayOfWeek> = mutableSetOf()
     private var _kernel: DockThorKernel = DockThorKernel.getInstance()
     val isMondayPickedLD = MutableLiveData(false)
@@ -23,7 +24,7 @@ class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
     val isSundayPickedLD = MutableLiveData(false)
     val isSwitchCheckedLD = MutableLiveData(false)
     val progressLD = MutableLiveData(5)
-    val maxDockValueLD = MutableLiveData(30)
+    val maxDockValueLD = MutableLiveData(10)
     val startTimeLD = MutableLiveData("8:00")
     val endTimeLD = MutableLiveData("9:45")
 
@@ -31,9 +32,11 @@ class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
         val alarmInputs: List<AlarmInput> = this.toListAlarmInput()
         isSwitchCheckedLD.value = isSwitchCheckedLD.value?.not()
         if (isSwitchCheckedLD.value == true) {
-             _kernel.addAlarmForStation(station, alarmInputs)
+            messageToDisplayLD.value = "Alarm created"
+            _kernel.addAlarmForStation(station, alarmInputs)
         } else {
-             _kernel.removeAlarmForStation(station, alarmInputs)
+            messageToDisplayLD.value = "Alarm removed"
+            _kernel.removeAlarmForStation(station, alarmInputs)
         }
     }
 

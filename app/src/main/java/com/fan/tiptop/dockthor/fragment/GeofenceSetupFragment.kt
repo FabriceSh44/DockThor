@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.fan.tiptop.citiapi.data.CitiStationStatus
@@ -17,6 +18,7 @@ class GeofenceSetupFragment : Fragment() {
     private var _viewModel: GeofenceSetupViewModel? = null
     private var _binding: FragmentGeofenceSetupBinding? = null
     private val binding get() = _binding!!
+    private val viewModel get() = _viewModel!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +30,11 @@ class GeofenceSetupFragment : Fragment() {
             val viewModelFactory = GeofenceSetupModelFactory(_station!!)
             _viewModel = ViewModelProvider(this, viewModelFactory)[GeofenceSetupViewModel::class.java]
             binding.viewModel = _viewModel
+            viewModel.messageToDisplayLD.observe(viewLifecycleOwner) { errorText ->
+                if (errorText.isNotEmpty()) {
+                    Toast.makeText(binding.root.context, errorText, Toast.LENGTH_LONG).show()
+                }
+            }
         }
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root

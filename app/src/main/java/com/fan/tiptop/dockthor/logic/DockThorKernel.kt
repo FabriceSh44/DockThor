@@ -202,7 +202,6 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
 
 
     companion object {
-        val MIN_TO_REPLACE: Int = 2
         private var _instance: DockThorKernel? = null
 
         @Synchronized

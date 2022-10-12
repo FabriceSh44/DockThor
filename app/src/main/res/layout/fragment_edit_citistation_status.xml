@@ -76,7 +76,7 @@
             android:name="com.fan.tiptop.dockthor.fragment.GeofenceSetupFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/directionImageView"
             app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
