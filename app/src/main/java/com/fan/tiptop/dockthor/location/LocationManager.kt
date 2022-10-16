@@ -4,13 +4,16 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.dockthor.alarm.AlarmBroadcastReceiver
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -109,6 +112,16 @@ class LocationManager private constructor(val context: AppCompatActivity) {
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
+    fun getGeofenceIntent(station: CitiStationStatus): PendingIntent {
+        Intent().also { intent ->
+            intent.action = "com.fan.tiptop.dockthor.START_ALARM"
+            intent.putExtra("station_id", station.stationId)
+            //return PendingIntent.getBroadcast(context, _requestCode++, intent, PendingIntent.FLAG_IMMUTABLE)
+            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        }
+    }
+
+
     companion object {
         private const val TAG = "LocationManager"
         private var _instance: LocationManager? = null
@@ -129,19 +142,31 @@ class LocationManager private constructor(val context: AppCompatActivity) {
     }
 
     private var _geofencingClient: GeofencingClient
+    private var _requestCode: Int = 0
     private var _hasLocationPermission: Boolean = false
     private var _fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context.applicationContext)
 
+    private val alarmBroadcastReceiver = AlarmBroadcastReceiver()
+
     init {
         fillLocationPermission(context)
         _geofencingClient = LocationServices.getGeofencingClient(context)
+        context.registerReceiver(alarmBroadcastReceiver, IntentFilter("com.fan.tiptop.dockthor.START_ALARM"))
     }
 
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling
         // addGeofences() and removeGeofences().
-        PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        //TODOFE add context receiver and check what request code is for
+        PendingIntent.getBroadcast(
+            context,
+            _requestCode++,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
+
+
 }

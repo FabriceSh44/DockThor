@@ -13,7 +13,7 @@ import java.util.*
 class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
 
     val messageToDisplayLD = MutableLiveData("")
-    private val pickDayOfWeeks: MutableSet<DayOfWeek> = mutableSetOf()
+    private val pickDayOfWeeks: MutableSet<Int> = mutableSetOf()
     private var _kernel: DockThorKernel = DockThorKernel.getInstance()
     val isMondayPickedLD = MutableLiveData(false)
     val isTuesdayPickedLD = MutableLiveData(false)
@@ -70,7 +70,7 @@ class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
         return result
     }
 
-    fun updateDayOfWeeks(isDayPickedLD: MutableLiveData<Boolean>, day: DayOfWeek) {
+    fun updateDayOfWeeks(isDayPickedLD: MutableLiveData<Boolean>, day: Int) {
         if (isDayPickedLD.value == true) {
             pickDayOfWeeks.add(day)
         } else {
@@ -82,36 +82,36 @@ class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
     fun onEndTimeSubmitted() {}
     fun onMondayButtonClick() {
         isMondayPickedLD.value = isMondayPickedLD.value?.not()
-        updateDayOfWeeks(isMondayPickedLD, DayOfWeek.MONDAY)
+        updateDayOfWeeks(isMondayPickedLD, Calendar.MONDAY)
     }
 
     fun onTuesdayButtonClick() {
         isTuesdayPickedLD.value = isTuesdayPickedLD.value?.not()
-        updateDayOfWeeks(isTuesdayPickedLD, DayOfWeek.TUESDAY)
+        updateDayOfWeeks(isTuesdayPickedLD, Calendar.TUESDAY)
     }
 
     fun onWednesdayButtonClick() {
         isWednesdayPickedLD.value = isWednesdayPickedLD.value?.not()
-        updateDayOfWeeks(isWednesdayPickedLD, DayOfWeek.WEDNESDAY)
+        updateDayOfWeeks(isWednesdayPickedLD, Calendar.WEDNESDAY)
     }
 
     fun onThursdayButtonClick() {
         isThursdayPickedLD.value = isThursdayPickedLD.value?.not()
-        updateDayOfWeeks(isThursdayPickedLD, DayOfWeek.THURSDAY)
+        updateDayOfWeeks(isThursdayPickedLD, Calendar.THURSDAY)
     }
 
     fun onFridayButtonClick() {
         isFridayPickedLD.value = isFridayPickedLD.value?.not()
-        updateDayOfWeeks(isFridayPickedLD, DayOfWeek.FRIDAY)
+        updateDayOfWeeks(isFridayPickedLD, Calendar.FRIDAY)
     }
 
     fun onSaturdayButtonClick() {
         isSaturdayPickedLD.value = isSaturdayPickedLD.value?.not()
-        updateDayOfWeeks(isSaturdayPickedLD, DayOfWeek.SATURDAY)
+        updateDayOfWeeks(isSaturdayPickedLD, Calendar.SATURDAY)
     }
 
     fun onSundayButtonClick() {
         isSundayPickedLD.value = isSundayPickedLD.value?.not()
-        updateDayOfWeeks(isSundayPickedLD, DayOfWeek.SUNDAY)
+        updateDayOfWeeks(isSundayPickedLD, Calendar.SUNDAY)
     }
 }

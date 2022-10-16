@@ -23,8 +23,6 @@ import kotlin.time.toKotlinDuration
 
 class DockThorKernel private constructor(val dao: CitibikeStationInformationDao) {
 
-    private val setGeofenceIntent: PendingIntent? = null
-
     //CITI
     private val _citiKernel: CitiKernel = CitiKernel()
 
@@ -47,6 +45,7 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
                 }
             }
         )
+
     }
 
     suspend fun updateCitistationList(onUpdateComplete: (List<CitiStationStatus>, String) -> Unit) {
@@ -192,11 +191,11 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
     }
 
     fun addAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
-        print(station)
+        if (alarmInputs.isEmpty())
+            return
+        val geofenceIntent  = LocationManager.getInstance().getGeofenceIntent(station)
         for (alarmInput in alarmInputs) {
-            if (setGeofenceIntent != null) {
-                AlarmManager.getInstance().setAlarm(setGeofenceIntent, alarmInput)
-            }
+                AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
         }
     }
 

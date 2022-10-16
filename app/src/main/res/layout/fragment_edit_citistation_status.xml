@@ -23,14 +23,14 @@
         <ImageView
             android:id="@+id/directionImageView"
             android:layout_width="322dp"
-            android:layout_height="327dp"
+            android:layout_height="223dp"
             android:contentDescription="@string/clickForDirection"
             android:onClick="@{()->viewModel.onDirectionClick()}"
             android:src="@android:drawable/ic_menu_directions"
             app:layout_constraintBottom_toTopOf="@+id/guidelineBottom2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stationStatusItem"
+            app:layout_constraintTop_toBottomOf="@+id/geofenceSetupFragmentContainerView"
             tools:ignore="ImageContrastCheck" />
 
         <TextView
@@ -79,6 +79,7 @@
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/directionImageView"
             app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
             app:layout_constraintTop_toBottomOf="@+id/stationStatusItem"
             tools:layout="@layout/fragment_geofence_setup" />
