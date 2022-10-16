@@ -2,24 +2,21 @@ package com.fan.tiptop.dockthor.alarm
 
 import android.app.AlarmManager.RTC_WAKEUP
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import java.time.Duration
+import com.fan.tiptop.dockthor.location.LocationManager
 import java.util.*
 
 class AlarmInput(
     val dayOfWeek: Int,
     val hourOfDay: Int,
-    val minuteOfDay: Int,
-    val geofenceElapsedTime: Duration
-) {
-}
+    val minuteOfDay: Int
+)
 
 class AlarmManager(val context: AppCompatActivity) {
     private var _alarmManagerAndroid: android.app.AlarmManager? = null
+    private val alarmManagerAndroid get() = _alarmManagerAndroid!!
 
     init {
         _alarmManagerAndroid =
@@ -52,7 +49,7 @@ class AlarmManager(val context: AppCompatActivity) {
             "Adding alarm for :${alarmCalendar.time} => timeInMillis:${alarmCalendar.timeInMillis}"
         )
 
-        _alarmManagerAndroid?.setExactAndAllowWhileIdle(
+        alarmManagerAndroid.setExactAndAllowWhileIdle(
             RTC_WAKEUP,
             alarmCalendar.timeInMillis,
             geofenceIntent
@@ -67,6 +64,9 @@ class AlarmManager(val context: AppCompatActivity) {
         private var _instance: AlarmManager? = null
         private const val TAG = "AlarmManager"
 
+        init{
+            Log.i(TAG,"Initializing AlarmManager")
+        }
         @Synchronized
         fun getInstance(context: AppCompatActivity): AlarmManager? {
             if (null == _instance) _instance = AlarmManager(context)

@@ -10,6 +10,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class NetworkManager private constructor(context: Context) {
+    init {
+        Log.i(TAG, "Initializing Network manager" )
+    }
     //for Volley API
     private var requestQueue: RequestQueue = Volley.newRequestQueue(context.applicationContext)
     fun stationStatusRequest(listener: DefaultNetworkManagerListener) {
@@ -19,21 +22,12 @@ class NetworkManager private constructor(context: Context) {
             { response ->
                 Log.d(TAG, "somePostRequest Response : $response")
                 if (null != response) {
-                    runBlocking {
-                        launch {
-                            listener.getResult(response.toString())
-                        }
-                    }
+                    runBlocking { launch { listener.getResult(response.toString()) } }
                 }
             },
             { error ->
                 Log.e(TAG, "Error with request. Error: ${error}")
-                runBlocking {
-                    launch {
-                        listener.getError(error?.message ?: "")
-                    }
-                }
-
+                runBlocking { launch { listener.getError(error?.message ?: "") } }
             })
         requestQueue.add(request)
     }
@@ -45,21 +39,12 @@ class NetworkManager private constructor(context: Context) {
             { response ->
                 Log.d(TAG, "somePostRequest Response : $response")
                 if (null != response) {
-                    runBlocking {
-                        launch {
-                            listener.getResult(response.toString())
-                        }
-                    }
+                    runBlocking { launch { listener.getResult(response.toString()) } }
                 }
             },
             { error ->
                 Log.e(TAG, "Error with request. Error: ${error}")
-                runBlocking {
-                    launch {
-                        listener.getError(error?.message ?: "")
-                    }
-                }
-
+                runBlocking { launch { listener.getError(error?.message ?: "") } }
             })
         requestQueue.add(request)
     }

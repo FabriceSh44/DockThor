@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.dockthor.alarm.AlarmInput
-import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -62,8 +61,7 @@ class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
                 AlarmInput(
                     pickedDayOfWeek,
                     startTime.hour,
-                    startTime.minute,
-                    geofenceDelay
+                    startTime.minute
                 )
             )
         }

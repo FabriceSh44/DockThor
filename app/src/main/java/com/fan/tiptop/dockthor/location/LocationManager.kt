@@ -150,6 +150,7 @@ class LocationManager private constructor(val context: AppCompatActivity) {
     private val alarmBroadcastReceiver = AlarmBroadcastReceiver()
 
     init {
+        Log.i(TAG,"Initializing LocationManager")
         fillLocationPermission(context)
         _geofencingClient = LocationServices.getGeofencingClient(context)
         context.registerReceiver(alarmBroadcastReceiver, IntentFilter("com.fan.tiptop.dockthor.START_ALARM"))
