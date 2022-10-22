@@ -39,7 +39,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         binding.searchView.setOnQueryTextListener(this)
         NetworkManager.getInstance().stationInformationRequest(
             object : DefaultNetworkManagerListener {
-                override suspend fun getResult(result: String) {
+                override fun getResult(result: String) {
                     if (result.isNotEmpty()) {
                         _stationInfoList = processResponse(result)
                         binding.errorTextView.text = ""
@@ -47,7 +47,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
                     }
                 }
 
-                override suspend fun getError(error: String) {
+                override fun getError(error: String) {
                     if (error.isNotEmpty()) {
                         binding.errorTextView.text =
                             "Can't load station suggestions. Got error:[$error]"

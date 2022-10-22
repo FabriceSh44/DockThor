@@ -48,16 +48,19 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private fun initializeKernel() {
         isLoadingLD.value = true
         _kernel.initialize { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
-            citiStationStatusLD.value = citiStationStatus
-            errorToDisplayLD.value = errorToDisplay
-            isLoadingLD.value = false
+            viewModelScope.launch {
+                citiStationStatusLD.value = citiStationStatus
+                errorToDisplayLD.value = errorToDisplay
+                isLoadingLD.value = false
+            }
         }
     }
 
     private fun refreshCitiStationStatusDisplay() {
         isLoadingLD.value = true
-        viewModelScope.launch {
-            _kernel.updateCitistationList { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
+
+        _kernel.updateCitistationList { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
+            viewModelScope.launch {
                 citiStationStatusLD.value = citiStationStatus
                 errorToDisplayLD.value = errorToDisplay
                 isLoadingLD.value = false
@@ -103,7 +106,11 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
             if (swipeSide == SwipeSide.BIKE) StationSearchCriteria.CLOSEST_WITH_BIKE else StationSearchCriteria.CLOSEST_WITH_DOCK
         isLoadingLD.value = true
         viewModelScope.launch {
-            _kernel.replaceStationWithCriteria(citiStationStatus,criteria,citiStationStatusLD.value) { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
+            _kernel.replaceStationWithCriteria(
+                citiStationStatus,
+                criteria,
+                citiStationStatusLD.value
+            ) { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
                 citiStationStatusLD.value = citiStationStatus
                 errorToDisplayLD.value = errorToDisplay
                 isLoadingLD.value = false

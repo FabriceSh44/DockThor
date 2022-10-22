@@ -44,9 +44,6 @@ class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel
         }
     }
 
-    fun onSwitchClick() {
-        _kernel.addGeofenceToStation(station)
-    }
 
     fun onDirectionClick() {
         var intent = _kernel.getActionViewIntent(station)
