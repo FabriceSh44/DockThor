@@ -15,6 +15,8 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     private val TAG: String = "GeofenceBroadcastReceiver"
 
     override fun onReceive(context: Context, intent: Intent) {
+        Log.i(TAG, "onReceive context:${context} intent:${intent} ")
+
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
         if (geofencingEvent.hasError()) {
             val errorMessage = GeofenceStatusCodes
@@ -22,13 +24,22 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             Log.e(TAG, errorMessage)
             return
         }
-        val citistationStatus =
-            geofencingEvent.triggeringGeofences.firstOrNull()?.requestId?.toInt()
-                ?.let { DockThorKernel.getInstance().getCitistationStatus(it) }
+        Log.i(TAG, "received geofencing event:${geofencingEvent}. Retrieving citistation status")
 
-        citistationStatus?.let { Log.i(TAG, "has ${it.numDockAvailable} docks") }
 
         Log.i(TAG, getGeofenceTransitionDetails(geofencingEvent))
+        //can be null despite what AS is saying
+        if (geofencingEvent.triggeringGeofences == null) {
+            geofencingEvent.triggeringLocation
+            Log.i(TAG, "No geofence triggered")
+            return
+        }
+        val citistationStatus =
+            geofencingEvent.triggeringGeofences.first().requestId.toInt()
+                .let { DockThorKernel.getInstance().getCitistationStatus(it) }
+
+        citistationStatus?.let { Log.i(TAG, "${it.address} has ${it.numDockAvailable} docks") }
+
     }
 
     private fun getGeofenceTransitionDetails(event: GeofencingEvent): String {
@@ -50,8 +61,10 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
         }
         val triggeringIDs: MutableList<String?>
         triggeringIDs = ArrayList()
-        for (geofence in event.triggeringGeofences) {
-            triggeringIDs.add(geofence.requestId)
+        if (event.triggeringGeofences != null) {
+            for (geofence in event.triggeringGeofences) {
+                triggeringIDs.add(geofence.requestId)
+            }
         }
         return String.format("%s: %s", transitionString, TextUtils.join(", ", triggeringIDs))
     }

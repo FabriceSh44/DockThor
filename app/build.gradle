@@ -8,14 +8,14 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        release  {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyPassword RELEASE_KEY_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-        }
-    }
+//    signingConfigs {
+//        release  {
+//            storeFile file(RELEASE_STORE_FILE)
+//            storePassword RELEASE_STORE_PASSWORD
+//            keyPassword RELEASE_KEY_PASSWORD
+//            keyAlias RELEASE_KEY_ALIAS
+//        }
+//    }
     compileSdk 32
 
     defaultConfig {

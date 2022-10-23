@@ -116,14 +116,13 @@ class LocationManager private constructor(val context: AppCompatActivity) {
         Intent().also { intent ->
             intent.action = "com.fan.tiptop.dockthor.START_ALARM"
             intent.putExtra("station_id", station.stationId)
-            //return PendingIntent.getBroadcast(context, _requestCode++, intent, PendingIntent.FLAG_IMMUTABLE)
             return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
     }
     fun getGeofenceCreationIntent(): PendingIntent {
         Intent().also { intent ->
             intent.action = "com.fan.tiptop.dockthor.CREATE_GEOFENCE"
-            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)// MUTABLE is mandatory for geofencing
         }
     }
 
@@ -160,6 +159,9 @@ class LocationManager private constructor(val context: AppCompatActivity) {
         Log.i(TAG,"Initializing LocationManager")
         fillLocationPermission(context)
         _geofencingClient = LocationServices.getGeofencingClient(context)
+
+        Log.i(TAG,"Register broadcast receiver")
+
         context.registerReceiver(alarmBroadcastReceiver, IntentFilter("com.fan.tiptop.dockthor.START_ALARM"))
         context.registerReceiver(geofenceBroadcastReceiver, IntentFilter("com.fan.tiptop.dockthor.CREATE_GEOFENCE"))
     }
