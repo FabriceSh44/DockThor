@@ -9,6 +9,7 @@ import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.data.StationSearchCriteria
 import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
 import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
@@ -47,11 +48,13 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
 
     private fun initializeKernel() {
         isLoadingLD.value = true
-        _kernel.initialize { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
-            viewModelScope.launch {
-                citiStationStatusLD.value = citiStationStatus
-                errorToDisplayLD.value = errorToDisplay
-                isLoadingLD.value = false
+        viewModelScope.launch(Dispatchers.Default) {
+            _kernel.initialize { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
+                viewModelScope.launch {
+                    citiStationStatusLD.value = citiStationStatus
+                    errorToDisplayLD.value = errorToDisplay
+                    isLoadingLD.value = false
+                }
             }
         }
     }
@@ -59,11 +62,13 @@ class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
     private fun refreshCitiStationStatusDisplay() {
         isLoadingLD.value = true
 
-        _kernel.updateCitistationList { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
-            viewModelScope.launch {
-                citiStationStatusLD.value = citiStationStatus
-                errorToDisplayLD.value = errorToDisplay
-                isLoadingLD.value = false
+        viewModelScope.launch(Dispatchers.Default) {
+            _kernel.updateCitistationList { citiStationStatus: List<CitiStationStatus>, errorToDisplay: String ->
+                viewModelScope.launch {
+                    citiStationStatusLD.value = citiStationStatus
+                    errorToDisplayLD.value = errorToDisplay
+                    isLoadingLD.value = false
+                }
             }
         }
     }

@@ -3,15 +3,20 @@ package com.fan.tiptop.dockthor.alarm
 import android.app.AlarmManager.RTC_WAKEUP
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.fan.tiptop.dockthor.location.LocationManager
+import java.time.Duration
 import java.util.*
+import kotlin.math.log
 
 class AlarmInput(
+    val stationId: Int,
     val dayOfWeek: Int,
     val hourOfDay: Int,
-    val minuteOfDay: Int
+    val minuteOfDay: Int,
+    val delay: Duration
 )
 
 class AlarmManager(val context: AppCompatActivity) {
@@ -44,29 +49,43 @@ class AlarmManager(val context: AppCompatActivity) {
             }
         }
 
+        var alarmTime = alarmCalendar.timeInMillis
+        //FOR TEST
+//        alarmTime = System.currentTimeMillis() + 4000
         Log.i(
             TAG,
-            "Adding alarm for :${alarmCalendar.time} => timeInMillis:${alarmCalendar.timeInMillis}"
+            "Adding alarm for :${
+                Calendar.getInstance().apply { timeInMillis = alarmTime }.time
+            } => timeInMillis:${alarmTime}"
         )
 
         alarmManagerAndroid.setExactAndAllowWhileIdle(
             RTC_WAKEUP,
-            alarmCalendar.timeInMillis,
+            alarmTime,
             geofenceIntent
         )
     }
 
     fun removeAlarm(alarmInput: AlarmInput) {
-//        TODO("Not yet implemented")
+        val intent = Intent()
+        intent.action = AlarmBroadcastReceiver.generateAction(alarmInput.stationId)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManagerAndroid.cancel(pendingIntent)
     }
 
     companion object {
         private var _instance: AlarmManager? = null
         private const val TAG = "AlarmManager"
 
-        init{
-            Log.i(TAG,"Initializing AlarmManager")
+        init {
+            Log.i(TAG, "Initializing AlarmManager")
         }
+
         @Synchronized
         fun getInstance(context: AppCompatActivity): AlarmManager? {
             if (null == _instance) _instance = AlarmManager(context)

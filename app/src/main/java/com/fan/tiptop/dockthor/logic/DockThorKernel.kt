@@ -1,6 +1,5 @@
 package com.fan.tiptop.dockthor.logic
 
-import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
@@ -17,6 +16,7 @@ import com.fan.tiptop.dockthor.location.DefaultLocationManagerListener
 import com.fan.tiptop.dockthor.location.LocationManager
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -31,20 +31,25 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
 
     //LOG
     private val TAG = "DockThorKernel"
-    fun initialize(function: (List<CitiStationStatus>, String) -> Unit) {
+    suspend fun initialize(
+        function: (List<CitiStationStatus>, String) -> Unit
+    ) {
+
         NetworkManager.getInstance().stationInformationRequest(
             object : DefaultNetworkManagerListener {
                 override fun getResult(result: String) {
                     if (result.isNotEmpty()) {
-                        _citiKernel.processStationInfoRequestResult(result)
-                        updateCitistationList(function)
+                        CoroutineScope(Dispatchers.Default).launch {
+                            _citiKernel.processStationInfoRequestResult(result)
+                            updateCitistationList(function)
+                        }
                     }
                 }
 
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
                         Log.e(TAG, error)
-                        function(listOf(), "Unable to retrieve Citibike station information")
+                        function(listOf(), "Unable to retrieve citibike station information")
                     }
                 }
             }
@@ -56,8 +61,7 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         LocationManager.getInstance()
             .getLastLocation(object : DefaultLocationManagerListener {
                 override fun getLocation(location: android.location.Location?) {
-                    runBlocking {
-                        launch(Dispatchers.Default) {
+                    CoroutineScope(Dispatchers.Default).launch {
                             val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
                                 CitibikeStationInformationModelDecorated(
                                     x,
@@ -86,7 +90,6 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
                                         )
                                     }
                                 })
-                        }
                     }
                 }
             })
@@ -182,10 +185,10 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         dao.delete(stationInfoModel.model)
     }
 
-    fun addGeofenceToStation(stationId: Int) {
+    fun addGeofenceToStation(stationId: Int, expiration: Duration) {
         val stationInfoModel =
             _citiKernel.getCitiInfoModel(stationId) ?: return
-        LocationManager.getInstance().addGeofence(stationInfoModel.model, 3600)
+        LocationManager.getInstance().addGeofence(stationInfoModel.model, expiration)
     }
 
     fun getCitistationStatus(stationId: Int): CitiStationStatus? {
@@ -218,7 +221,7 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
     fun addAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
         if (alarmInputs.isEmpty())
             return
-        val geofenceIntent = LocationManager.getInstance().getGeofenceIntent(station)
+        val geofenceIntent = LocationManager.getInstance().getGeofenceIntent(station,alarmInputs.first().delay)
         for (alarmInput in alarmInputs) {
             AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
         }

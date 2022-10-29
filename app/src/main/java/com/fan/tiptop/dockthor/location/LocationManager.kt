@@ -19,8 +19,7 @@ import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import java.time.Duration
 
 class LocationManager private constructor(val context: AppCompatActivity) {
     @SuppressLint("MissingPermission")
@@ -43,16 +42,16 @@ class LocationManager private constructor(val context: AppCompatActivity) {
     @SuppressLint("MissingPermission")
     fun addGeofence(
         station: CitibikeStationInformationModel,
-        expirationInSecond: Long,
+        expiration: Duration,
     ) {
         val location: com.fan.tiptop.citiapi.data.Location =
             com.fan.tiptop.citiapi.data.Location(station.lat, station.lon)
         val geofencingRequest = GeoFenceBuilder.getGeofencingRequest(
-            location, expirationInSecond, station.station_id
+            location, expiration.seconds, station.station_id
         )
 
         if (_hasLocationPermission) {
-            _geofencingClient.addGeofences(geofencingRequest, getGeofenceCreationIntent()).run {
+            _geofencingClient.addGeofences(geofencingRequest, getGeofenceCreationIntent(station.station_id.toInt())).run {
                 addOnSuccessListener {
                     Log.i(
                         TAG,
@@ -112,16 +111,21 @@ class LocationManager private constructor(val context: AppCompatActivity) {
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-    fun getGeofenceIntent(station: CitiStationStatus): PendingIntent {
+    fun getGeofenceIntent(station: CitiStationStatus,expiration:Duration): PendingIntent {
+        val action = AlarmBroadcastReceiver.generateAction(station.stationId)
+        context.registerReceiver(alarmBroadcastReceiver, IntentFilter(action))
         Intent().also { intent ->
-            intent.action = "com.fan.tiptop.dockthor.START_ALARM"
+            intent.action = action
             intent.putExtra("station_id", station.stationId)
+            intent.putExtra("duration_in_sec", expiration.seconds)
             return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
     }
-    fun getGeofenceCreationIntent(): PendingIntent {
+    private fun getGeofenceCreationIntent(stationId:Int): PendingIntent {
+        val action = "com.fan.tiptop.dockthor.CREATE_GEOFENCE.${stationId}"
+        context.registerReceiver(geofenceBroadcastReceiver, IntentFilter(action))
         Intent().also { intent ->
-            intent.action = "com.fan.tiptop.dockthor.CREATE_GEOFENCE"
+            intent.action = action
             return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)// MUTABLE is mandatory for geofencing
         }
     }
@@ -147,7 +151,6 @@ class LocationManager private constructor(val context: AppCompatActivity) {
     }
 
     private var _geofencingClient: GeofencingClient
-    private var _requestCode: Int = 0
     private var _hasLocationPermission: Boolean = false
     private var _fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context.applicationContext)
@@ -162,8 +165,6 @@ class LocationManager private constructor(val context: AppCompatActivity) {
 
         Log.i(TAG,"Register broadcast receiver")
 
-        context.registerReceiver(alarmBroadcastReceiver, IntentFilter("com.fan.tiptop.dockthor.START_ALARM"))
-        context.registerReceiver(geofenceBroadcastReceiver, IntentFilter("com.fan.tiptop.dockthor.CREATE_GEOFENCE"))
     }
 
 

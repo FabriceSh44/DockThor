@@ -59,9 +59,11 @@ class GeofenceSetupViewModel(val station: CitiStationStatus) : ViewModel() {
         for (pickedDayOfWeek in pickDayOfWeeks) {
             result.add(
                 AlarmInput(
+                    station.stationId,
                     pickedDayOfWeek,
                     startTime.hour,
-                    startTime.minute
+                    startTime.minute,
+                    geofenceDelay
                 )
             )
         }

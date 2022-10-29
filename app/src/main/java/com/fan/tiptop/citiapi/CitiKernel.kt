@@ -16,7 +16,7 @@ class CitiKernel {
     private var _stationInformationModelMap: Map<Int, CitibikeStationInformationModelDecorated> =
         mapOf()
 
-    fun processStationInfoRequestResult(result: String) {
+     suspend fun processStationInfoRequestResult(result: String) {
         try {
             _stationInformationModelMap =
                 _requester.getStationInformationModel(result).data.stations.map { x ->
