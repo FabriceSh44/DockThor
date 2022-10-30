@@ -136,7 +136,7 @@ class MainViewModel(val dao: DockthorDao) : ViewModel() {
             return
         }
         viewModelScope.launch {
-            dao.deleteByStationId((_selectedStationsId.distinct()))
+            dao.deleteAlarmByStationId((_selectedStationsId.distinct()))
             refreshCitiStationStatusDisplay()
             _contextualBarNotVisible.value = true
         }

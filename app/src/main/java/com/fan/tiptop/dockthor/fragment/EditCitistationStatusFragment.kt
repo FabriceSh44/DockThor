@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.fan.tiptop.dockthor.databinding.FragmentEditCitistationStatusBinding
 import com.fan.tiptop.dockthor.logic.EditCitistationStatusModelFactory
 import com.fan.tiptop.dockthor.logic.EditCitistationStatusViewModel
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 
 
 class EditCitistationStatusFragment : Fragment() {
@@ -29,13 +31,18 @@ class EditCitistationStatusFragment : Fragment() {
             val station = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).station
             val alarms = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).alarms
             val viewModelFactory = EditCitistationStatusModelFactory(station)
-            _viewModel = ViewModelProvider(this, viewModelFactory)[EditCitistationStatusViewModel::class.java]
+            _viewModel = ViewModelProvider(
+                this,
+                viewModelFactory
+            )[EditCitistationStatusViewModel::class.java]
             binding.viewModel = viewModel
-            val  geofenceSetupFragment =childFragmentManager.fragments.firstOrNull() as GeofenceSetupFragment
+            val geofenceSetupFragment =
+                childFragmentManager.fragments.firstOrNull() as GeofenceSetupFragment
             geofenceSetupFragment.setArguments(station, alarms.toList())
             viewModel.navigationIntentLD.observe(viewLifecycleOwner) { navigationIntent ->
                 navigationIntent?.let { context?.startActivity(it) }
             }
+
         }
         return binding.root
     }

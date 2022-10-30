@@ -1,5 +1,7 @@
 package com.fan.tiptop.dockthor.logic
 
+import android.util.Log
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fan.tiptop.citiapi.data.CitiStationStatus
@@ -8,11 +10,16 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class GeofenceSetupViewModel(val station: CitiStationStatus,alarms:List<CitibikeStationAlarm>) : ViewModel() {
+class GeofenceSetupViewModel(val station: CitiStationStatus, alarms: List<CitibikeStationAlarm>) :
+    ViewModel() {
+    private val TAG = "GeofenceSetupViewModel"
+    val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("H:mm", Locale.ENGLISH)
 
     val messageToDisplayLD = MutableLiveData("")
     private val pickDayOfWeeks: MutableSet<Int> = mutableSetOf()
     private var _kernel: DockThorKernel = DockThorKernel.getInstance()
+    val startTimeClickedLD = MutableLiveData(false)
+    val endTimeClickedLD = MutableLiveData(false)
     val isMondayPickedLD = MutableLiveData(false)
     val isTuesdayPickedLD = MutableLiveData(false)
     val isWednesdayPickedLD = MutableLiveData(false)
@@ -25,15 +32,36 @@ class GeofenceSetupViewModel(val station: CitiStationStatus,alarms:List<Citibike
     val maxDockValueLD = MutableLiveData(10)
     val startTimeLD = MutableLiveData("8:00")
     val endTimeLD = MutableLiveData("9:45")
+    val startTimeHour: Int
+        get() {
+            return LocalTime.parse(startTimeLD.value, dtf).hour
+        }
+    val startTimeMinute: Int
+        get() {
+            return LocalTime.parse(startTimeLD.value, dtf).minute
+        }
+    val endTimeHour: Int
+        get() {
+            return LocalTime.parse(endTimeLD.value, dtf).hour
+        }
+    val endTimeMinute: Int
+        get() {
+            return LocalTime.parse(endTimeLD.value, dtf).minute
+        }
+
     init {
         fromListAlarmInput(alarms)
     }
 
     fun onEnabledSwitchClick() {
-        val alarmInputs: List<CitibikeStationAlarm> = this.toListAlarmInput()
         isSwitchCheckedLD.value = isSwitchCheckedLD.value?.not()
+        updateAlarms()
+    }
+
+    fun updateAlarms() {
+        val alarmInputs: List<CitibikeStationAlarm> = this.toListAlarmInput()
         if (isSwitchCheckedLD.value == true) {
-            messageToDisplayLD.value = "Alarm created"
+            messageToDisplayLD.value = "Alarm created" //TODO should pop only if next alarm changed
             _kernel.addAlarmForStation(station, alarmInputs)
         } else {
             messageToDisplayLD.value = "Alarm removed"
@@ -41,62 +69,54 @@ class GeofenceSetupViewModel(val station: CitiStationStatus,alarms:List<Citibike
         }
     }
 
-    private fun fromListAlarmInput(alarms:List<CitibikeStationAlarm>) {
+    private fun fromListAlarmInput(alarms: List<CitibikeStationAlarm>) {
         if (alarms.isEmpty())
             return
-        isSwitchCheckedLD.value=true
+        isSwitchCheckedLD.value = true
         val firstAlarm = alarms.first()
-        startTimeLD.value= "${firstAlarm.hourOfDay}:${firstAlarm.minuteOfDay}"
-        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("H:m", Locale.ENGLISH)
-        val startTime: LocalTime? = startTimeLD.value?.let { LocalTime.parse(it, dtf) }
-        endTimeLD.value=startTime?.plusSeconds(firstAlarm.delayInSec)?.format(dtf)
-        for (alarm in alarms)
-        {
-            when(alarm.dayOfWeek){
-                Calendar.MONDAY->{
-                    isMondayPickedLD.value=true
+        val startTime = LocalTime.of(firstAlarm.hourOfDay, firstAlarm.minuteOfDay)
+        startTimeLD.value = startTime?.format(dtf)
+        endTimeLD.value = startTime?.plusSeconds(firstAlarm.delayInSec)?.format(dtf)
+        for (alarm in alarms) {
+            when (alarm.dayOfWeek) {
+                Calendar.MONDAY -> {
+                    isMondayPickedLD.value = true
+                    updateDayOfWeeks(isMondayPickedLD,Calendar.MONDAY)
                 }
-                Calendar.TUESDAY->{isTuesdayPickedLD.value=true}
-                Calendar.WEDNESDAY->{isWednesdayPickedLD.value=true}
-                Calendar.THURSDAY->{isThursdayPickedLD.value=true}
-                Calendar.FRIDAY->{isFridayPickedLD.value=true}
-                Calendar.SATURDAY->{isSaturdayPickedLD.value=true}
-                Calendar.SUNDAY->{isSundayPickedLD.value=true}
+                Calendar.TUESDAY -> {
+                    isTuesdayPickedLD.value = true
+                    updateDayOfWeeks(isTuesdayPickedLD,Calendar.TUESDAY)
+                }
+                Calendar.WEDNESDAY -> {
+                    isWednesdayPickedLD.value = true
+                    updateDayOfWeeks(isWednesdayPickedLD,Calendar.WEDNESDAY)
+                }
+                Calendar.THURSDAY -> {
+                    isThursdayPickedLD.value = true
+                    updateDayOfWeeks(isThursdayPickedLD,Calendar.THURSDAY)
+                }
+                Calendar.FRIDAY -> {
+                    isFridayPickedLD.value = true
+                    updateDayOfWeeks(isFridayPickedLD,Calendar.FRIDAY)
+                }
+                Calendar.SATURDAY -> {
+                    isSaturdayPickedLD.value = true
+                    updateDayOfWeeks(isSaturdayPickedLD,Calendar.SATURDAY)
+                }
+                Calendar.SUNDAY -> {
+                    isSundayPickedLD.value = true
+                    updateDayOfWeeks(isSundayPickedLD,Calendar.SUNDAY)
+                }
             }
         }
-//        val result = mutableListOf<CitibikeStationAlarm>()
-//        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("H:m", Locale.ENGLISH)
-//        val startTime: LocalTime? = startTimeLD.value?.let { LocalTime.parse(it, dtf) }
-//        val endTime: LocalTime? = endTimeLD.value?.let { LocalTime.parse(it, dtf) }
-//        if (startTime == null || endTime == null) {
-//            return mutableListOf()
-//        }
-//        var secondDelay: Int
-//        if (endTime > startTime) {
-//            secondDelay = endTime.toSecondOfDay() - startTime.toSecondOfDay()
-//        } else {
-//            secondDelay = LocalTime.parse("11:59:59").toSecondOfDay() - startTime.toSecondOfDay()
-//            secondDelay += endTime.toSecondOfDay()
-//        }
-//
-//        for (pickedDayOfWeek in pickDayOfWeeks) {
-//            result.add(
-//                CitibikeStationAlarm(
-//                    stationId = station.stationId,
-//                    dayOfWeek = pickedDayOfWeek,
-//                    hourOfDay = startTime.hour,
-//                    minuteOfDay = startTime.minute,
-//                    delayInSec = secondDelay.toLong()
-//                )
-//            )
-//        }
     }
+
     private fun toListAlarmInput(): List<CitibikeStationAlarm> {
         val result = mutableListOf<CitibikeStationAlarm>()
-        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("H:m", Locale.ENGLISH)
         val startTime: LocalTime? = startTimeLD.value?.let { LocalTime.parse(it, dtf) }
         val endTime: LocalTime? = endTimeLD.value?.let { LocalTime.parse(it, dtf) }
         if (startTime == null || endTime == null) {
+            Log.e(TAG, "Unable to parse ${startTimeLD.value} or ${endTimeLD.value}")
             return mutableListOf()
         }
         var secondDelay: Int
@@ -114,7 +134,8 @@ class GeofenceSetupViewModel(val station: CitiStationStatus,alarms:List<Citibike
                     dayOfWeek = pickedDayOfWeek,
                     hourOfDay = startTime.hour,
                     minuteOfDay = startTime.minute,
-                    delayInSec = secondDelay.toLong()
+                    delayInSec = secondDelay.toLong(),
+                    dockThreshold = progressLD.value ?: 5
                 )
             )
         }
@@ -127,10 +148,33 @@ class GeofenceSetupViewModel(val station: CitiStationStatus,alarms:List<Citibike
         } else {
             pickDayOfWeeks.remove(day)
         }
+        if (isSwitchCheckedLD.value == true) {
+            updateAlarms()
+        }
     }
 
-    fun onStartTimeSubmitted() {}
-    fun onEndTimeSubmitted() {}
+    fun updateStartTime(hour: Int, minute: Int) {
+        startTimeLD.value = LocalTime.of(hour, minute)?.format(dtf)
+        if (isSwitchCheckedLD.value == true) {
+            updateAlarms()
+        }
+    }
+
+    fun updateEndTime(hour: Int, minute: Int) {
+        endTimeLD.value = LocalTime.of(hour, minute)?.format(dtf)
+        if (isSwitchCheckedLD.value == true) {
+            updateAlarms()
+        }
+    }
+
+    fun onStartTimeClicked() {
+        startTimeClickedLD.value = true
+    }
+
+    fun onEndTimeClicked() {
+        endTimeClickedLD.value = true
+    }
+
     fun onMondayButtonClick() {
         isMondayPickedLD.value = isMondayPickedLD.value?.not()
         updateDayOfWeeks(isMondayPickedLD, Calendar.MONDAY)
@@ -165,4 +209,5 @@ class GeofenceSetupViewModel(val station: CitiStationStatus,alarms:List<Citibike
         isSundayPickedLD.value = isSundayPickedLD.value?.not()
         updateDayOfWeeks(isSundayPickedLD, Calendar.SUNDAY)
     }
+
 }

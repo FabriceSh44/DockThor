@@ -17,4 +17,5 @@ data class CitibikeStationAlarm(
     val hourOfDay: Int,
     val minuteOfDay: Int,
     val delayInSec: Long,
+    val dockThreshold: Int,
 ) : Parcelable

@@ -25,6 +25,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
     ) {
         val stationId = intent.getIntExtra("station_id", 0)
         val durationInSec = intent.getLongExtra("duration_in_sec", 0)
+        val dockThreshold = intent.getLongExtra("duration_in_sec", 0)
         Log.i(TAG, "Alarm just fired for ${stationId}")
         DockThorKernel.getInstance()
             .addGeofenceToStation(stationId, Duration.ofSeconds(durationInSec))

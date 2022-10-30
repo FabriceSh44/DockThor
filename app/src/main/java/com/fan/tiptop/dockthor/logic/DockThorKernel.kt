@@ -208,8 +208,10 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
 
 
     fun removeAlarmForStation(alarmInputs: List<CitibikeStationAlarm>) {
+        if(alarmInputs.isEmpty())
+            return
         CoroutineScope(Dispatchers.IO).launch {
-            dao.deleteByStationId(
+            dao.deleteAlarmByStationId(
                 alarmInputs.first().stationId
             )
         }
@@ -222,7 +224,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
         if (alarmInputs.isEmpty())
             return
         val geofenceIntent = LocationManager.getInstance()
-            .getGeofenceIntent(station, Duration.ofSeconds(alarmInputs.first().delayInSec))
+            .getGeofenceIntent(station, alarmInputs.first())
         for (alarmInput in alarmInputs) {
             AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
         }
