@@ -5,18 +5,24 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.fan.tiptop.citiapi.data.CitiStationStatus
+import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
 import com.fan.tiptop.citiapi.database.DockThorDatabase
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
 import com.fan.tiptop.dockthor.databinding.FragmentMainBinding
+import com.fan.tiptop.dockthor.logic.DockThorKernel
 import com.fan.tiptop.dockthor.logic.MainViewModel
 import com.fan.tiptop.dockthor.logic.MainViewModelFactory
 import com.fan.tiptop.dockthor.logic.main_swipe.MainSwipeController
 import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainFragment : Fragment() {
@@ -35,7 +41,7 @@ class MainFragment : Fragment() {
 
         //set main view model
         val application = requireNotNull(this.activity).application
-        val dao = DockThorDatabase.getInstance(application).citibikeStationInformationDao
+        val dao = DockThorDatabase.getInstance(application).dockthorDao
 
         val viewModelFactory = MainViewModelFactory(dao)
         _mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
@@ -45,7 +51,7 @@ class MainFragment : Fragment() {
 
 
         val adapter = CitiStationStatusAdapter({ station: CitiStationStatus ->
-            actionClick(station)
+            actionClick(station,)
         },
             { station: CitiStationStatus ->
                 Boolean
@@ -140,9 +146,18 @@ class MainFragment : Fragment() {
     private fun actionClick(station: CitiStationStatus) {
         val navigate = mainViewModel.onActionClick(station)
         if (navigate) {
-            val action =
-                MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(station)
-            this.findNavController().navigate(action)
+            CoroutineScope(Dispatchers.IO).launch {
+                val alarms =
+                    DockThorKernel.getInstance().dao.getStationAlarms(station.stationId)
+                CoroutineScope(Dispatchers.Main).launch {
+                    val action =
+                        MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(
+                            station,
+                            alarms.toTypedArray()
+                        )
+                    findNavController().navigate(action)
+                }
+            }
         }
     }
 

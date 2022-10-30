@@ -13,3 +13,6 @@ telnet  localhost 5554
 auth token # token=(cat ~/.emulator_console_auth_token)
 geo fix -73.9923318 40.6839783  # station1
 geo fix -73.999231 40.718924 # station2
+
+## Dump alarms
+~/Android/Sdk/platform-tools/adb  shell dumpsys alarm

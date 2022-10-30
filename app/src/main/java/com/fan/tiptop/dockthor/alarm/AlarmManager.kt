@@ -6,18 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
+import com.fan.tiptop.citiapi.database.DockThorDatabase
 import com.fan.tiptop.dockthor.location.LocationManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.Duration
 import java.util.*
 import kotlin.math.log
 
-class AlarmInput(
-    val stationId: Int,
-    val dayOfWeek: Int,
-    val hourOfDay: Int,
-    val minuteOfDay: Int,
-    val delay: Duration
-)
 
 class AlarmManager(val context: AppCompatActivity) {
     private var _alarmManagerAndroid: android.app.AlarmManager? = null
@@ -28,7 +26,7 @@ class AlarmManager(val context: AppCompatActivity) {
             context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
     }
 
-    fun setAlarm(geofenceIntent: PendingIntent, alarmInput: AlarmInput) {
+    fun setAlarm(geofenceIntent: PendingIntent, alarmInput: CitibikeStationAlarm) {
         val nowCalendar: Calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
         }
@@ -52,21 +50,26 @@ class AlarmManager(val context: AppCompatActivity) {
         var alarmTime = alarmCalendar.timeInMillis
         //FOR TEST
 //        alarmTime = System.currentTimeMillis() + 4000
-        Log.i(
-            TAG,
-            "Adding alarm for :${
-                Calendar.getInstance().apply { timeInMillis = alarmTime }.time
-            } => timeInMillis:${alarmTime}"
-        )
 
-        alarmManagerAndroid.setExactAndAllowWhileIdle(
-            RTC_WAKEUP,
-            alarmTime,
-            geofenceIntent
-        )
+        CoroutineScope(Dispatchers.IO).launch {
+            Log.i(
+                TAG,
+                "Adding alarm for :${
+                    Calendar.getInstance().apply { timeInMillis = alarmTime }.time
+                } => timeInMillis:${alarmTime}"
+            )
+            DockThorDatabase.getInstance(context).dockthorDao.insert(
+                alarmInput
+            )
+            alarmManagerAndroid.setExactAndAllowWhileIdle(
+                RTC_WAKEUP,
+                alarmTime,
+                geofenceIntent
+            )
+        }
     }
 
-    fun removeAlarm(alarmInput: AlarmInput) {
+    fun removeAlarm(alarmInput: CitibikeStationAlarm) {
         val intent = Intent()
         intent.action = AlarmBroadcastReceiver.generateAction(alarmInput.stationId)
         val pendingIntent = PendingIntent.getBroadcast(

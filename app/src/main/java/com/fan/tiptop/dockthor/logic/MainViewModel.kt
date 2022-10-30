@@ -7,12 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.data.StationSearchCriteria
-import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
+import com.fan.tiptop.citiapi.database.DockthorDao
 import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel(val dao: CitibikeStationInformationDao) : ViewModel() {
+class MainViewModel(val dao: DockthorDao) : ViewModel() {
 
 
     //LOG

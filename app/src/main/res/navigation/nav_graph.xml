@@ -43,5 +43,8 @@
         <argument
             android:name="station"
             app:argType="com.fan.tiptop.citiapi.data.CitiStationStatus" />
+        <argument
+            android:name="alarms"
+            app:argType="com.fan.tiptop.citiapi.data.CitibikeStationAlarm[]" />
     </fragment>
 </navigation>

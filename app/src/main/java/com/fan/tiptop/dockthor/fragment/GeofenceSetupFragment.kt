@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.fan.tiptop.citiapi.data.CitiStationStatus
+import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
 import com.fan.tiptop.dockthor.databinding.FragmentGeofenceSetupBinding
 import com.fan.tiptop.dockthor.logic.GeofenceSetupModelFactory
 import com.fan.tiptop.dockthor.logic.GeofenceSetupViewModel
@@ -15,6 +16,7 @@ import com.fan.tiptop.dockthor.logic.GeofenceSetupViewModel
 
 class GeofenceSetupFragment : Fragment() {
     private  var _station: CitiStationStatus? = null
+    private  var _alarms: List<CitibikeStationAlarm>? = null
     private var _viewModel: GeofenceSetupViewModel? = null
     private var _binding: FragmentGeofenceSetupBinding? = null
     private val binding get() = _binding!!
@@ -27,7 +29,7 @@ class GeofenceSetupFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentGeofenceSetupBinding.inflate(inflater, container, false)
         if (_station!=null) {
-            val viewModelFactory = GeofenceSetupModelFactory(_station!!)
+            val viewModelFactory = GeofenceSetupModelFactory(_station!!, _alarms!!)
             _viewModel = ViewModelProvider(this, viewModelFactory)[GeofenceSetupViewModel::class.java]
             binding.viewModel = _viewModel
             viewModel.messageToDisplayLD.observe(viewLifecycleOwner) { errorText ->
@@ -46,8 +48,9 @@ class GeofenceSetupFragment : Fragment() {
         _viewModel = null
     }
 
-    fun setStation(station: CitiStationStatus) {
+    fun setArguments(station: CitiStationStatus, alarms:List<CitibikeStationAlarm>) {
         _station = station
+        _alarms = alarms
     }
 
 }

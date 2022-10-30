@@ -27,14 +27,14 @@ class EditCitistationStatusFragment : Fragment() {
 
         if (!requireArguments().isEmpty) {
             val station = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).station
+            val alarms = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).alarms
             val viewModelFactory = EditCitistationStatusModelFactory(station)
-            _viewModel = ViewModelProvider(this, viewModelFactory).get(EditCitistationStatusViewModel::class.java)
+            _viewModel = ViewModelProvider(this, viewModelFactory)[EditCitistationStatusViewModel::class.java]
             binding.viewModel = viewModel
             val  geofenceSetupFragment =childFragmentManager.fragments.firstOrNull() as GeofenceSetupFragment
-            geofenceSetupFragment.setStation(station)
+            geofenceSetupFragment.setArguments(station, alarms.toList())
             viewModel.navigationIntentLD.observe(viewLifecycleOwner) { navigationIntent ->
                 navigationIntent?.let { context?.startActivity(it) }
-                // binding.geofenceSetupfragmentContainerView.getFragment<GeofenceSetupFragment>().initialize(station)
             }
         }
         return binding.root

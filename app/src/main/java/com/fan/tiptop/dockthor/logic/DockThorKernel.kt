@@ -5,12 +5,8 @@ import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
 import com.fan.tiptop.citiapi.CitiKernel
-import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModelDecorated
-import com.fan.tiptop.citiapi.data.Location
-import com.fan.tiptop.citiapi.data.StationSearchCriteria
-import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
-import com.fan.tiptop.dockthor.alarm.AlarmInput
+import com.fan.tiptop.citiapi.data.*
+import com.fan.tiptop.citiapi.database.DockthorDao
 import com.fan.tiptop.dockthor.alarm.AlarmManager
 import com.fan.tiptop.dockthor.location.DefaultLocationManagerListener
 import com.fan.tiptop.dockthor.location.LocationManager
@@ -24,7 +20,7 @@ import java.time.Duration
 import kotlin.time.toKotlinDuration
 
 
-class DockThorKernel private constructor(val dao: CitibikeStationInformationDao) {
+class DockThorKernel private constructor(val dao: DockthorDao) {
 
     //CITI
     private val _citiKernel: CitiKernel = CitiKernel()
@@ -62,34 +58,34 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
             .getLastLocation(object : DefaultLocationManagerListener {
                 override fun getLocation(location: android.location.Location?) {
                     CoroutineScope(Dispatchers.Default).launch {
-                            val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
-                                CitibikeStationInformationModelDecorated(
-                                    x,
-                                    isFavorite = true
-                                )
-                            }.toMutableList()
-                            NetworkManager.getInstance()
-                                .stationStatusRequest(object : DefaultNetworkManagerListener {
-                                    override fun getResult(result: String) {
-                                        if (result.isNotEmpty()) {
-                                            val citiStationStatusToDisplay: List<CitiStationStatus> =
-                                                _citiKernel.getCitiStationStatusToDisplay(
-                                                    result,
-                                                    stationInfoModelToDisplay,
-                                                    location.toCitiLocation()
-                                                )
-                                            onUpdateComplete(citiStationStatusToDisplay, "")
-                                        }
+                        val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
+                            CitibikeStationInformationModelDecorated(
+                                x,
+                                isFavorite = true
+                            )
+                        }.toMutableList()
+                        NetworkManager.getInstance()
+                            .stationStatusRequest(object : DefaultNetworkManagerListener {
+                                override fun getResult(result: String) {
+                                    if (result.isNotEmpty()) {
+                                        val citiStationStatusToDisplay: List<CitiStationStatus> =
+                                            _citiKernel.getCitiStationStatusToDisplay(
+                                                result,
+                                                stationInfoModelToDisplay,
+                                                location.toCitiLocation()
+                                            )
+                                        onUpdateComplete(citiStationStatusToDisplay, "")
                                     }
+                                }
 
-                                    override fun getError(error: String) {
-                                        Log.e(TAG, error)
-                                        onUpdateComplete(
-                                            listOf(),
-                                            "Unable to retrieve Citibike station status"
-                                        )
-                                    }
-                                })
+                                override fun getError(error: String) {
+                                    Log.e(TAG, error)
+                                    onUpdateComplete(
+                                        listOf(),
+                                        "Unable to retrieve Citibike station status"
+                                    )
+                                }
+                            })
                     }
                 }
             })
@@ -211,17 +207,22 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
     }
 
 
-    fun removeAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
-        print(station)
+    fun removeAlarmForStation(alarmInputs: List<CitibikeStationAlarm>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.deleteByStationId(
+                alarmInputs.first().stationId
+            )
+        }
         for (alarmInput in alarmInputs) {
             AlarmManager.getInstance().removeAlarm(alarmInput)
         }
     }
 
-    fun addAlarmForStation(station: CitiStationStatus, alarmInputs: List<AlarmInput>) {
+    fun addAlarmForStation(station: CitiStationStatus, alarmInputs: List<CitibikeStationAlarm>) {
         if (alarmInputs.isEmpty())
             return
-        val geofenceIntent = LocationManager.getInstance().getGeofenceIntent(station,alarmInputs.first().delay)
+        val geofenceIntent = LocationManager.getInstance()
+            .getGeofenceIntent(station, Duration.ofSeconds(alarmInputs.first().delayInSec))
         for (alarmInput in alarmInputs) {
             AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
         }
@@ -232,7 +233,7 @@ class DockThorKernel private constructor(val dao: CitibikeStationInformationDao)
         private var _instance: DockThorKernel? = null
 
         @Synchronized
-        fun getInstance(dao: CitibikeStationInformationDao): DockThorKernel {
+        fun getInstance(dao: DockthorDao): DockThorKernel {
             if (null == _instance) _instance = DockThorKernel(dao)
             return _instance!!
         }

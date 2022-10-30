@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 
-@Database(entities = [CitibikeStationInformationModel::class], version = 3, exportSchema = false)
+@Database(entities = [CitibikeStationInformationModel::class,CitibikeStationAlarm::class], version = 4, exportSchema = false)
 abstract class DockThorDatabase : RoomDatabase() {
-    abstract val citibikeStationInformationDao: CitibikeStationInformationDao
+    abstract val dockthorDao: DockthorDao
 
     companion object {
         @Volatile

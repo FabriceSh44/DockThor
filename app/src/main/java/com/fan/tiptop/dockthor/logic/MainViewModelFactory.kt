@@ -2,9 +2,9 @@ package com.fan.tiptop.dockthor.logic
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.fan.tiptop.citiapi.database.CitibikeStationInformationDao
+import com.fan.tiptop.citiapi.database.DockthorDao
 
-class MainViewModelFactory(private val dao: CitibikeStationInformationDao) :
+class MainViewModelFactory(private val dao: DockthorDao) :
     ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
