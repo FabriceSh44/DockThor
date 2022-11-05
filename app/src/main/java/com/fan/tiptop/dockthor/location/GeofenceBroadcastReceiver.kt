@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.fan.tiptop.dockthor.logic.DockThorKernel
+import com.fan.tiptop.dockthor.logic.NotificationManager
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
@@ -38,7 +40,12 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             geofencingEvent.triggeringGeofences.first().requestId.toInt()
                 .let { DockThorKernel.getInstance().getCitistationStatus(it) }
 
-        citistationStatus?.let { Log.i(TAG, "${it.address} has ${it.numDockAvailable} docks") }
+        citistationStatus?.let {
+            Log.i(TAG, "${it.address} has ${it.numDockAvailable} docks")
+            if (it.numDockAvailable.toInt() < 5) {
+                NotificationManager.getInstance().sendNotification(it)
+            }
+        }
 
     }
 

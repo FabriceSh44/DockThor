@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.fan.tiptop.citiapi.CitiKernel
 import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.database.DockthorDao
@@ -207,28 +208,19 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
     }
 
 
-    fun removeAlarmForStation(alarmInputs: List<CitibikeStationAlarm>) {
-        if(alarmInputs.isEmpty())
-            return
+    fun removeAlarmForStation(stationId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            dao.deleteAlarmByStationId(
-                alarmInputs.first().stationId
-            )
+            dao.deleteAlarmByStationId(stationId)
         }
-        for (alarmInput in alarmInputs) {
-            AlarmManager.getInstance().removeAlarm(alarmInput)
-        }
+        AlarmManager.getInstance().removeAlarm(stationId)
     }
 
-    fun addAlarmForStation(station: CitiStationStatus, alarmInputs: List<CitibikeStationAlarm>) {
-        if (alarmInputs.isEmpty())
-            return
+    fun setupNextAlarmForStation(station: CitiStationStatus, alarmInput: CitibikeStationAlarm) {
         val geofenceIntent = LocationManager.getInstance()
-            .getGeofenceIntent(station, alarmInputs.first())
-        for (alarmInput in alarmInputs) {
+            .getGeofenceIntent(station, alarmInput)
             AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
-        }
     }
+
 
 
     companion object {

@@ -22,13 +22,14 @@
 
         <ImageView
             android:id="@+id/directionImageView"
-            android:layout_width="322dp"
-            android:layout_height="223dp"
+            android:layout_width="302dp"
+            android:layout_height="139dp"
             android:contentDescription="@string/clickForDirection"
             android:onClick="@{()->viewModel.onDirectionClick()}"
             android:src="@android:drawable/ic_menu_directions"
             app:layout_constraintBottom_toTopOf="@+id/guidelineBottom2"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/geofenceSetupFragmentContainerView"
             tools:ignore="ImageContrastCheck" />
@@ -75,7 +76,7 @@
             android:id="@+id/geofenceSetupFragmentContainerView"
             android:name="com.fan.tiptop.dockthor.fragment.GeofenceSetupFragment"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/directionImageView"
             app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"

@@ -27,27 +27,7 @@ class AlarmManager(val context: AppCompatActivity) {
     }
 
     fun setAlarm(geofenceIntent: PendingIntent, alarmInput: CitibikeStationAlarm) {
-        val nowCalendar: Calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-        }
-        val alarmCalendar: Calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, alarmInput.hourOfDay)
-            set(Calendar.MINUTE, alarmInput.minuteOfDay)
-            set(Calendar.SECOND, 0)
-        }
-        alarmCalendar.apply { set(Calendar.DAY_OF_WEEK, alarmInput.dayOfWeek) }
-
-        if (alarmCalendar < nowCalendar) {
-            alarmCalendar.apply {
-                set(
-                    Calendar.DAY_OF_YEAR,
-                    alarmCalendar.get(Calendar.DAY_OF_YEAR) + 7
-                )
-            }
-        }
-
-        var alarmTime = alarmCalendar.timeInMillis
+        val alarmTime = alarmInput.wakeUpTimeInMillis
         //FOR TEST
 //        alarmTime = System.currentTimeMillis() + 4000
 
@@ -69,9 +49,9 @@ class AlarmManager(val context: AppCompatActivity) {
         }
     }
 
-    fun removeAlarm(alarmInput: CitibikeStationAlarm) {
+    fun removeAlarm(stationId: Int) {
         val intent = Intent()
-        intent.action = AlarmBroadcastReceiver.generateAction(alarmInput.stationId)
+        intent.action = AlarmBroadcastReceiver.generateAction(stationId)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             0,
