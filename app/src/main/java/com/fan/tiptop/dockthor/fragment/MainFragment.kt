@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
+import com.fan.tiptop.citiapi.data.CitibikeStationAlarmData
 import com.fan.tiptop.citiapi.database.DockThorDatabase
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.adapter.CitiStationStatusAdapter
@@ -51,7 +52,7 @@ class MainFragment : Fragment() {
 
 
         val adapter = CitiStationStatusAdapter({ station: CitiStationStatus ->
-            actionClick(station,)
+            actionClick(station)
         },
             { station: CitiStationStatus ->
                 Boolean
@@ -149,11 +150,15 @@ class MainFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
                 val alarms =
                     DockThorKernel.getInstance().dao.getStationAlarms(station.stationId)
+                val alarmData =
+                    DockThorKernel.getInstance().dao.getStationAlarmData(station.stationId)
+                        ?: CitibikeStationAlarmData(station.stationId, false, 8, 0, 3600, 5, 0)
                 CoroutineScope(Dispatchers.Main).launch {
                     val action =
                         MainFragmentDirections.actionMainFragmentToEditCitistationStatusFragment(
                             station,
-                            alarms.toTypedArray()
+                            alarms.toTypedArray(),
+                            alarmData
                         )
                     findNavController().navigate(action)
                 }

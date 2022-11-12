@@ -5,9 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
+import com.fan.tiptop.citiapi.data.CitibikeStationAlarmData
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 
-@Database(entities = [CitibikeStationInformationModel::class,CitibikeStationAlarm::class], version = 6, exportSchema = false)
+@Database(
+    entities = [CitibikeStationInformationModel::class, CitibikeStationAlarm::class, CitibikeStationAlarmData::class],
+    version = 7,
+    exportSchema = false
+)
 abstract class DockThorDatabase : RoomDatabase() {
     abstract val dockthorDao: DockthorDao
 

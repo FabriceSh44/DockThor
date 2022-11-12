@@ -6,15 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
+import com.fan.tiptop.citiapi.data.CitibikeMetaAlarmBean
 import com.fan.tiptop.citiapi.database.DockThorDatabase
-import com.fan.tiptop.dockthor.location.LocationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.Duration
 import java.util.*
-import kotlin.math.log
 
 
 class AlarmManager(val context: AppCompatActivity) {
@@ -26,10 +23,10 @@ class AlarmManager(val context: AppCompatActivity) {
             context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
     }
 
-    fun setAlarm(geofenceIntent: PendingIntent, alarmInput: CitibikeStationAlarm) {
-        val alarmTime = alarmInput.wakeUpTimeInMillis
-        //FOR TEST
-//        alarmTime = System.currentTimeMillis() + 4000
+    fun setAlarm(geofenceIntent: PendingIntent, alarmBean: CitibikeMetaAlarmBean) {
+        val alarmTime = alarmBean.alarmData.wakeUpTimeInMillis
+        // FOR TEST
+        // alarmTime = System.currentTimeMillis() + 4000
 
         CoroutineScope(Dispatchers.IO).launch {
             Log.i(
@@ -38,9 +35,14 @@ class AlarmManager(val context: AppCompatActivity) {
                     Calendar.getInstance().apply { timeInMillis = alarmTime }.time
                 } => timeInMillis:${alarmTime}"
             )
-            DockThorDatabase.getInstance(context).dockthorDao.insert(
-                alarmInput
+            DockThorDatabase.getInstance(context).dockthorDao.upsert(
+                alarmBean.alarmData
             )
+            for (alarm in alarmBean.alarms) {
+                DockThorDatabase.getInstance(context).dockthorDao.insert(
+                    alarm
+                )
+            }
             alarmManagerAndroid.setExactAndAllowWhileIdle(
                 RTC_WAKEUP,
                 alarmTime,
@@ -60,6 +62,7 @@ class AlarmManager(val context: AppCompatActivity) {
         )
         alarmManagerAndroid.cancel(pendingIntent)
     }
+
 
     companion object {
         private var _instance: AlarmManager? = null

@@ -3,13 +3,12 @@ package com.fan.tiptop.dockthor.fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
+import com.fan.tiptop.citiapi.data.CitibikeMetaAlarmBean
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.databinding.FragmentGeofenceSetupBinding
 import com.fan.tiptop.dockthor.logic.GeofenceSetupModelFactory
@@ -20,7 +19,7 @@ import com.google.android.material.timepicker.TimeFormat
 
 class GeofenceSetupFragment : Fragment() {
     private  var _station: CitiStationStatus? = null
-    private  var _alarms: List<CitibikeStationAlarm>? = null
+    private  var _alarmbean: CitibikeMetaAlarmBean? = null
     private var _viewModel: GeofenceSetupViewModel? = null
     private var _binding: FragmentGeofenceSetupBinding? = null
     private val binding get() = _binding!!
@@ -33,7 +32,7 @@ class GeofenceSetupFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentGeofenceSetupBinding.inflate(inflater, container, false)
         if (_station!=null) {
-            val viewModelFactory = GeofenceSetupModelFactory(_station!!, _alarms!!)
+            val viewModelFactory = GeofenceSetupModelFactory(_station!!, _alarmbean!!)
             _viewModel = ViewModelProvider(this, viewModelFactory)[GeofenceSetupViewModel::class.java]
             binding.viewModel = _viewModel
             viewModel.messageToDisplayLD.observe(viewLifecycleOwner) { errorText ->
@@ -92,9 +91,9 @@ class GeofenceSetupFragment : Fragment() {
         _viewModel = null
     }
 
-    fun setArguments(station: CitiStationStatus, alarms:List<CitibikeStationAlarm>) {
+    fun setArguments(station: CitiStationStatus, alarmBean:CitibikeMetaAlarmBean) {
         _station = station
-        _alarms = alarms
+        _alarmbean = alarmBean
     }
 
 }

@@ -12,7 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
+import com.fan.tiptop.citiapi.data.CitibikeMetaAlarmBean
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.alarm.AlarmBroadcastReceiver
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -112,14 +112,14 @@ class LocationManager private constructor(val context: AppCompatActivity) {
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-    fun getGeofenceIntent(station: CitiStationStatus,alarm:CitibikeStationAlarm): PendingIntent {
+    fun getGeofenceIntent(station: CitiStationStatus, alarm: CitibikeMetaAlarmBean): PendingIntent {
         val action = AlarmBroadcastReceiver.generateAction(station.stationId)
         context.registerReceiver(alarmBroadcastReceiver, IntentFilter(action))
         Intent().also { intent ->
             intent.action = action
             intent.putExtra("station_id", station.stationId)
-            intent.putExtra("duration_in_sec", alarm.delayInSec)
-            intent.putExtra("dock_threshold", alarm.dockThreshold)
+            intent.putExtra("duration_in_sec", alarm.alarmData.delayInSec)
+            intent.putExtra("dock_threshold", alarm.alarmData.dockThreshold)
             return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
     }

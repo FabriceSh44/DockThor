@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.fan.tiptop.citiapi.data.CitibikeMetaAlarmBean
 import com.fan.tiptop.dockthor.databinding.FragmentEditCitistationStatusBinding
 import com.fan.tiptop.dockthor.logic.EditCitistationStatusModelFactory
 import com.fan.tiptop.dockthor.logic.EditCitistationStatusViewModel
@@ -30,6 +31,7 @@ class EditCitistationStatusFragment : Fragment() {
         if (!requireArguments().isEmpty) {
             val station = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).station
             val alarms = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).alarms
+            val alarmData = EditCitistationStatusFragmentArgs.fromBundle(requireArguments()).alarmData
             val viewModelFactory = EditCitistationStatusModelFactory(station)
             _viewModel = ViewModelProvider(
                 this,
@@ -38,7 +40,7 @@ class EditCitistationStatusFragment : Fragment() {
             binding.viewModel = viewModel
             val geofenceSetupFragment =
                 childFragmentManager.fragments.firstOrNull() as GeofenceSetupFragment
-            geofenceSetupFragment.setArguments(station, alarms.toList())
+            geofenceSetupFragment.setArguments(station,CitibikeMetaAlarmBean(alarms.toList(),alarmData))
             viewModel.navigationIntentLD.observe(viewLifecycleOwner) { navigationIntent ->
                 navigationIntent?.let { context?.startActivity(it) }
             }
