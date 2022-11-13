@@ -10,7 +10,7 @@ import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 
 @Database(
     entities = [CitibikeStationInformationModel::class, CitibikeStationAlarm::class, CitibikeStationAlarmData::class],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class DockThorDatabase : RoomDatabase() {

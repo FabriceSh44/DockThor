@@ -6,7 +6,7 @@ import com.google.android.gms.location.GeofencingRequest
 
 class GeoFenceBuilder {
     companion object {
-        private const val GEOFENCE_RADIUS_IN_METERS: Float = 200F
+        private const val GEOFENCE_RADIUS_IN_METERS: Float = 500F
         fun getGeofencingRequest(
             location: Location,
             expirationInSecond: Long,

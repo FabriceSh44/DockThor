@@ -28,8 +28,8 @@ class NotificationManager private constructor(private val context: Context) {
     fun sendNotification(citiStationStatus: CitiStationStatus) {
         var builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_dock_24)
-            .setContentTitle("Action")
-            .setContentText("Content")
+            .setContentTitle("Dock alert")
+            .setContentText("${citiStationStatus.address}: ${citiStationStatus.numDockAvailable} docks available")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         with(NotificationManagerCompat.from(context)) {
             // notificationId is a unique int for each notification that you must define

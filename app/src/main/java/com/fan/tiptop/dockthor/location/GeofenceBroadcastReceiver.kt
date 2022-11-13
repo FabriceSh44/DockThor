@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import com.fan.tiptop.dockthor.logic.DockThorKernel
 import com.fan.tiptop.dockthor.logic.NotificationManager
 import com.google.android.gms.location.Geofence
@@ -27,8 +26,6 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             return
         }
         Log.i(TAG, "received geofencing event:${geofencingEvent}. Retrieving citistation status")
-
-
         Log.i(TAG, getGeofenceTransitionDetails(geofencingEvent))
         //can be null despite what AS is saying
         if (geofencingEvent.triggeringGeofences == null) {
@@ -36,17 +33,17 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             Log.i(TAG, "No geofence triggered")
             return
         }
-        val citistationStatus =
-            geofencingEvent.triggeringGeofences.first().requestId.toInt()
-                .let { DockThorKernel.getInstance().getCitistationStatus(it) }
-
-        citistationStatus?.let {
-            Log.i(TAG, "${it.address} has ${it.numDockAvailable} docks")
-            if (it.numDockAvailable.toInt() < 5) {
-                NotificationManager.getInstance().sendNotification(it)
+        geofencingEvent.triggeringGeofences.first().requestId.toInt()
+            .let {
+                DockThorKernel.getInstance().getCitistationStatus(it) { it ->
+                    it?.let {
+                        Log.i(TAG, "${it.address} has ${it.numDockAvailable} docks")
+                        if (it.numDockAvailable.toInt() < 5) {
+                            NotificationManager.getInstance().sendNotification(it)
+                        }
+                    }
+                }
             }
-        }
-
     }
 
     private fun getGeofenceTransitionDetails(event: GeofencingEvent): String {

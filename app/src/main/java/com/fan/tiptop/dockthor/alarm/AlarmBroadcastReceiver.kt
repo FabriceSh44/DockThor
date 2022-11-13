@@ -29,5 +29,6 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         Log.i(TAG, "Alarm just fired for ${stationId}")
         DockThorKernel.getInstance()
             .addGeofenceToStation(stationId, Duration.ofSeconds(durationInSec))
+        DockThorKernel.getInstance().setupNextAlarmForStation(stationId)
     }
 }

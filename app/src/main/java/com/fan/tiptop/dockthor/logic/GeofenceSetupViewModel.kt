@@ -12,7 +12,10 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class GeofenceSetupViewModel(val station: CitiStationStatus, alarmData: CitibikeMetaAlarmBean) :
+class GeofenceSetupViewModel(
+    val station: CitiStationStatus,
+    private val metaAlarmBean: CitibikeMetaAlarmBean
+) :
     ViewModel() {
     private val TAG = "GeofenceSetupViewModel"
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("H:mm", Locale.ENGLISH)
@@ -53,7 +56,7 @@ class GeofenceSetupViewModel(val station: CitiStationStatus, alarmData: Citibike
     private var prevUpdateMessage: String = ""
 
     init {
-        fromMetaAlarmBean(alarmData)
+        fromMetaAlarmBean(metaAlarmBean)
     }
 
     fun onEnabledSwitchClick() {
@@ -65,15 +68,18 @@ class GeofenceSetupViewModel(val station: CitiStationStatus, alarmData: Citibike
     }
 
     private fun updateAlarms(displayMessage: Boolean = true) {
-        val metaAlarmBean = toMetaAlarmBean()
+        updateMetaAlarmBean()
         val nextAlarmInput: CitibikeStationAlarm? = metaAlarmBean.nextAlarm
         if (nextAlarmInput != null && isSwitchCheckedLD.value == true) {
+            _kernel.setupNextAlarmForStation(metaAlarmBean)
             val updateMessage = getUpdateMessage(metaAlarmBean)
-            if (displayMessage && updateMessage != prevUpdateMessage) {
-                prevUpdateMessage = updateMessage
-                messageToDisplayLD.value = updateMessage
+            if (updateMessage != prevUpdateMessage) {
+                // weak way to not spam alarms
+                if (displayMessage) {
+                    prevUpdateMessage = updateMessage
+                    messageToDisplayLD.value = updateMessage
+                }
             }
-            _kernel.setupNextAlarmForStation(station, metaAlarmBean)
         }
     }
 
@@ -92,9 +98,7 @@ class GeofenceSetupViewModel(val station: CitiStationStatus, alarmData: Citibike
             daysText = "${days} day(s)"
             comma = ","
         }
-        if (hours != 0) {
-            hoursText = "${comma}${hours} hour(s)"
-        }
+        hoursText = "${comma}${hours} hour(s)"
         val minutesText = " and ${minutes} minute(s)"
         return "Geofence set to ${daysText}${hoursText}${minutesText} from now"
     }
@@ -137,21 +141,18 @@ class GeofenceSetupViewModel(val station: CitiStationStatus, alarmData: Citibike
                 }
             }
         }
-        updateAlarms(displayMessage = false)
         if (alarmBean.alarmData.activated) {
             isSwitchCheckedLD.value = true
         }
+        updateAlarms(displayMessage = false)
     }
 
-    private fun toMetaAlarmBean(): CitibikeMetaAlarmBean {
+    private fun updateMetaAlarmBean() {
         val startTime: LocalTime? = startTimeLD.value?.let { LocalTime.parse(it, dtf) }
         val endTime: LocalTime? = endTimeLD.value?.let { LocalTime.parse(it, dtf) }
         if (startTime == null || endTime == null) {
             Log.e(TAG, "Unable to parse ${startTimeLD.value} or ${endTimeLD.value}")
-            return CitibikeMetaAlarmBean(
-                mutableListOf(),
-                CitibikeStationAlarmData(station.stationId, false, 0, 0, 0L, 0, 0)
-            )
+            return
         }
         var secondDelay: Int
         if (endTime > startTime) {
@@ -162,16 +163,17 @@ class GeofenceSetupViewModel(val station: CitiStationStatus, alarmData: Citibike
         }
 
         val result = mutableListOf<Pair<Long, CitibikeStationAlarm>>()
+        val map: Map<Int, CitibikeStationAlarm> =
+            metaAlarmBean.alarms.associateBy { x -> x.dayOfWeek }
         for (pickedDayOfWeek in pickDayOfWeeks) {
             val alarmCalendar: Calendar = getCalendarForDay(startTime, pickedDayOfWeek)
             val wakeUpTimeInMillis = alarmCalendar.timeInMillis
+            val alarm = map[pickedDayOfWeek] ?: CitibikeStationAlarm(
+                stationId = station.stationId,
+                dayOfWeek = pickedDayOfWeek,
+            )
             result.add(
-                Pair(
-                    wakeUpTimeInMillis, CitibikeStationAlarm(
-                        stationId = station.stationId,
-                        dayOfWeek = pickedDayOfWeek,
-                    )
-                )
+                Pair(wakeUpTimeInMillis, alarm)
             )
         }
 
@@ -179,14 +181,15 @@ class GeofenceSetupViewModel(val station: CitiStationStatus, alarmData: Citibike
         val sortedAlarms = sortedBy.map { x -> x.second }
         val alarmData = CitibikeStationAlarmData(
             station.stationId,
-            activated = isSwitchCheckedLD.value?:false,
+            activated = isSwitchCheckedLD.value ?: false,
             startTime.hour,
             startTime.minute,
             secondDelay.toLong(),
             progressLD.value ?: 5,
             sortedBy.firstOrNull()?.first ?: 0
         )
-        return CitibikeMetaAlarmBean(sortedAlarms, alarmData)
+        metaAlarmBean.alarms=sortedAlarms
+        metaAlarmBean.alarmData=alarmData
     }
 
     private fun getCalendarForDay(

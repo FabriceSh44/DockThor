@@ -38,10 +38,17 @@ class AlarmManager(val context: AppCompatActivity) {
             DockThorDatabase.getInstance(context).dockthorDao.upsert(
                 alarmBean.alarmData
             )
-            for (alarm in alarmBean.alarms) {
-                DockThorDatabase.getInstance(context).dockthorDao.insert(
-                    alarm
-                )
+            val alarmsInDb =
+                DockThorDatabase.getInstance(context).dockthorDao.getStationAlarms(alarmBean.alarmData.stationId)
+            for (alarmInDb in alarmsInDb) {
+                if (alarmInDb !in alarmBean.alarms) {
+                    DockThorDatabase.getInstance(context).dockthorDao.delete(alarmInDb)
+                }
+            }
+            for (alarmToSet in alarmBean.alarms) {
+                if (alarmToSet !in alarmsInDb) {
+                    DockThorDatabase.getInstance(context).dockthorDao.insert(alarmToSet)
+                }
             }
             alarmManagerAndroid.setExactAndAllowWhileIdle(
                 RTC_WAKEUP,

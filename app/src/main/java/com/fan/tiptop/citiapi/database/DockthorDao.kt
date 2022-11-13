@@ -21,13 +21,11 @@ interface DockthorDao {
     @Query("SELECT * from station_information_model")
     suspend fun getFavoriteStations():List<CitibikeStationInformationModel>
 
-     @Insert
+    @Insert
     suspend fun insert(stationAlarm: CitibikeStationAlarm)
     @Delete
     suspend fun delete(stationAlarm: CitibikeStationAlarm)
 
-    @Query("DELETE from station_alarm WHERE id = :alarmId")
-    suspend fun deleteAlarmById(alarmId:Int)
     @Query("SELECT * from station_alarm WHERE stationId = :stationId")
     suspend fun getStationAlarms(stationId:Int):List<CitibikeStationAlarm>
 

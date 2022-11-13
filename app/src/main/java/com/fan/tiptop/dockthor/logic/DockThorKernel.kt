@@ -187,14 +187,21 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
         LocationManager.getInstance().addGeofence(stationInfoModel.model, expiration)
     }
 
-    fun getCitistationStatus(stationId: Int): CitiStationStatus? {
+    fun getCitistationStatus(stationId: Int, onRequestComplete: (CitiStationStatus?) -> Unit) {
         NetworkManager.getInstance()
             .stationStatusRequest(object : DefaultNetworkManagerListener {
                 override fun getResult(result: String) {
                     if (result.isNotEmpty()) {
                         val citiStationStatus: CitiStationStatus? =
                             _citiKernel.getCitiStationStatus(result, stationId)
+                        citiStationStatus?.let { it ->
+                            _citiKernel.getCitiInfoModel(stationId)?.model?.name.let { it2 ->
+                                it.address =
+                                    it2.toString()
+                            }
+                        }
                         Log.i(TAG, "Get citistationstatus   ${citiStationStatus}")
+                        onRequestComplete(citiStationStatus)
                     }
                 }
 
@@ -203,23 +210,33 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
                 }
             })
 
-        return null
     }
 
 
     fun removeAlarmForStation(stationId: Int) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            dao.deleteAlarmByStationId(stationId)
-//        }
         AlarmManager.getInstance().removeAlarm(stationId)
     }
 
-    fun setupNextAlarmForStation(station: CitiStationStatus, alarmInput: CitibikeMetaAlarmBean) {
+    fun setupNextAlarmForStation(alarmInput: CitibikeMetaAlarmBean) {
         val geofenceIntent = LocationManager.getInstance()
-            .getGeofenceIntent(station, alarmInput)
-            AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
+            .getGeofenceIntent(alarmInput)
+        AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
     }
 
+    fun setupNextAlarmForStation(stationId: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val stationAlarms = dao.getStationAlarms(stationId)
+            val stationAlarmData = dao.getStationAlarmData(stationId)
+            stationAlarmData?.let { it ->
+                setupNextAlarmForStation(
+                    CitibikeMetaAlarmBean(
+                        stationAlarms,
+                        it
+                    )
+                )
+            }
+        }
+    }
 
 
     companion object {
@@ -244,7 +261,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
 
 private fun android.location.Location?.toCitiLocation(): Location? {
     if (this == null) {
-        return null;
+        return null
     }
     val ageLocation =
         SystemClock.elapsedRealtimeNanos() - this.elapsedRealtimeNanos
