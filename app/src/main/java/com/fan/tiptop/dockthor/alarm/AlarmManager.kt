@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.data.CitibikeMetaAlarmBean
 import com.fan.tiptop.citiapi.database.DockThorDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +59,7 @@ class AlarmManager(val context: AppCompatActivity) {
         }
     }
 
-    fun removeAlarm(stationId: Int) {
+    fun removeAlarm(stationId: CitiStationId) {
         val intent = Intent()
         intent.action = AlarmBroadcastReceiver.generateAction(stationId)
         val pendingIntent = PendingIntent.getBroadcast(

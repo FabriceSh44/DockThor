@@ -12,6 +12,7 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.request.CitiRequester
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.R
@@ -28,7 +29,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private val TAG = "DockThor"
     private var _binding: FragmentStationSearchBinding? = null
     private val binding get() = _binding!!
-    private var _currentFavStationId: Set<Int> = mutableSetOf()
+    private var _currentFavStationId: Set<CitiStationId> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,8 +50,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
-                        binding.errorTextView.text =
-                            "Can't load station suggestions. Got error:[$error]"
+                        binding.errorTextView.text =getString(R.string.cant_load_station,  error)
                         Log.e(TAG, error)
                     }
                 }
@@ -105,7 +105,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
                     break
                 }
             }
-            if (allWordInStationName && station.station_id.toInt() !in _currentFavStationId) {
+            if (allWordInStationName && CitiStationId(station.station_id) !in _currentFavStationId) {
                 filteredStationList.add(station)
             }
             if (filteredStationList.size > 20)
@@ -115,7 +115,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     }
 
     private fun removeAllAddress() {
-        var addressTable = binding.stationAddressTableLayout
+        val addressTable = binding.stationAddressTableLayout
         val toDelete = LinkedList<View>()
         for (i in 0 until addressTable.childCount) {
             val view = addressTable.getChildAt(i)
@@ -131,13 +131,13 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private fun redrawStationAddressTable(
         stationSuggestions: List<CitibikeStationInformationModel>
     ) {
-        var addressTable = binding.stationAddressTableLayout
+        val addressTable = binding.stationAddressTableLayout
         var i = 0
         for (ssRow in stationSuggestions) {
             val context = addressTable.context
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val row = inflater.inflate(R.layout.element_suggestion_station_row, null) as TableRow
+            val row = inflater.inflate(R.layout.element_suggestion_station_row, _binding!!.root) as TableRow
             val addressView: TextView = getTextViewWithStyle(context, ssRow.name)
             row.addView(addressView)
             row.tag = ssRow

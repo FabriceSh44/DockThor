@@ -5,12 +5,11 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
 import com.fan.tiptop.citiapi.data.CitibikeStationAlarmData
 import com.fan.tiptop.citiapi.database.DockThorDatabase
 import com.fan.tiptop.dockthor.R
@@ -79,9 +78,11 @@ class MainFragment : Fragment() {
         //switch fav station behavior
         mainViewModel.navigateToSwitchFavStation.observe(viewLifecycleOwner) { shouldNavigate ->
             if (shouldNavigate) {
+                val stationIdArray: Array<CitiStationId>? = mainViewModel.citiStationStatusLD.value?.map { x -> x.stationId }
+                    ?.toTypedArray()
                 val action = MainFragmentDirections.actionMainFragmentToStationSearchFragment(
-                    mainViewModel.citiStationStatusLD.value?.map { x -> x.stationId }?.toIntArray()
-                        ?: intArrayOf()
+                    stationIdArray
+                        ?: arrayOf()
                 )
                 view.findNavController().navigate(action)
                 mainViewModel.onAddFavStationNavigated()

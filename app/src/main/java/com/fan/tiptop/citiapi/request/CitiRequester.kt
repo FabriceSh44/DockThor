@@ -14,7 +14,6 @@ data class StationStatusModel(val data: Stations, val last_updated: Int, val ttl
 
 @Serializable
 data class StationInformations(val stations: List<CitibikeStationInformationModel>)
-
 @Serializable
 data class StationInformationModel(
     val data: StationInformations,
@@ -23,7 +22,7 @@ data class StationInformationModel(
 )
 
 class CitiRequester {
-    private var _stationIdToStation: MutableMap<Int, CitibikeStationModel> = mutableMapOf()
+    private var _stationIdToStation: MutableMap<CitiStationId, CitibikeStationModel> = mutableMapOf()
     private val json = Json {
         ignoreUnknownKeys = true
     }
@@ -33,17 +32,17 @@ class CitiRequester {
         stationList: List<CitibikeStationInformationModelDecorated>,
         userLocation: Location?
     ): MutableList<CitiStationStatus> {
-        var result = mutableListOf<CitiStationStatus>()
+        val result = mutableListOf<CitiStationStatus>()
         if (stationList.isEmpty()) {
             return result
         }
         val model = getStationStatusModel(response)
         for (stationInfo in model.data.stations) {
-            this._stationIdToStation.put(stationInfo.station_id.toInt(), stationInfo)
+            this._stationIdToStation.put(CitiStationId(stationInfo.station_id), stationInfo)
         }
         for (stationInfoModelDecorated in stationList) {
             val stationInfoModel = stationInfoModelDecorated.model
-            val stationId = stationInfoModel.station_id.toInt()
+            val stationId = CitiStationId(stationInfoModel.station_id)
             val stationStatus = this._stationIdToStation[stationId]
                 ?: throw Exception("Unable to find station for $stationId")
             var distanceDescription = ""
@@ -61,7 +60,7 @@ class CitiRequester {
                     stationStatus.num_ebikes_available.toString(),
                     stationStatus.num_docks_available.toString(),
                     stationInfoModel.name,
-                    stationInfoModel.station_id.toInt(),
+                    CitiStationId(stationInfoModel.station_id),
                     distanceDescription,
                     isFavorite = stationInfoModelDecorated.isFavorite
                 )
@@ -73,21 +72,21 @@ class CitiRequester {
     fun getStationStatusWithCriteria(
         response: String,
         criteria: StationSearchCriteria, minToReplace:Int
-    ): Map<Int, CitiStationStatus> {
+    ): Map<CitiStationId, CitiStationStatus> {
         val model = getStationStatusModel(response)
-        var result = mutableMapOf<Int, CitiStationStatus>()
+        val result = mutableMapOf<CitiStationId, CitiStationStatus>()
         for (stationInfo in model.data.stations) {
             if ((criteria == StationSearchCriteria.CLOSEST_WITH_BIKE && stationInfo.num_bikes_available > minToReplace)
                 or (criteria == StationSearchCriteria.CLOSEST_WITH_DOCK && stationInfo.num_docks_available > minToReplace)
             ) {
                 result.put(
-                    stationInfo.station_id.toInt(),
+                    CitiStationId(stationInfo.station_id),
                     CitiStationStatus(
                         stationInfo.num_bikes_available.toString(),
                         stationInfo.num_ebikes_available.toString(),
                         stationInfo.num_docks_available.toString(),
                         "",
-                        stationInfo.station_id.toInt(),
+                        CitiStationId(stationInfo.station_id),
                         ""
                     )
                 )
@@ -97,10 +96,10 @@ class CitiRequester {
         return result
     }
 
-    fun getStationStatus(stationId: Int, response: String): CitiStationStatus? {
+    fun getStationStatus(stationId: CitiStationId, response: String): CitiStationStatus? {
         val model = getStationStatusModel(response)
         for (stationInfo in model.data.stations) {
-            if (stationInfo.station_id.toInt() == stationId) {
+            if (CitiStationId(stationInfo.station_id) == stationId) {
                 return CitiStationStatus(
                     stationInfo.num_bikes_available.toString(),
                     stationInfo.num_ebikes_available.toString(),
@@ -117,7 +116,6 @@ class CitiRequester {
     private fun getStationStatusModel(string: String): StationStatusModel {
         return json.decodeFromString(string)
     }
-
     fun getStationInformationModel(stationInformationContent: String): StationInformationModel {
         return json.decodeFromString(stationInformationContent)
     }

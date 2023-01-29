@@ -17,3 +17,4 @@ data class CitibikeStationInformationModel(
     val lon: Double,
     val lat: Double,
 ):Parcelable
+

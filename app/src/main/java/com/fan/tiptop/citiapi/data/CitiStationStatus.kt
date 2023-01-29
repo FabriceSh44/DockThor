@@ -12,7 +12,7 @@ data class CitiStationStatus(
     val numDockAvailable: String,
     // retrieved from citi information api request
     var address: String,
-    val stationId: Int,
+    val stationId: CitiStationId,
     //retrieved from gps data
     var distance:String?=null,
     // retrieved from database

@@ -30,7 +30,7 @@
             app:popUpTo="@id/nav_graph" />
         <argument
             android:name="favStationIds"
-            app:argType="integer[]" />
+            app:argType="com.fan.tiptop.citiapi.data.CitiStationId[]" />
     </fragment>
     <fragment
         android:id="@+id/editCitistationStatusFragment"

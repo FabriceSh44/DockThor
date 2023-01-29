@@ -13,14 +13,14 @@ class CitiKernel {
 
     //CITI
     private val _requester = CitiRequester()
-    private var _stationInformationModelMap: Map<Int, CitibikeStationInformationModelDecorated> =
+    private var _stationInformationModelMap: Map<CitiStationId, CitibikeStationInformationModelDecorated> =
         mapOf()
 
      fun processStationInfoRequestResult(result: String) {
         try {
             _stationInformationModelMap =
                 _requester.getStationInformationModel(result).data.stations.map { x ->
-                    x.station_id.toInt() to
+                    CitiStationId(x.station_id) to
                             CitibikeStationInformationModelDecorated(
                                 x,
                                 isFavorite = false
@@ -50,17 +50,17 @@ class CitiKernel {
         }
     }
 
-    fun getCitiStationStatus(result: String, stationId: Int): CitiStationStatus? {
+    fun getCitiStationStatus(result: String, stationId: CitiStationId): CitiStationStatus? {
         return _requester.getStationStatus(stationId, result)
     }
 
-    fun getStationLocation(stationId: Int): Location? {
+    fun getStationLocation(stationId: CitiStationId): Location? {
         val get: CitibikeStationInformationModelDecorated? =
             _stationInformationModelMap.get(stationId)
         return get?.model?.let { Location(it.lat, it.lon, Duration.ZERO) }
     }
 
-    fun getCitiInfoModel(stationId: Int): CitibikeStationInformationModelDecorated? {
+    fun getCitiInfoModel(stationId: CitiStationId): CitibikeStationInformationModelDecorated? {
         val stationInfoModel = _stationInformationModelMap.get(stationId)
         if (stationInfoModel == null) {
             Log.e(TAG, "Unable to retrieve station info model from station id {stationId}")
@@ -82,12 +82,12 @@ class CitiKernel {
             _stationInformationModelMap.get(targetCitiStationStatus.stationId)
         if (citiStationModelToReplace != null) {
             val sortedCitiModelList = LocationUtils.getDropShapedClosestStation(
-                _stationInformationModelMap.filter {stationIdsWithCriteria.containsKey(it.value.model.station_id.toInt() ) }.values,
+                _stationInformationModelMap.filter {stationIdsWithCriteria.containsKey(CitiStationId(it.value.model.station_id)) }.values,
                 userLocation,
                 citiStationModelToReplace.model.toCitiLocation()
             )
             val closestStationInfo = sortedCitiModelList.firstOrNull() ?: return null
-            var status = stationIdsWithCriteria.get(closestStationInfo.model.station_id.toInt())
+            val status = stationIdsWithCriteria.get(CitiStationId(closestStationInfo.model.station_id))
             status?.let {
                 it.address = closestStationInfo.model.name
                 it.distance = LocationUtils.computeAndFormatDistance(

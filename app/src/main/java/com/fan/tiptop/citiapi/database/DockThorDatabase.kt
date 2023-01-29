@@ -4,15 +4,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
 import com.fan.tiptop.citiapi.data.CitibikeStationAlarmData
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.data.Converters
 
 @Database(
     entities = [CitibikeStationInformationModel::class, CitibikeStationAlarm::class, CitibikeStationAlarmData::class],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class DockThorDatabase : RoomDatabase() {
     abstract val dockthorDao: DockthorDao
 

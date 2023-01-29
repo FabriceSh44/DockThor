@@ -1,10 +1,12 @@
 package com.fan.tiptop.dockthor.location
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
+import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.dockthor.logic.DockThorKernel
 import com.fan.tiptop.dockthor.logic.NotificationManager
 import com.google.android.gms.location.Geofence
@@ -12,9 +14,11 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 
 
+@Suppress("SENSELESS_COMPARISON")
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     private val TAG: String = "GeofenceBroadcastReceiver"
 
+    @SuppressLint("VisibleForTests")
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "onReceive context:${context} intent:${intent} ")
 
@@ -33,10 +37,10 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             Log.i(TAG, "No geofence triggered")
             return
         }
-        geofencingEvent.triggeringGeofences.first().requestId.toInt()
+        geofencingEvent.triggeringGeofences.first().requestId
             .let {
-                DockThorKernel.getInstance().getCitistationStatus(it) { it ->
-                    it?.let {
+                DockThorKernel.getInstance().getCitistationStatus(CitiStationId(it)) { it2 ->
+                    it2?.let {
                         Log.i(TAG, "${it.address} has ${it.numDockAvailable} docks")
                         if (it.numDockAvailable.toInt() < 5) {
                             NotificationManager.getInstance().sendNotification(it)
@@ -46,6 +50,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             }
     }
 
+    @SuppressLint("VisibleForTests")
     private fun getGeofenceTransitionDetails(event: GeofencingEvent): String {
         val transitionString: String
         val geofenceTransition = event.geofenceTransition

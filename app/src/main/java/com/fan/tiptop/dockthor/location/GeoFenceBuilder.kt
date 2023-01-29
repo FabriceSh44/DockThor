@@ -1,5 +1,7 @@
 package com.fan.tiptop.dockthor.location
 
+import android.annotation.SuppressLint
+import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.data.Location
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
@@ -7,15 +9,16 @@ import com.google.android.gms.location.GeofencingRequest
 class GeoFenceBuilder {
     companion object {
         private const val GEOFENCE_RADIUS_IN_METERS: Float = 500F
+        @SuppressLint("VisibleForTests")
         fun getGeofencingRequest(
             location: Location,
             expirationInSecond: Long,
-            geofenceId: String
+            geofenceId: CitiStationId
         ): GeofencingRequest {
             val geofenceList = mutableListOf<Geofence>()
             geofenceList.add(
                 Geofence.Builder()
-                    .setRequestId(geofenceId)
+                    .setRequestId(geofenceId.value)
                     .setCircularRegion(
                         location.latitude,
                         location.longitude,

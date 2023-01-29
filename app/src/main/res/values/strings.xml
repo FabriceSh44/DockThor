@@ -27,4 +27,5 @@
     <string name="min_to_replace">2</string>
     <string name="clickForDirection">For direction</string>
     <string name="setFavorite">Set favorite</string>
+    <string name="cant_load_station">"Can't load station suggestions. Got error:[%1$s]"</string>
 </resources>

@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.data.CitibikeMetaAlarmBean
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.dockthor.alarm.AlarmBroadcastReceiver
@@ -44,14 +45,15 @@ class LocationManager private constructor(val context: AppCompatActivity) {
         station: CitibikeStationInformationModel,
         expiration: Duration,
     ) {
+        val stationId = CitiStationId(station.station_id)
         val location: com.fan.tiptop.citiapi.data.Location =
             com.fan.tiptop.citiapi.data.Location(station.lat, station.lon)
         val geofencingRequest = GeoFenceBuilder.getGeofencingRequest(
-            location, expiration.seconds, station.station_id
+            location, expiration.seconds, stationId
         )
 
         if (_hasLocationPermission) {
-            _geofencingClient.addGeofences(geofencingRequest, getGeofenceCreationIntent(station.station_id.toInt())).run {
+            _geofencingClient.addGeofences(geofencingRequest, getGeofenceCreationIntent(stationId)).run {
                 addOnSuccessListener {
                     Log.i(
                         TAG,
@@ -122,8 +124,8 @@ class LocationManager private constructor(val context: AppCompatActivity) {
             return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
     }
-    private fun getGeofenceCreationIntent(stationId:Int): PendingIntent {
-        val action = "com.fan.tiptop.dockthor.CREATE_GEOFENCE.${stationId}"
+    private fun getGeofenceCreationIntent(stationId:CitiStationId): PendingIntent {
+        val action = "com.fan.tiptop.dockthor.CREATE_GEOFENCE.${stationId.value}"
         context.registerReceiver(geofenceBroadcastReceiver, IntentFilter(action))
         Intent().also { intent ->
             intent.action = action

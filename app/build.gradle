@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId "com.fan.tiptop.dockthor"
-        minSdk 28
+        minSdk 31
         targetSdk 33
         versionCode 24
         versionName "0.1.24"

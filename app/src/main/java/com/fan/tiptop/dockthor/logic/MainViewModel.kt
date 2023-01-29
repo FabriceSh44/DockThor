@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.data.CitiStationStatus
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.data.StationSearchCriteria
@@ -15,8 +16,6 @@ import kotlinx.coroutines.launch
 class MainViewModel(val dao: DockthorDao) : ViewModel() {
 
 
-    //LOG
-    private val TAG = "DockThorViewModel"
 
     //DISPLAY
     val errorToDisplayLD = MutableLiveData("")
@@ -35,7 +34,7 @@ class MainViewModel(val dao: DockthorDao) : ViewModel() {
 
     //MODEL
     private var _kernel: DockThorKernel = DockThorKernel.getInstance(dao)
-    private val _selectedStationsId: MutableList<Int> = mutableListOf()
+    private val _selectedStationsId: MutableList<CitiStationId> = mutableListOf()
 
     //METHODS
     fun onSwipeRefresh() {
@@ -124,11 +123,11 @@ class MainViewModel(val dao: DockthorDao) : ViewModel() {
     }
 
     fun onAddFavStationClicked() {
-        _navigateToSwitchFavStation.value = true;
+        _navigateToSwitchFavStation.value = true
     }
 
     fun onAddFavStationNavigated() {
-        _navigateToSwitchFavStation.value = false;
+        _navigateToSwitchFavStation.value = false
     }
 
     fun onItemDeleted() {
@@ -146,7 +145,7 @@ class MainViewModel(val dao: DockthorDao) : ViewModel() {
         citiStationStatusLD.value =
             citiStationStatusLD.value?.let { toggleSelectedStatus(it, { true }) { false } }
         _selectedStationsId.clear()
-        _contextualBarNotVisible.value = true;
+        _contextualBarNotVisible.value = true
     }
 
     fun onActionLongClick(station: CitiStationStatus) {
@@ -184,7 +183,7 @@ class MainViewModel(val dao: DockthorDao) : ViewModel() {
 
     fun containsInfoModel(stationModel: CitibikeStationInformationModel): Boolean {
         val matchingStation: CitiStationStatus? =
-            citiStationStatusLD.value?.find { x -> x.stationId == stationModel.station_id.toInt() }
+            citiStationStatusLD.value?.find { x -> x.stationId == CitiStationId(stationModel.station_id) }
         return matchingStation != null
     }
 }

@@ -27,7 +27,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
 
     //LOG
     private val TAG = "DockThorKernel"
-    suspend fun initialize(
+    fun initialize(
         function: (List<CitiStationStatus>, String) -> Unit
     ) {
 
@@ -181,13 +181,13 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
         dao.delete(stationInfoModel.model)
     }
 
-    fun addGeofenceToStation(stationId: Int, expiration: Duration) {
+    fun addGeofenceToStation(stationId: CitiStationId, expiration: Duration) {
         val stationInfoModel =
             _citiKernel.getCitiInfoModel(stationId) ?: return
         LocationManager.getInstance().addGeofence(stationInfoModel.model, expiration)
     }
 
-    fun getCitistationStatus(stationId: Int, onRequestComplete: (CitiStationStatus?) -> Unit) {
+    fun getCitistationStatus(stationId: CitiStationId, onRequestComplete: (CitiStationStatus?) -> Unit) {
         NetworkManager.getInstance()
             .stationStatusRequest(object : DefaultNetworkManagerListener {
                 override fun getResult(result: String) {
@@ -213,7 +213,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
     }
 
 
-    fun removeAlarmForStation(stationId: Int) {
+    fun removeAlarmForStation(stationId: CitiStationId) {
         AlarmManager.getInstance().removeAlarm(stationId)
     }
 
@@ -223,7 +223,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
         AlarmManager.getInstance().setAlarm(geofenceIntent, alarmInput)
     }
 
-    fun setupNextAlarmForStation(stationId: Int) {
+    fun setupNextAlarmForStation(stationId: CitiStationId) {
         CoroutineScope(Dispatchers.IO).launch {
             val stationAlarms = dao.getStationAlarms(stationId)
             val stationAlarmData = dao.getStationAlarmData(stationId)
