@@ -1,5 +1,6 @@
 package com.fan.tiptop.dockthor.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -128,6 +129,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun redrawStationAddressTable(
         stationSuggestions: List<CitibikeStationInformationModel>
     ) {
@@ -137,7 +139,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
             val context = addressTable.context
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val row = inflater.inflate(R.layout.element_suggestion_station_row, _binding!!.root) as TableRow
+            val row = inflater.inflate(R.layout.element_suggestion_station_row, null) as TableRow
             val addressView: TextView = getTextViewWithStyle(context, ssRow.name)
             row.addView(addressView)
             row.tag = ssRow
