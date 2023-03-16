@@ -15,7 +15,7 @@ data class StationStatusModel(val data: Stations, val last_updated: Int, val ttl
 @Serializable
 data class StationInformations(val stations: List<CitibikeStationInformationModel>)
 @Serializable
-data class StationInformationModel(
+data class CitibikeStationInformationModels(
     val data: StationInformations,
     val last_updated: Int,
     val ttl: Int
@@ -42,7 +42,7 @@ class CitiRequester {
         }
         for (stationInfoModelDecorated in stationList) {
             val stationInfoModel = stationInfoModelDecorated.model
-            val stationId = CitiStationId(stationInfoModel.station_id)
+            val stationId = stationInfoModel.station_id
             val stationStatus = this._stationIdToStation[stationId]
                 ?: throw Exception("Unable to find station for $stationId")
             var distanceDescription = ""
@@ -54,17 +54,15 @@ class CitiRequester {
                     stationInfoModel.lon
                 )
             }
-            result.add(
-                CitiStationStatus(
-                    stationStatus.num_bikes_available.toString(),
-                    stationStatus.num_ebikes_available.toString(),
-                    stationStatus.num_docks_available.toString(),
-                    stationInfoModel.name,
-                    CitiStationId(stationInfoModel.station_id),
-                    distanceDescription,
-                    isFavorite = stationInfoModelDecorated.isFavorite
-                )
+            var status = CitiStationStatus(
+                numBikeAvailable = stationStatus.num_bikes_available.toString(),
+                numEbikeAvailable = stationStatus.num_ebikes_available.toString(),
+                numDockAvailable = stationStatus.num_docks_available.toString(),
+                distance = distanceDescription,
+                isFavorite = stationInfoModelDecorated.model.isFavorite,
             )
+            status.fillFromStationModel(stationInfoModel)
+            result.add(status)
         }
         return result
     }
@@ -116,7 +114,7 @@ class CitiRequester {
     private fun getStationStatusModel(string: String): StationStatusModel {
         return json.decodeFromString(string)
     }
-    fun getStationInformationModel(stationInformationContent: String): StationInformationModel {
+    fun getStationInformationModel(stationInformationContent: String): CitibikeStationInformationModels {
         return json.decodeFromString(stationInformationContent)
     }
 

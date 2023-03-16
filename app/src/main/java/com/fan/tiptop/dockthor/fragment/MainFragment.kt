@@ -107,7 +107,7 @@ class MainFragment : Fragment() {
             }
         }
         if (!requireArguments().isEmpty) {
-            val stationModel = MainFragmentArgs.fromBundle(requireArguments()).stationModel
+            val stationModel = MainFragmentArgs.fromBundle(requireArguments()).stationInformationModel
             if (!mainViewModel.containsInfoModel(stationModel)) {
                 mainViewModel.onSetStation(stationModel)
             }

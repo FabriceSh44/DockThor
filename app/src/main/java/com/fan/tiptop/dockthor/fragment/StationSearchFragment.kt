@@ -16,6 +16,7 @@ import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.request.CitiRequester
 import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.data.StationInformationModel
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.databinding.FragmentStationSearchBinding
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
@@ -26,7 +27,7 @@ import java.util.*
 class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     //StationSearchFragment works with view binding
-    private var _stationInfoList: List<CitibikeStationInformationModel>? = null
+    private var _stationInfoList: List<StationInformationModel>? = null
     private val TAG = "DockThor"
     private var _binding: FragmentStationSearchBinding? = null
     private val binding get() = _binding!!
@@ -69,11 +70,18 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         binding.searchView.requestFocus()
     }
 
-    fun processResponse(response: String): List<CitibikeStationInformationModel> {
+    fun processResponse(response: String): List<StationInformationModel> {
         try {
             val requestor = CitiRequester()
             val model = requestor.getStationInformationModel(response)
-            return model.data.stations
+            return model.data.stations.map { x-> StationInformationModel(   station_id = CitiStationId(x.station_id),
+                name = "",
+                address = x.name,
+                isFavorite = false,
+                expiryTime = null,
+                capacity = x.capacity,
+                lon = x.lon,
+                lat = x.lat) }
         } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
             return listOf()
@@ -94,19 +102,19 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     private fun filterList(
         queryText: String,
-        stationInfoList: List<CitibikeStationInformationModel>
-    ): MutableList<CitibikeStationInformationModel> {
-        val filteredStationList = mutableListOf<CitibikeStationInformationModel>()
+        stationInfoList: List<StationInformationModel>
+    ): MutableList<StationInformationModel> {
+        val filteredStationList = mutableListOf<StationInformationModel>()
         val splitQueryList: List<String> = queryText.lowercase().split(" ")
         for (station in stationInfoList) {
             var allWordInStationName = true
             for (word in splitQueryList) {
-                if (!station.name.lowercase().contains(word)) {
+                if (!station.address.lowercase().contains(word)) {
                     allWordInStationName = false
                     break
                 }
             }
-            if (allWordInStationName && CitiStationId(station.station_id) !in _currentFavStationId) {
+            if (allWordInStationName && station.station_id !in _currentFavStationId) {
                 filteredStationList.add(station)
             }
             if (filteredStationList.size > 20)
@@ -131,7 +139,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     @SuppressLint("InflateParams")
     private fun redrawStationAddressTable(
-        stationSuggestions: List<CitibikeStationInformationModel>
+        stationSuggestions: List<StationInformationModel>
     ) {
         val addressTable = binding.stationAddressTableLayout
         var i = 0
@@ -140,7 +148,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val row = inflater.inflate(R.layout.element_suggestion_station_row, null) as TableRow
-            val addressView: TextView = getTextViewWithStyle(context, ssRow.name)
+            val addressView: TextView = getTextViewWithStyle(context, ssRow.address)
             row.addView(addressView)
             row.tag = ssRow
             row.setOnClickListener { view -> chooseView(view) }
@@ -166,7 +174,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
     private fun chooseView(view: View?) {
         if (view != null) {
-            val stationInfo = view.tag as CitibikeStationInformationModel
+            val stationInfo = view.tag as StationInformationModel
             val action = StationSearchFragmentDirections.actionStationSearchFragmentToMainFragment(
                 stationInfo
             )

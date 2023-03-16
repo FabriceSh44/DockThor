@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.fan.tiptop.citiapi.data.CitiStationId
 import com.fan.tiptop.citiapi.data.CitibikeMetaAlarmBean
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.data.StationInformationModel
 import com.fan.tiptop.dockthor.alarm.AlarmBroadcastReceiver
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.GeofencingClient
@@ -42,10 +42,10 @@ class LocationManager private constructor(val context: AppCompatActivity) {
 
     @SuppressLint("MissingPermission")
     fun addGeofence(
-        station: CitibikeStationInformationModel,
+        station: StationInformationModel,
         expiration: Duration,
     ) {
-        val stationId = CitiStationId(station.station_id)
+        val stationId = station.station_id
         val location: com.fan.tiptop.citiapi.data.Location =
             com.fan.tiptop.citiapi.data.Location(station.lat, station.lon)
         val geofencingRequest = GeoFenceBuilder.getGeofencingRequest(

@@ -5,22 +5,19 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
-import com.fan.tiptop.citiapi.data.CitiStationId
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarmData
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
+import com.fan.tiptop.citiapi.data.*
 
 @Dao
 interface DockthorDao {
     @Insert
-    suspend fun insert(stationInformationModel: CitibikeStationInformationModel)
+    suspend fun insert(stationInformationModel: StationInformationModel)
     @Delete
-    suspend fun delete(stationInformationModel: CitibikeStationInformationModel)
+    suspend fun delete(stationInformationModel: StationInformationModel)
 
     @Query("DELETE FROM station_information_model WHERE station_id in (:stationIdList)")
     suspend fun deleteAlarmByStationId(stationIdList: List<CitiStationId>)
     @Query("SELECT * from station_information_model")
-    suspend fun getFavoriteStations():List<CitibikeStationInformationModel>
+    suspend fun getFavoriteStations():List<StationInformationModel>
 
     @Insert
     suspend fun insert(stationAlarm: CitibikeStationAlarm)

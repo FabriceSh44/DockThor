@@ -5,14 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarm
-import com.fan.tiptop.citiapi.data.CitibikeStationAlarmData
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
-import com.fan.tiptop.citiapi.data.Converters
+import com.fan.tiptop.citiapi.data.*
 
 @Database(
-    entities = [CitibikeStationInformationModel::class, CitibikeStationAlarm::class, CitibikeStationAlarmData::class],
-    version = 9,
+    entities = [StationInformationModel::class, CitibikeStationAlarm::class, CitibikeStationAlarmData::class],
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

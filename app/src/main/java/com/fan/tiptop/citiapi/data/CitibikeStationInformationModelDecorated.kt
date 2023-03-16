@@ -1,8 +1,7 @@
 package com.fan.tiptop.citiapi.data
 
 class CitibikeStationInformationModelDecorated(
-    val model: CitibikeStationInformationModel,
-    val isFavorite: Boolean,
+    val model: StationInformationModel,
     var distanceRank: Double= Double.MAX_VALUE
 ) {
 }

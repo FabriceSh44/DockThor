@@ -16,14 +16,22 @@ class CitiKernel {
     private var _stationInformationModelMap: Map<CitiStationId, CitibikeStationInformationModelDecorated> =
         mapOf()
 
-     fun processStationInfoRequestResult(result: String) {
+    fun processStationInfoRequestResult(result: String) {
         try {
             _stationInformationModelMap =
                 _requester.getStationInformationModel(result).data.stations.map { x ->
                     CitiStationId(x.station_id) to
                             CitibikeStationInformationModelDecorated(
-                                x,
-                                isFavorite = false
+                                StationInformationModel(
+                                    station_id = CitiStationId(x.station_id),
+                                    name = "",
+                                    address = x.name,
+                                    isFavorite = false,
+                                    expiryTime = null,
+                                    capacity = x.capacity,
+                                    lon = x.lon,
+                                    lat = x.lat
+                                )
                             )
                 }.toMap()
         } catch (e: Exception) {
@@ -75,26 +83,33 @@ class CitiKernel {
         criteria: StationSearchCriteria,
         result: String
     ): CitiStationStatus? {
-        val minToReplace = if (criteria==StationSearchCriteria.CLOSEST_WITH_BIKE ) targetCitiStationStatus.numBikeAvailable.toInt() else targetCitiStationStatus.numDockAvailable.toInt()
+        val minToReplace =
+            if (criteria == StationSearchCriteria.CLOSEST_WITH_BIKE) targetCitiStationStatus.numBikeAvailable.toInt() else targetCitiStationStatus.numDockAvailable.toInt()
         val stationIdsWithCriteria =
             _requester.getStationStatusWithCriteria(result, criteria, minToReplace)
         val citiStationModelToReplace =
             _stationInformationModelMap.get(targetCitiStationStatus.stationId)
         if (citiStationModelToReplace != null) {
             val sortedCitiModelList = LocationUtils.getDropShapedClosestStation(
-                _stationInformationModelMap.filter {stationIdsWithCriteria.containsKey(CitiStationId(it.value.model.station_id)) }.values,
+                _stationInformationModelMap.filter {
+                    stationIdsWithCriteria.containsKey(
+                        it.value.model.station_id
+                    )
+                }.values,
                 userLocation,
                 citiStationModelToReplace.model.toCitiLocation()
             )
             val closestStationInfo = sortedCitiModelList.firstOrNull() ?: return null
-            val status = stationIdsWithCriteria.get(CitiStationId(closestStationInfo.model.station_id))
+            val status =
+                stationIdsWithCriteria.get(closestStationInfo.model.station_id)
             status?.let {
-                it.address = closestStationInfo.model.name
+                it.address = closestStationInfo.model.address
                 it.distance = LocationUtils.computeAndFormatDistance(
                     userLocation.latitude,
                     userLocation.longitude,
                     closestStationInfo.model.lat,
-                    closestStationInfo.model.lon)
+                    closestStationInfo.model.lon
+                )
             }
             return status
         }
@@ -104,7 +119,7 @@ class CitiKernel {
 }
 
 
-private fun CitibikeStationInformationModel.toCitiLocation(): Location {
+private fun StationInformationModel.toCitiLocation(): Location {
     return Location(this.lat, this.lon)
 }
 

@@ -4,10 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fan.tiptop.citiapi.data.CitiStationId
-import com.fan.tiptop.citiapi.data.CitiStationStatus
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
-import com.fan.tiptop.citiapi.data.StationSearchCriteria
+import com.fan.tiptop.citiapi.data.*
 import com.fan.tiptop.citiapi.database.DockthorDao
 import com.fan.tiptop.dockthor.logic.main_swipe.SwipeSide
 import kotlinx.coroutines.Dispatchers
@@ -98,7 +95,7 @@ class MainViewModel(val dao: DockthorDao) : ViewModel() {
         }
     }
 
-    fun onSetStation(stationModel: CitibikeStationInformationModel) {
+    fun onSetStation(stationModel: StationInformationModel) {
         viewModelScope.launch {
             dao.insert(stationModel)
             refreshCitiStationStatusDisplay()
@@ -181,9 +178,9 @@ class MainViewModel(val dao: DockthorDao) : ViewModel() {
         return currentList.filter { x -> filter(x) }.map { x -> x.selected }
     }
 
-    fun containsInfoModel(stationModel: CitibikeStationInformationModel): Boolean {
+    fun containsInfoModel(stationModel: StationInformationModel): Boolean {
         val matchingStation: CitiStationStatus? =
-            citiStationStatusLD.value?.find { x -> x.stationId == CitiStationId(stationModel.station_id) }
+            citiStationStatusLD.value?.find { x -> x.stationId == stationModel.station_id }
         return matchingStation != null
     }
 }

@@ -60,8 +60,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
                     CoroutineScope(Dispatchers.Default).launch {
                         val stationInfoModelToDisplay = dao.getFavoriteStations().map { x ->
                             CitibikeStationInformationModelDecorated(
-                                x,
-                                isFavorite = true
+                                x
                             )
                         }.toMutableList()
                         NetworkManager.getInstance()
@@ -104,8 +103,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
                     launch(Dispatchers.Default) {
                         val favoriteStations = dao.getFavoriteStations().map { x ->
                             CitibikeStationInformationModelDecorated(
-                                x,
-                                isFavorite = true
+                                x
                             )
                         }.toMutableList()
                         NetworkManager.getInstance()
@@ -195,10 +193,7 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
                         val citiStationStatus: CitiStationStatus? =
                             _citiKernel.getCitiStationStatus(result, stationId)
                         citiStationStatus?.let { it ->
-                            _citiKernel.getCitiInfoModel(stationId)?.model?.name.let { it2 ->
-                                it.address =
-                                    it2.toString()
-                            }
+                            _citiKernel.getCitiInfoModel(stationId)?.model?.let { it1 -> it.fillFromStationModel(it1)}
                         }
                         Log.i(TAG, "Get citistationstatus   ${citiStationStatus}")
                         onRequestComplete(citiStationStatus)

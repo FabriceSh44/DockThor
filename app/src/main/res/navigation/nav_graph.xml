@@ -13,11 +13,12 @@
         <action
             android:id="@+id/action_mainFragment_to_stationSearchFragment"
             app:destination="@id/stationSearchFragment" />
-        <argument android:name="stationModel"
-            app:argType="com.fan.tiptop.citiapi.data.CitibikeStationInformationModel" />
         <action
             android:id="@+id/action_mainFragment_to_editCitistationStatusFragment"
             app:destination="@id/editCitistationStatusFragment" />
+        <argument
+            android:name="stationInformationModel"
+            app:argType="com.fan.tiptop.citiapi.data.StationInformationModel" />
     </fragment>
     <fragment
         android:id="@+id/stationSearchFragment"
