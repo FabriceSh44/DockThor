@@ -2,6 +2,7 @@ package com.fan.tiptop.dockthor.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -14,17 +15,18 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.fan.tiptop.citiapi.data.CitiStationId
-import com.fan.tiptop.citiapi.request.CitiRequester
-import com.fan.tiptop.citiapi.data.CitibikeStationInformationModel
 import com.fan.tiptop.citiapi.data.StationInformationModel
+import com.fan.tiptop.citiapi.request.CitiRequester
 import com.fan.tiptop.dockthor.R
 import com.fan.tiptop.dockthor.databinding.FragmentStationSearchBinding
 import com.fan.tiptop.dockthor.network.DefaultNetworkManagerListener
 import com.fan.tiptop.dockthor.network.NetworkManager
 import java.util.*
+//private const val MAX_RESULTS = 5
 
 
 class StationSearchFragment : Fragment(), OnQueryTextListener {
+
 
     //StationSearchFragment works with view binding
     private var _stationInfoList: List<StationInformationModel>? = null
@@ -32,6 +34,8 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private var _binding: FragmentStationSearchBinding? = null
     private val binding get() = _binding!!
     private var _currentFavStationId: Set<CitiStationId> = mutableSetOf()
+    private var _geocoder: Geocoder? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +43,8 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     ): View {
         _binding = FragmentStationSearchBinding.inflate(inflater, container, false)
         val myView = binding.root
+        _geocoder = Geocoder(myView.context)
+
         binding.searchView.setOnQueryTextListener(this)
         NetworkManager.getInstance().stationInformationRequest(
             object : DefaultNetworkManagerListener {
@@ -52,7 +58,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
 
                 override fun getError(error: String) {
                     if (error.isNotEmpty()) {
-                        binding.errorTextView.text =getString(R.string.cant_load_station,  error)
+                        binding.errorTextView.text = getString(R.string.cant_load_station, error)
                         Log.e(TAG, error)
                     }
                 }
@@ -60,7 +66,8 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         )
 
         if (!requireArguments().isEmpty) {
-            _currentFavStationId= StationSearchFragmentArgs.fromBundle(requireArguments()).favStationIds.toSet()
+            _currentFavStationId =
+                StationSearchFragmentArgs.fromBundle(requireArguments()).favStationIds.toSet()
         }
         return myView
     }
@@ -74,19 +81,36 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
         try {
             val requestor = CitiRequester()
             val model = requestor.getStationInformationModel(response)
-            return model.data.stations.map { x-> StationInformationModel(   station_id = CitiStationId(x.station_id),
-                name = "",
-                address = x.name,
-                isFavorite = false,
-                expiryTime = null,
-                capacity = x.capacity,
-                lon = x.lon,
-                lat = x.lat) }
+            return model.data.stations.map { x ->
+                StationInformationModel(
+                    station_id = CitiStationId(x.station_id),
+                    name = "",
+                    address = x.name,
+                    isFavorite = false,
+                    expiryTime = null,
+                    capacity = x.capacity,
+                    lon = x.lon,
+                    lat = x.lat
+                )
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Unable to process response. Got error ${e}")
             return listOf()
         }
     }
+//    fun getLocationFromName(name: String):List<Address>?  {
+//        _geocoder?.let {
+//                return it.getFromLocationName(
+//                    name,
+//                    MAX_RESULTS,
+//                    40.601742,
+//                    -74.112110,
+//                    40.90197465400506,
+//                    -73.8583169222231
+//                )
+//        }
+//        return mutableListOf()
+//    }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false

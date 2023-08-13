@@ -3,7 +3,7 @@
     <string name="hello_blank_fragment">Favorite station</string>
     <string name="switch_fav_station">Pick new favorite station</string>
     <string name="add_station_button">Replace favorite station</string>
-    <string name="search_station_hint">Input station street</string>
+    <string name="search_station_hint">Input address</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>

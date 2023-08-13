@@ -8,7 +8,6 @@ data class CitibikeStationModel(
     val station_id: String,
     val is_renting: Int,
     val num_bikes_disabled: Int,
-    val station_status: String,
     val is_returning: Int,
     val legacy_id: String,
     val num_docks_disabled: Int,
