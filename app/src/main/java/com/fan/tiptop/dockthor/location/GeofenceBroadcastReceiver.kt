@@ -14,7 +14,6 @@ import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 
 
-@Suppress("SENSELESS_COMPARISON")
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     private val TAG: String = "GeofenceBroadcastReceiver"
 
@@ -22,7 +21,12 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.i(TAG, "onReceive context:${context} intent:${intent} ")
 
-        val geofencingEvent = GeofencingEvent.fromIntent(intent)
+        val geofencingEvent: GeofencingEvent? = GeofencingEvent.fromIntent(intent)
+        if (geofencingEvent == null)
+        {
+            Log.e(TAG, "received null geofencing event")
+            return
+        }
         if (geofencingEvent.hasError()) {
             val errorMessage = GeofenceStatusCodes
                 .getStatusCodeString(geofencingEvent.errorCode)
@@ -32,12 +36,13 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
         Log.i(TAG, "received geofencing event:${geofencingEvent}. Retrieving citistation status")
         Log.i(TAG, getGeofenceTransitionDetails(geofencingEvent))
         //can be null despite what AS is saying
-        if (geofencingEvent.triggeringGeofences == null) {
+        val triggeringGeofences = geofencingEvent.triggeringGeofences
+        if (triggeringGeofences == null) {
             geofencingEvent.triggeringLocation
             Log.i(TAG, "No geofence triggered")
             return
         }
-        geofencingEvent.triggeringGeofences.first().requestId
+        triggeringGeofences.first().requestId
             .let {
                 DockThorKernel.getInstance().getCitistationStatus(CitiStationId(it)) { it2 ->
                     it2?.let {
@@ -70,8 +75,9 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
         }
         val triggeringIDs: MutableList<String?>
         triggeringIDs = ArrayList()
-        if (event.triggeringGeofences != null) {
-            for (geofence in event.triggeringGeofences) {
+        val triggeringGeofences = event.triggeringGeofences
+        if (triggeringGeofences != null) {
+            for (geofence in triggeringGeofences) {
                 triggeringIDs.add(geofence.requestId)
             }
         }
