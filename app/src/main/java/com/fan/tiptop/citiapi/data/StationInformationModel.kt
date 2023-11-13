@@ -14,7 +14,7 @@ data class StationInformationModel(
     val station_id: CitiStationId,
     val name: String,
     val address: String,
-    val isFavorite:Boolean,
+    var isFavorite:Boolean,
     val expiryTime:Date?,
     val capacity: Int,
     val lon: Double,

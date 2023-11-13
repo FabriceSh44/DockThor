@@ -171,12 +171,14 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
 
     suspend fun addStationToFavorite(station: CitiStationStatus) {
         val stationInfoModel = _citiKernel.getCitiInfoModel(station.stationId) ?: return
+        stationInfoModel.model.isFavorite=station.isFavorite
         dao.insert(stationInfoModel.model)
     }
 
     suspend fun removeStationFromFavorite(station: CitiStationStatus) {
         val stationInfoModel = _citiKernel.getCitiInfoModel(station.stationId) ?: return
-        dao.delete(stationInfoModel.model)
+        stationInfoModel.model.isFavorite=station.isFavorite
+        dao.deleteStationsByStationId(listOf(station.stationId))
     }
 
     fun addGeofenceToStation(stationId: CitiStationId, expiration: Duration) {

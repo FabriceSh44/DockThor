@@ -15,7 +15,7 @@ interface DockthorDao {
     suspend fun delete(stationInformationModel: StationInformationModel)
 
     @Query("DELETE FROM station_information_model WHERE station_id in (:stationIdList)")
-    suspend fun deleteAlarmByStationId(stationIdList: List<CitiStationId>)
+    suspend fun deleteStationsByStationId(stationIdList: List<CitiStationId>)
     @Query("SELECT * from station_information_model")
     suspend fun getFavoriteStations():List<StationInformationModel>
 

@@ -64,12 +64,12 @@ class CitiKernel {
 
     fun getStationLocation(stationId: CitiStationId): Location? {
         val get: CitibikeStationInformationModelDecorated? =
-            _stationInformationModelMap.get(stationId)
+            _stationInformationModelMap[stationId]
         return get?.model?.let { Location(it.lat, it.lon, Duration.ZERO) }
     }
 
     fun getCitiInfoModel(stationId: CitiStationId): CitibikeStationInformationModelDecorated? {
-        val stationInfoModel = _stationInformationModelMap.get(stationId)
+        val stationInfoModel = _stationInformationModelMap[stationId]
         if (stationInfoModel == null) {
             Log.e(TAG, "Unable to retrieve station info model from station id {stationId}")
             return null
@@ -88,7 +88,7 @@ class CitiKernel {
         val stationIdsWithCriteria =
             _requester.getStationStatusWithCriteria(result, criteria, minToReplace)
         val citiStationModelToReplace =
-            _stationInformationModelMap.get(targetCitiStationStatus.stationId)
+            _stationInformationModelMap[targetCitiStationStatus.stationId]
         if (citiStationModelToReplace != null) {
             val sortedCitiModelList = LocationUtils.getDropShapedClosestStation(
                 _stationInformationModelMap.filter {

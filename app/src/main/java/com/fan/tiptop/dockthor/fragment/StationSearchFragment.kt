@@ -199,6 +199,7 @@ class StationSearchFragment : Fragment(), OnQueryTextListener {
     private fun chooseView(view: View?) {
         if (view != null) {
             val stationInfo = view.tag as StationInformationModel
+            stationInfo.isFavorite=true
             val action = StationSearchFragmentDirections.actionStationSearchFragmentToMainFragment(
                 stationInfo
             )

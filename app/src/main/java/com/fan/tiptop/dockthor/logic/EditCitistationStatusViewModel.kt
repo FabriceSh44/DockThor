@@ -33,20 +33,20 @@ class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel
     fun onFavoriteClick() {
         if (station.isFavorite) {
             viewModelScope.launch {
-                _kernel.removeStationFromFavorite(station);
                 updateIsFavorite(false)
+                _kernel.removeStationFromFavorite(station)
             }
         } else {
             viewModelScope.launch {
-                _kernel.addStationToFavorite(station)
                 updateIsFavorite(true)
+                _kernel.addStationToFavorite(station)
             }
         }
     }
 
 
     fun onDirectionClick() {
-        var intent = _kernel.getActionViewIntent(station)
+        val intent = _kernel.getActionViewIntent(station)
         navigationIntentLD.value = intent
     }
 }
