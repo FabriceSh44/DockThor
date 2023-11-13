@@ -13,6 +13,9 @@ class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel
     private  var _kernel: DockThorKernel
     val stationAddress: String
         get() = station.address
+    val stationGivenName: String
+        get() = station.givenName
+
     private var _isStationFavoriteLD = MutableLiveData(false)
     val isStationFavoriteLD: LiveData<Boolean>
         get() = _isStationFavoriteLD
