@@ -52,4 +52,6 @@ class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel
         val intent = _kernel.getActionViewIntent(station)
         navigationIntentLD.value = intent
     }
+    fun onEditFavoriteNameClick() {//TODOFE show pop up and allow to change station nickname
+    }
 }

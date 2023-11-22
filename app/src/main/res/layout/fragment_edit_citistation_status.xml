@@ -9,51 +9,6 @@
         android:layout_height="match_parent"
         tools:context=".fragment.EditCitistationStatusFragment">
 
-        <ImageView
-            android:id="@+id/favoriteImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:contentDescription="@string/setFavorite"
-            android:onClick="@{()->viewModel.onFavoriteClick()}"
-            android:src="@{viewModel.isStationFavoriteLD? @android:drawable/btn_star_big_on:@android:drawable/btn_star_big_off}"
-            app:layout_constraintBottom_toBottomOf="@+id/stationNicknameTextView"
-            app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
-            app:layout_constraintTop_toTopOf="@+id/stationNicknameTextView" />
-
-        <ImageView
-            android:id="@+id/directionImageView"
-            android:layout_width="302dp"
-            android:layout_height="139dp"
-            android:contentDescription="@string/clickForDirection"
-            android:onClick="@{()->viewModel.onDirectionClick()}"
-            android:src="@android:drawable/ic_menu_directions"
-            app:layout_constraintBottom_toTopOf="@+id/guidelineBottom2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.494"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/geofenceSetupFragmentContainerView"
-            tools:ignore="ImageContrastCheck" />
-        <TextView
-            android:id="@+id/stationNicknameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{viewModel.stationGivenName}"
-            android:textSize="@dimen/statusAddressTextSize"
-            app:layout_constraintBottom_toTopOf="@id/stationAddressTextView"
-            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
-            app:layout_constraintTop_toTopOf="@+id/guidelineTop2" />
-        <!--android:text="@{viewModel.stationAddress}"-->
-        <TextView
-            android:id="@+id/stationAddressTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="@{viewModel.stationAddress}"
-            android:textSize="@dimen/statusAddressTextSize"
-            app:layout_constraintBottom_toTopOf="@id/stationStatusItem"
-            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
-            app:layout_constraintTop_toTopOf="@+id/stationNicknameTextView" />
-
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineBottom2"
             android:layout_width="wrap_content"
@@ -83,6 +38,31 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.02" />
 
+        <include
+            android:id="@+id/editStationHeader"
+            layout="@layout/element_station_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
+            app:layout_constraintTop_toBottomOf="@+id/guidelineTop2"
+            app:viewModel='@{viewModel}' />
+
+        <include
+            android:id="@+id/stationStatusItem"
+            layout="@layout/element_station_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
+            app:layout_constraintTop_toBottomOf="@+id/editStationHeader"
+            app:numBikeAvailable='@{viewModel.station.numBikeAvailable}'
+            app:numDockAvailable='@{viewModel.station.numDockAvailable}'
+            app:numEbikeAvailable='@{viewModel.station.numEbikeAvailable}' />
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/geofenceSetupFragmentContainerView"
             android:name="com.fan.tiptop.dockthor.fragment.GeofenceSetupFragment"
@@ -96,19 +76,21 @@
             app:layout_constraintTop_toBottomOf="@+id/stationStatusItem"
             tools:layout="@layout/fragment_geofence_setup" />
 
-        <include
-            android:id="@+id/stationStatusItem"
-            layout="@layout/element_station_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:layout_constraintEnd_toStartOf="@+id/guidelineRight2"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/guidelineLeft2"
-            app:layout_constraintTop_toBottomOf="@+id/stationAddressTextView"
-            app:numBikeAvailable='@{viewModel.station.numBikeAvailable}'
-            app:numDockAvailable='@{viewModel.station.numDockAvailable}'
-            app:numEbikeAvailable='@{viewModel.station.numEbikeAvailable}' />
+        <ImageView
+            android:id="@+id/directionImageView"
+            android:layout_width="302dp"
+            android:layout_height="139dp"
+            android:contentDescription="@string/clickForDirection"
+            android:onClick="@{()->viewModel.onDirectionClick()}"
+            android:src="@android:drawable/ic_menu_directions"
+            app:layout_constraintBottom_toTopOf="@+id/guidelineBottom2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/geofenceSetupFragmentContainerView"
+            tools:ignore="ImageContrastCheck" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
