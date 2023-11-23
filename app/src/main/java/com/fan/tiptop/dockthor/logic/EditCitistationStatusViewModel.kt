@@ -10,12 +10,11 @@ import kotlinx.coroutines.launch
 
 class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel() {
 
-    private  var _kernel: DockThorKernel
+    private var _kernel: DockThorKernel
     val stationAddress: String
         get() = station.address
-    val stationGivenName: String
-        get() = station.givenName
 
+    val stationGivenNameLD:MutableLiveData<String> = MutableLiveData(station.givenName)
     private var _isStationFavoriteLD = MutableLiveData(false)
     val isStationFavoriteLD: LiveData<Boolean>
         get() = _isStationFavoriteLD
@@ -52,6 +51,5 @@ class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel
         val intent = _kernel.getActionViewIntent(station)
         navigationIntentLD.value = intent
     }
-    fun onEditFavoriteNameClick() {//TODOFE show pop up and allow to change station nickname
-    }
+
 }

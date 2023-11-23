@@ -9,29 +9,33 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="4dp">
-        <TextView
-            android:id="@+id/stationNicknameTextView"
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.stationGivenName}"
-            android:textSize="@dimen/statusAddressTextSize"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.80" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/favoriteNameInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="57dp"
+            android:hint="Favorite nickname"
             android:visibility="@{viewModel.isStationFavoriteLD() ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconDrawable="@drawable/ic_baseline_star_24"
+           >
 
-
-        <ImageView
-            android:id="@+id/editFavoriteNameImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:contentDescription="@string/editFavoriteName"
-            android:visibility="@{viewModel.isStationFavoriteLD() ? View.VISIBLE : View.GONE}"
-            android:onClick="@{()->viewModel.onEditFavoriteNameClick()}"
-            android:src="@android:drawable/ic_menu_edit"
-            app:layout_constraintStart_toEndOf="@+id/stationNicknameTextView"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={viewModel.stationGivenNameLD}"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
         <ImageView
             android:id="@+id/favoriteImageView"
             android:layout_width="wrap_content"
@@ -42,14 +46,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-         <TextView
+        <TextView
             android:id="@+id/stationAddressTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="2dp"
             android:text="@{viewModel.stationAddress}"
             android:textSize="@dimen/statusAddressTextSize"
+            app:drawableStartCompat="@drawable/ic_location_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editFavoriteNameImageView" />
+            app:layout_constraintTop_toBottomOf="@+id/favoriteNameInputLayout" />
 
 
 
