@@ -1,13 +1,20 @@
 package com.fan.tiptop.dockthor.logic
 
 import android.content.Intent
+import android.view.View
+import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fan.tiptop.citiapi.data.CitiStationStatus
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 
+@BindingAdapter("setEndIconOnClickListener")
+fun setEndIconOnClickListener(inputLayout: TextInputLayout, endIconOnClickListener: View.OnClickListener) {
+    inputLayout.setEndIconOnClickListener(endIconOnClickListener)
+}
 class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel() {
 
     private var _kernel: DockThorKernel
@@ -46,6 +53,13 @@ class EditCitistationStatusViewModel(val station: CitiStationStatus) : ViewModel
         }
     }
 
+    fun  onFavSaveClickListener()
+    {
+        viewModelScope.launch {
+            station.givenName= stationGivenNameLD.value!!
+            _kernel.updateStationName(station)
+        }
+    }
 
     fun onDirectionClick() {
         val intent = _kernel.getActionViewIntent(station)

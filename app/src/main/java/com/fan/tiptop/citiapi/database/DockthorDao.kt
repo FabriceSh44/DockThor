@@ -11,6 +11,8 @@ import com.fan.tiptop.citiapi.data.*
 interface DockthorDao {
     @Insert
     suspend fun insert(stationInformationModel: StationInformationModel)
+    @Query("UPDATE station_information_model SET name=:name WHERE station_id = :stationId")
+    suspend fun updateName(name:String, stationId: CitiStationId)
     @Delete
     suspend fun delete(stationInformationModel: StationInformationModel)
 

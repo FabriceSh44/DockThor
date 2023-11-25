@@ -12,7 +12,7 @@ data class StationInformationModel(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
     val station_id: CitiStationId,
-    val name: String,
+    var name: String,
     val address: String,
     var isFavorite:Boolean,
     val expiryTime:Date?,

@@ -22,12 +22,15 @@
             android:id="@+id/favoriteNameInputLayout"
             android:layout_width="0dp"
             android:layout_height="57dp"
-            android:hint="Favorite nickname"
+            android:hint="@string/favorite_nickname"
             android:visibility="@{viewModel.isStationFavoriteLD() ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:startIconDrawable="@drawable/ic_baseline_star_24"
+            app:endIconDrawable="@drawable/ic_save_24"
+            app:endIconMode="custom"
+            app:setEndIconOnClickListener="@{()->viewModel.onFavSaveClickListener()}"
            >
 
             <com.google.android.material.textfield.TextInputEditText

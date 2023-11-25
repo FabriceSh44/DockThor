@@ -175,6 +175,13 @@ class DockThorKernel private constructor(val dao: DockthorDao) {
         dao.insert(stationInfoModel.model)
     }
 
+    suspend fun updateStationName(station: CitiStationStatus) {
+        val stationInfoModel = _citiKernel.getCitiInfoModel(station.stationId) ?: return
+        stationInfoModel.model.name=station.givenName
+        dao.updateName(station.givenName,station.stationId)
+    }
+
+
     suspend fun removeStationFromFavorite(station: CitiStationStatus) {
         val stationInfoModel = _citiKernel.getCitiInfoModel(station.stationId) ?: return
         stationInfoModel.model.isFavorite=station.isFavorite

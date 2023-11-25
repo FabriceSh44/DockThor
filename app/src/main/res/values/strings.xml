@@ -29,4 +29,5 @@
     <string name="setFavorite">Set favorite</string>
     <string name="cant_load_station">"Can't load station suggestions. Got error:[%1$s]"</string>
     <string name="editFavoriteName">edit favorite</string>
+    <string name="favorite_nickname">nickname</string>
 </resources>
