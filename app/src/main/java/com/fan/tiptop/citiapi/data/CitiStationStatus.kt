@@ -25,7 +25,7 @@ data class CitiStationStatus(
         stationId = model.station_id
         address = model.address
         if (model.name.isNullOrEmpty())
-            givenName = "Fav${model.id}"
+            givenName = ""
         else
             givenName = model.name
     }
